@@ -1067,7 +1067,7 @@ const ND = (() => {
   const PUZZLE_DATA = {
     'S5000': { name: "Jake's Locker Combination", successFlags: [{flag: 0, value: 2}],  successScene: 'S1426', backScene: 'S1425' },
     'S5001': { name: 'Boiler Chain Padlock',      successFlags: [],                     successScene: 'S5002', backScene: 'S2099' },
-    'S5002': { name: 'Boiler Lever Puzzle',       successFlags: [{flag: 62, value: 2}], successScene: 'S2060', backScene: 'S2061' },
+    'S5002': { name: 'Boiler Lever Puzzle',       successFlags: [{flag: 62, value: 2}], successScene: 'S2060', backScene: 'S2099' },
     'S50':   { name: 'Boiler Room Keypad',        successFlags: [{flag: 92, value: 1}], successScene: 'S1460', backScene: 'S1457' },
     'S51':   { name: 'Boiler Room Keypad',        successFlags: [{flag: 59, value: 2}], successScene: 'S1460', backScene: 'S1457' },
     'S56':   { name: "Aunt Eloise's Safe",        successFlags: [{flag: 41, value: 2}], successScene: 'S57',   backScene: 'S626' },
@@ -2106,6 +2106,11 @@ const ND = (() => {
         setupPasswordPuzzle(puzzleAction);
       } else if (pt === 'LEVER_PUZZLE' && puzzleAction.solution) {
         setupLeverPuzzle(puzzleAction);
+        // S5002: scene data exit_scene points to S2061 (safe boiler) but during
+        // the crisis (F62==1) we should return to S2099 (lever CU, crisis).
+        if (sceneId === 'S5002' && (state.flags[62] ?? 0) === 1) {
+          activePuzzle.exitScene = 2099;
+        }
       } else if (pt === 'TELEPHONE' && puzzleAction.buttons) {
         setupTelephone(puzzleAction);
       } else if (PUZZLE_DATA[sceneId]) {
