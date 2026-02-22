@@ -296,6 +296,7 @@ const ND = (() => {
     history: [],          // Scene history for Back button
     timerActive: false,
     timerStartTime: 0,
+    animationEnabled: false,
   };
   let timerCheckInterval = null;
   let secondChanceSave = null; // Auto-checkpoint before dangerous scenes
@@ -306,6 +307,22 @@ const ND = (() => {
   let activeHotspots = [];
   let bgNativeHeight = GAME_H; // native pixel height of current bg (376 for panoramics, 292 for closeups)
   let movieActive = false; // true while a PLAY_SECONDARY_MOVIE is playing
+
+  // Fidget animation state
+  let fidgetInterval = null;
+  let fidgetFrames = [];
+  let fidgetFrameIndex = 0;
+  let fidgetDrawRect = null;
+  let fidgetBgSnapshot = null;
+  let fidgetIdleEnd = 0;      // last frame index of idle loop
+  let fidgetHoverStart = 0;   // first frame index of hover loop
+  let fidgetHovering = false;  // true when mouse is over NPC hotspot
+  let fidgetUnhovering = false; // true while playing hover animation in reverse
+
+  // Conversation animation state
+  let convAnimInterval = null;
+  let convAnimFrames = [];
+  let convAnimFrameIndex = 0;
 
   // Asset config
   let FRAMES_DIR, AUDIO_DIR, SPRITES_DIR;
@@ -329,6 +346,7 @@ const ND = (() => {
   // Audio
   let ambientAudio = null;
   const imgCache = {};
+  const chromaKeyCache = {}; // cacheKey → canvas element (processed removeChromaKey results)
   const SLOT_SIZE = 54; // px, inventory slot canvas size
 
   // ── Markup helpers ───────────────────────────────────────────────────────
@@ -512,7 +530,7 @@ const ND = (() => {
         }
 
         fi++;
-      }, 100);
+      }, 60);
     });
 
     // Set completion flags
@@ -559,7 +577,7 @@ const ND = (() => {
         }
         ctx.drawImage(frames[fi], x, y, w, h);
         fi++;
-      }, 100);
+      }, 60);
     });
     movieActive = false;
   }
@@ -620,6 +638,56 @@ const ND = (() => {
   }
 
   // ── Timer system ─────────────────────────────────────────────────────────
+  function getTimerDeadline() {
+    // Each boiler scene has 3 timed SCENE_CHANGE actions at 300/240/180 seconds,
+    // corresponding to difficulty levels: Junior(0)=300, Senior(1)=240, Master(2)=180.
+    // Collect unique thresholds, sort descending, and pick by difficulty index.
+    const scene = scenes[state.currentSceneId];
+    if (!scene) return 180;
+    const thresholds = new Set();
+    for (const act of scene.actions) {
+      if (act.type !== 'SCENE_CHANGE') continue;
+      for (const c of act.conditions || []) {
+        if (c.type === 'timed_flag') thresholds.add(c.seconds);
+      }
+    }
+    if (thresholds.size === 0) return 180;
+    const sorted = [...thresholds].sort((a, b) => b - a); // [300, 240, 180]
+    const diffIdx = state.difficulty ?? 1;
+    return sorted[Math.min(diffIdx, sorted.length - 1)];
+  }
+
+  const DIFFICULTY_NAMES = ['Junior', 'Senior', 'Master'];
+
+  function updateTimerDisplay() {
+    const el = document.getElementById('dp-timer');
+    if (!el) return;
+    const diffName = DIFFICULTY_NAMES[state.difficulty ?? 1] || 'Senior';
+    if (!state.timerActive) { el.textContent = `Timer: inactive (${diffName})`; return; }
+    const elapsed = Math.floor((Date.now() - state.timerStartTime) / 1000);
+    const deadline = getTimerDeadline();
+    const remaining = Math.max(0, deadline - elapsed);
+    const min = Math.floor(remaining / 60);
+    const sec = remaining % 60;
+    el.textContent = `Timer: ${min}:${String(sec).padStart(2, '0')} remaining (${elapsed}s / ${deadline}s) [${diffName}]`;
+    el.style.color = remaining <= 30 ? '#f44' : '#f84';
+  }
+
+  function debugTimerSkip() {
+    if (!state.timerActive) { startTimer(); }
+    const deadline = getTimerDeadline();
+    // Set start time so only 10 seconds remain
+    state.timerStartTime = Date.now() - (deadline - 10) * 1000;
+    updateTimerDisplay();
+  }
+
+  function debugTimerAdd() {
+    if (!state.timerActive) return;
+    // Push start time forward by 10s → 10 more seconds of remaining time
+    state.timerStartTime += 10000;
+    updateTimerDisplay();
+  }
+
   function startTimer() {
     state.timerActive = true;
     state.timerStartTime = Date.now();
@@ -629,23 +697,26 @@ const ND = (() => {
   function stopTimer() {
     state.timerActive = false;
     if (timerCheckInterval) { clearInterval(timerCheckInterval); timerCheckInterval = null; }
+    updateTimerDisplay();
   }
 
   function startTimerChecks() {
     if (timerCheckInterval) clearInterval(timerCheckInterval);
     timerCheckInterval = setInterval(() => {
       if (!state.timerActive) return;
-      // Re-evaluate timed SCENE_CHANGE actions in the current scene
+      updateTimerDisplay();
       const scene = scenes[state.currentSceneId];
       if (!scene) return;
+      const deadline = getTimerDeadline();
+      const elapsed = (Date.now() - state.timerStartTime) / 1000;
+      if (elapsed < deadline) return;
+      // Find the SCENE_CHANGE action whose timed_flag matches the difficulty deadline
       for (const act of scene.actions) {
         if (act.type !== 'SCENE_CHANGE') continue;
-        if (!act.conditions || !act.conditions.some(c => c.type === 'timed_flag')) continue;
-        if (condPass(act)) {
-          stopTimer();
-          loadScene(`S${act.target_scene}`, act.scene_param ?? 0, false);
-          return;
-        }
+        if (!act.conditions || !act.conditions.some(c => c.type === 'timed_flag' && c.seconds === deadline)) continue;
+        stopTimer();
+        loadScene(`S${act.target_scene}`, act.scene_param ?? 0, false);
+        return;
       }
     }, 2000);
   }
@@ -763,6 +834,13 @@ const ND = (() => {
     return oc;
   }
 
+  function getChromaKeyFrame(img, cacheKey) {
+    if (chromaKeyCache[cacheKey]) return chromaKeyCache[cacheKey];
+    const cleaned = removeChromaKey(img);
+    chromaKeyCache[cacheKey] = cleaned;
+    return cleaned;
+  }
+
   async function renderNPCs(actions, variant) {
     // Render PLAY_SECONDARY_VIDEO character sprites at the correct panoramic position.
     // The hotspot bounds (hs_x1/y1, hs_x2/y2) define the NPC's visible screen area for
@@ -777,14 +855,164 @@ const ND = (() => {
       if (!fr) continue;
       const img = await tryLoadImg(FRAMES_DIR, act.asset_name, '_000.png');
       if (img) {
-        const cleaned = removeChromaKey(img);
+        const cacheKey = `${act.asset_name}_000`;
+        const cleaned = getChromaKeyFrame(img, cacheKey);
         const yS = bgNativeHeight > GAME_H ? GAME_H / bgNativeHeight : 1;
         const drawH = cleaned.height * yS;
         const drawX = fr.hs_x2 - cleaned.width;
         const drawY = fr.hs_y2 * yS - drawH;
+
+        // Snapshot clean background before drawing sprite (for fidget restore)
+        let bgSnapshot = null;
+        if (state.animationEnabled) {
+          const snapX = Math.max(0, Math.floor(drawX));
+          const snapY = Math.max(0, Math.floor(drawY));
+          const snapW = Math.min(Math.ceil(cleaned.width + (drawX - snapX)), GAME_W - snapX);
+          const snapH = Math.min(Math.ceil(drawH + (drawY - snapY)), GAME_H - snapY);
+          if (snapW > 0 && snapH > 0) {
+            bgSnapshot = { data: ctx.getImageData(snapX, snapY, snapW, snapH),
+                           x: snapX, y: snapY, w: snapW, h: snapH };
+          }
+        }
+
         ctx.drawImage(cleaned, drawX, drawY, cleaned.width, drawH);
+
+        if (state.animationEnabled) {
+          startFidget(act.asset_name, fr, yS, bgSnapshot,
+            act.idle_end_frame, act.hover_start_frame, act.end_frame);
+        }
       }
     }
+  }
+
+  // ── Fidget animation ────────────────────────────────────────────────────
+  // Fidget AVFs have two frame ranges: idle (0→idleEnd) and hover (hoverStart→endFrame).
+  // The idle loop plays continuously; when the mouse hovers over the NPC hotspot,
+  // the engine switches to the hover loop.
+  async function startFidget(assetName, frameData, yS, bgSnapshot, idleEnd, hoverStart, endFrame) {
+    stopFidget();
+    if (!bgSnapshot) return;
+
+    // Preload and chroma-key all frames
+    const frames = [];
+    for (let i = 0; ; i++) {
+      const ext = `_${String(i).padStart(3, '0')}.png`;
+      const img = await tryLoadImg(FRAMES_DIR, assetName, ext);
+      if (!img) break;
+      frames.push(getChromaKeyFrame(img, `${assetName}${ext}`));
+    }
+    if (frames.length === 0) return;
+
+    const cleaned0 = frames[0];
+    const drawH = cleaned0.height * yS;
+    const drawW = cleaned0.width;
+    const drawX = frameData.hs_x2 - drawW;
+    const drawY = frameData.hs_y2 * yS - drawH;
+
+    fidgetFrames = frames;
+    fidgetFrameIndex = 0;
+    fidgetDrawRect = { x: drawX, y: drawY, w: drawW, h: drawH };
+    fidgetBgSnapshot = bgSnapshot;
+    fidgetIdleEnd = (idleEnd != null && idleEnd < frames.length) ? idleEnd : frames.length - 1;
+    fidgetHoverStart = (hoverStart != null && hoverStart < frames.length) ? hoverStart : 0;
+    fidgetHovering = false;
+
+    fidgetInterval = setInterval(() => {
+      if (!state.animationEnabled) { stopFidget(); return; }
+      // Restore background behind previous frame
+      ctx.putImageData(fidgetBgSnapshot.data, fidgetBgSnapshot.x, fidgetBgSnapshot.y);
+
+      if (fidgetUnhovering) {
+        // Playing hover animation in reverse back to hover start
+        fidgetFrameIndex--;
+        if (fidgetFrameIndex < fidgetHoverStart) {
+          // Reverse complete — resume idle loop
+          fidgetUnhovering = false;
+          fidgetFrameIndex = 0;
+        }
+      } else if (fidgetHovering) {
+        // Hover: play forward once, hold on last frame
+        fidgetFrameIndex++;
+        if (fidgetFrameIndex > fidgetFrames.length - 1) {
+          fidgetFrameIndex = fidgetFrames.length - 1;
+        }
+      } else {
+        // Idle: loop forward
+        fidgetFrameIndex++;
+        if (fidgetFrameIndex > fidgetIdleEnd) {
+          fidgetFrameIndex = 0;
+        }
+      }
+
+      // Draw new frame
+      ctx.drawImage(fidgetFrames[fidgetFrameIndex],
+        fidgetDrawRect.x, fidgetDrawRect.y, fidgetDrawRect.w, fidgetDrawRect.h);
+    }, 60);
+  }
+
+  function stopFidget() {
+    if (fidgetInterval) {
+      clearInterval(fidgetInterval);
+      fidgetInterval = null;
+    }
+    fidgetFrames = [];
+    fidgetFrameIndex = 0;
+    fidgetDrawRect = null;
+    fidgetBgSnapshot = null;
+    fidgetHovering = false;
+    fidgetUnhovering = false;
+  }
+
+  function startFidgetIfNeeded() {
+    if (!state.animationEnabled || !state.currentSceneId) return;
+    loadScene(state.currentSceneId, state.currentVariant, false);
+  }
+
+  // ── Conversation animation ──────────────────────────────────────────────
+  async function startConvAnimation(nodeId, coords) {
+    stopConvAnimation();
+    if (!state.animationEnabled || !nodeId) return;
+
+    // Load all frames (conversation frames include background — no chroma-key)
+    const frames = [];
+    for (let i = 0; ; i++) {
+      const ext = `_${String(i).padStart(3, '0')}.png`;
+      const img = await tryLoadImg(FRAMES_DIR, nodeId, ext);
+      if (!img) break;
+      frames.push(img);
+    }
+    if (frames.length === 0) return;
+
+    // Draw rect from coords (same logic as playNarrationVideo)
+    const x = coords?.x2 ?? 0;
+    const y = coords?.y2 ?? 0;
+    const w = (coords?.x3 ?? (GAME_W - 1)) - x + 1;
+    const h = (coords?.y3 ?? (GAME_H - 1)) - y + 1;
+
+    convAnimFrames = frames;
+    convAnimFrameIndex = 0;
+
+    // Draw first frame immediately
+    ctx.drawImage(frames[0], x, y, w, h);
+
+    convAnimInterval = setInterval(() => {
+      convAnimFrameIndex++;
+      if (convAnimFrameIndex >= convAnimFrames.length) {
+        clearInterval(convAnimInterval);
+        convAnimInterval = null;
+        return;
+      }
+      ctx.drawImage(convAnimFrames[convAnimFrameIndex], x, y, w, h);
+    }, 60);
+  }
+
+  function stopConvAnimation() {
+    if (convAnimInterval) {
+      clearInterval(convAnimInterval);
+      convAnimInterval = null;
+    }
+    convAnimFrames = [];
+    convAnimFrameIndex = 0;
   }
 
   function drawHotspots(hotspots) {
@@ -934,6 +1162,15 @@ const ND = (() => {
       }
     }
 
+    // Conversation animation: when enabled, play NPC video on game canvas
+    // and move the text overlay below the canvas instead of on top of it.
+    if (state.animationEnabled && !skipGreeting && act.node_id) {
+      const gameWrap = document.getElementById('game-wrap');
+      gameWrap.parentNode.insertBefore(convOL, gameWrap.nextSibling);
+      convOL.classList.add('below-canvas');
+      startConvAnimation(act.node_id, act.coords);
+    }
+
     convOL.classList.add('active');
   }
 
@@ -993,7 +1230,13 @@ const ND = (() => {
   }
 
   function hideConv() {
-    convOL.classList.remove('active');
+    stopConvAnimation();
+    convOL.classList.remove('active', 'below-canvas');
+    // Move overlay back inside game-wrap if it was repositioned
+    const gameWrap = document.getElementById('game-wrap');
+    if (convOL.parentNode !== gameWrap) {
+      gameWrap.appendChild(convOL);
+    }
     pendingConvNav = null;
   }
 
@@ -1009,24 +1252,34 @@ const ND = (() => {
 
   function showMapDialog() {
     mapBtns.innerHTML = '';
+    const f5 = state.flags[5] ?? 1, f20 = state.flags[20] ?? 1;
+    // Endgame night mode: Daryl agreed to help (F40=2) + Connie chickened out (F95=2)
+    const endgameNight = (state.flags[40] ?? 1) === 2 && (state.flags[95] ?? 1) === 2;
+
     MAP_LOCATIONS.forEach(loc => {
-      // Day/night diner filtering based on story progression flags:
-      //   F5: 1=early game, 2=watched blackmail tape
-      //   F20: 1=nighttime (default), 2=daytime (post-Connie confession)
-      const f5 = state.flags[5] ?? 1, f20 = state.flags[20] ?? 1;
-      // Hide Diner Day when nighttime (after tape but before Connie confession)
-      if (loc.id === 'S10' && f5 === 2 && f20 !== 2) return;
-      // Hide Diner Night when daytime or early game
-      if (loc.id === 'S888' && (f5 !== 2 || f20 === 2)) return;
+      // --- Endgame night mode: only Aunt Eloise's and Pharmacy (→S1250) ---
+      if (endgameNight) {
+        if (loc.id === 'S10' || loc.id === 'S888' || loc.id === 'S11') return;
+      } else {
+        // --- Normal day/night diner filtering ---
+        //   F5: 1=early game, 2=watched blackmail tape
+        //   F20: 1=nighttime (default), 2=daytime (post-Connie confession)
+        // Hide Diner Day when nighttime (after tape but before Connie confession)
+        if (loc.id === 'S10' && f5 === 2 && f20 !== 2) return;
+        // Hide Diner Night when daytime or early game
+        if (loc.id === 'S888' && (f5 !== 2 || f20 === 2)) return;
+      }
 
       const btn = document.createElement('button');
       btn.className = 'map-loc-btn';
+      // In endgame night, Pharmacy routes to S1250 (endgame confrontation)
+      const destId = (endgameNight && loc.id === 'S1200') ? 'S1250' : loc.id;
       btn.textContent = loc.label;
-      const isCurrent = state.currentSceneId === loc.id;
+      const isCurrent = state.currentSceneId === destId;
       if (isCurrent) btn.classList.add('current');
       btn.onclick = () => {
         hideMapDialog();
-        if (!isCurrent) loadScene(loc.id, 0);
+        if (!isCurrent) loadScene(destId, 0);
       };
       mapBtns.appendChild(btn);
     });
@@ -1066,8 +1319,8 @@ const ND = (() => {
   // Hard-coded puzzle success data: scene → { name, successFlags, successScene, backScene }
   const PUZZLE_DATA = {
     'S5000': { name: "Jake's Locker Combination", successFlags: [{flag: 0, value: 2}],  successScene: 'S1426', backScene: 'S1425' },
-    'S5001': { name: 'Boiler Chain Padlock',      successFlags: [],                     successScene: 'S5002', backScene: 'S2099' },
-    'S5002': { name: 'Boiler Lever Puzzle',       successFlags: [{flag: 62, value: 2}], successScene: 'S2060', backScene: 'S2099' },
+    // S5001: interactive ROTATINGLOCK_PUZZLE (combination 1-9-6-7), no stub needed
+    'S5002': { name: 'Boiler Lever Puzzle',       successFlags: [{flag: 62, value: 2}], successScene: 'S2060', backScene: 'S2077' },
     'S50':   { name: 'Boiler Room Keypad',        successFlags: [{flag: 92, value: 1}], successScene: 'S1460', backScene: 'S1457' },
     'S51':   { name: 'Boiler Room Keypad',        successFlags: [{flag: 59, value: 2}], successScene: 'S1460', backScene: 'S1457' },
     'S56':   { name: "Aunt Eloise's Safe",        successFlags: [{flag: 41, value: 2}], successScene: 'S57',   backScene: 'S626' },
@@ -1748,6 +2001,10 @@ const ND = (() => {
     const scene = scenes[sceneId];
     if (!scene) { console.warn('Scene not found:', sceneId); return; }
 
+    // Stop any running NPC fidget or conversation animation
+    stopFidget();
+    stopConvAnimation();
+
     // Clear any active interactive puzzle
     if (activePuzzle?._keyHandler) {
       document.removeEventListener('keydown', activePuzzle._keyHandler);
@@ -1787,6 +2044,15 @@ const ND = (() => {
     if (sceneId === 'S1460' && (state.flags[62] ?? 0) === 0) {
       state.flags[62] = 1;
     }
+    // F44/F45 are scene-local state flags in the original engine (reset per
+    // scene) but we treat them globally.  Reset them on scene entry so stale
+    // values from prior scenes don't trigger conditioned sounds/nav_on_end.
+    // Exception: preserve them when reloading the same scene (Tier 3 EFMHS
+    // re-evaluation needs the flags that were just set by clicking).
+    if (!isSameScene) {
+      delete state.flags[44];
+      delete state.flags[45];
+    }
     // S53 (elevator button CU): The EFMHS sets F45=2 (button pressed) but the
     // SCENE_CHANGE conditions check F44==2 (likely decoder off-by-one).  Bridge
     // the gap so the Tier 3 SCENE_CHANGE reload fires the elevator animation.
@@ -1817,6 +2083,16 @@ const ND = (() => {
     const yS = bgNativeHeight > GAME_H ? GAME_H / bgNativeHeight : 1;
     let autoNav = null, autoConv = null, puzzleAction = null;
     let movieSoundsPlayed = null; // sounds already triggered during movie playback
+
+    // Pre-scan: process timer actions before the main loop.  PLAY_SECONDARY_MOVIE
+    // auto-navigates and returns early, which would skip RESET_AND_START_TIMER /
+    // STOP_TIMER actions that appear later in the action list (e.g. S71 sabotaged
+    // elevator starts the boiler countdown but lists the timer after the movie).
+    for (const act of scene.actions) {
+      if (!condPass(act)) continue;
+      if (act.type === 'RESET_AND_START_TIMER') startTimer();
+      else if (act.type === 'STOP_TIMER') stopTimer();
+    }
 
     for (const act of scene.actions) {
       if (!condPass(act)) continue;
@@ -1872,11 +2148,8 @@ const ND = (() => {
           break;
 
         case 'RESET_AND_START_TIMER':
-          startTimer();
-          break;
-
         case 'STOP_TIMER':
-          stopTimer();
+          // Handled in pre-scan above (before movie auto-nav can return early)
           break;
 
         case 'PLAY_SECONDARY_MOVIE': {
@@ -2107,9 +2380,10 @@ const ND = (() => {
       } else if (pt === 'LEVER_PUZZLE' && puzzleAction.solution) {
         setupLeverPuzzle(puzzleAction);
         // S5002: scene data exit_scene points to S2061 (safe boiler) but during
-        // the crisis (F62==1) we should return to S2099 (lever CU, crisis).
+        // the crisis (F62==1) we should return to S2077 (crisis boiler room).
+        // The padlock is already solved at this point, so skip S2099 (lever CU).
         if (sceneId === 'S5002' && (state.flags[62] ?? 0) === 1) {
-          activePuzzle.exitScene = 2099;
+          activePuzzle.exitScene = 2077;
         }
       } else if (pt === 'TELEPHONE' && puzzleAction.buttons) {
         setupTelephone(puzzleAction);
@@ -2353,7 +2627,7 @@ const ND = (() => {
           'S1860':             'S1859', // card catalog open → closed
           // — Boiler room —
           'S2087':             'S2088', // vent grate on → off
-          'S2092':             'S2093', // vent shaft → sabotaged button
+          // S2092: nav_on_end 2059 is correct (vent shaft → outside), no override needed
         };
 
         // Tier 1 — Explicit lookup table (overrides for incorrect nav_on_end)
@@ -2488,8 +2762,27 @@ const ND = (() => {
     const dir = scrollDir(x);
     if (dir === -1)      canvas.style.cursor = 'w-resize';
     else if (dir === 1)  canvas.style.cursor = 'e-resize';
-    else if (hitTest(x, y)) canvas.style.cursor = 'pointer';
-    else                 canvas.style.cursor = state.activeItem !== null ? 'cell' : 'crosshair';
+    else {
+      const hit = hitTest(x, y);
+      if (hit) canvas.style.cursor = 'pointer';
+      else     canvas.style.cursor = state.activeItem !== null ? 'cell' : 'crosshair';
+
+      // Fidget hover: switch to hover animation when over NPC hotspot
+      if (fidgetInterval) {
+        const overNPC = !!(hit && hit.action.type === 'PLAY_SECONDARY_VIDEO');
+        if (overNPC && !fidgetHovering) {
+          // Mouse entered NPC — start hover animation forward
+          fidgetHovering = true;
+          fidgetUnhovering = false;
+          fidgetFrameIndex = fidgetHoverStart - 1;
+        } else if (!overNPC && fidgetHovering) {
+          // Mouse left NPC — play hover animation in reverse
+          fidgetHovering = false;
+          fidgetUnhovering = true;
+          // fidgetFrameIndex stays where it is; interval will decrement
+        }
+      }
+    }
   }
 
   // ── Public API ───────────────────────────────────────────────────────────
@@ -2497,6 +2790,24 @@ const ND = (() => {
     state.debugHotspots = !state.debugHotspots;
     togglePanel();
     loadScene(state.currentSceneId, state.currentVariant, false);
+  }
+
+  function toggleAnimation() {
+    state.animationEnabled = !state.animationEnabled;
+    const btn = document.getElementById('anim-toggle-btn');
+    if (btn) {
+      btn.textContent = state.animationEnabled ? 'Anim: ON' : 'Anim: OFF';
+      btn.classList.toggle('dp-active', state.animationEnabled);
+    }
+    if (state.animationEnabled) {
+      startFidgetIfNeeded();
+    } else {
+      stopFidget();
+      // Reload to restore static NPC frame
+      if (state.currentSceneId) {
+        loadScene(state.currentSceneId, state.currentVariant, false);
+      }
+    }
   }
 
   function goToScene(rawId) {
@@ -2539,9 +2850,10 @@ const ND = (() => {
     // Explicitly init these to 0 so flag_check conditions don't false-positive.
     //   F61: chain visibility (0=no chains, 1=chains visible after crisis)
     //   F62: boiler crisis (0=safe, 1=crisis active, 2=lever puzzle solved)
-    //   F88: vent shaft grate (0=closed, 1=open)
     //   F98: match/lighter state (0=initial, 1=has match)
-    for (const fid of [61, 62, 88, 98]) {
+    // NOTE: F88 (vent grate) is NOT included — its default of 1 (via ?? 1) is
+    // correct: 1=closed grate (initial), 2=opened (by slider puzzle).
+    for (const fid of [61, 62, 98]) {
       if (!(fid in state.flags)) state.flags[fid] = 0;
     }
 
@@ -2779,7 +3091,26 @@ const ND = (() => {
     loadScene('S1457', 0);
   }
 
-  return { init, loadScene, hideConv, continueConv, hideMapDialog, toggleDebug, goToScene, back, loadSecondChance,
-           togglePanel, debugToggleItem, debugRestart, debugAskAllQuestions, debugAddAllItems, debugBoilerEmergency };
+  function debugEndgame() {
+    // Set all prerequisites for endgame night mode:
+    // NPCs met
+    state.flags[38] = 2; state.flags[19] = 2; state.flags[29] = 2; state.flags[11] = 2;
+    // Blackmail tape watched
+    state.flags[5] = 2;
+    // Daryl agreed to help catch Mitch at pharmacy (S3216 tail_entry)
+    state.flags[40] = 2;
+    // Connie chickened out (S245 EVENTFLAGS)
+    state.flags[95] = 2;
+    // Boiler crisis resolved
+    state.flags[62] = 2;
+    updateInventoryBar();
+    refreshDebugPanel();
+    // Open the map — only Aunt Eloise's and Pharmacy (→S1250) should appear
+    showMapDialog();
+  }
+
+  return { init, loadScene, hideConv, continueConv, hideMapDialog, toggleDebug, toggleAnimation, goToScene, back, loadSecondChance,
+           togglePanel, debugToggleItem, debugRestart, debugAskAllQuestions, debugAddAllItems, debugBoilerEmergency,
+           debugTimerSkip, debugTimerAdd, debugEndgame };
 
 })();

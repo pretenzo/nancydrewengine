@@ -488,6 +488,9 @@ def decode_act(payload):
         asset = cstr(action_data, 0, 10)
         if len(action_data) >= 53:
             target_scene = u16(action_data, 42)
+            idle_end_frame = u16(action_data, 32)   # last frame of idle animation loop
+            hover_start_frame = u16(action_data, 34) # first frame of hover animation
+            end_frame = u16(action_data, 36)         # last frame of hover animation
             count = u16(action_data, 51)
             frames = []
             for fi in range(count):
@@ -503,7 +506,10 @@ def decode_act(payload):
                     "hs_x2":  struct.unpack_from('<i', action_data, off + 26)[0],
                     "hs_y2":  struct.unpack_from('<i', action_data, off + 30)[0],
                 })
-            return {**base, "asset_name": asset, "target_scene": target_scene, "frames": frames}
+            result = {**base, "asset_name": asset, "target_scene": target_scene,
+                      "idle_end_frame": idle_end_frame, "hover_start_frame": hover_start_frame,
+                      "end_frame": end_frame, "frames": frames}
+            return result
         return {**base, "asset_name": asset, "data_size": len(action_data)}
 
     # PLAY_SECONDARY_MOVIE (type 0x35): cinematic overlay animation

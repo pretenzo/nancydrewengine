@@ -3087,6 +3087,9 @@
         "subtype": 1,
         "asset_name": "hfid",
         "target_scene": 401,
+        "idle_end_frame": 15,
+        "hover_start_frame": 16,
+        "end_frame": 39,
         "frames": [
           {
             "frame": 11,
@@ -4773,6 +4776,9 @@
         "subtype": 1,
         "asset_name": "HulkFid",
         "target_scene": 301,
+        "idle_end_frame": 23,
+        "hover_start_frame": 24,
+        "end_frame": 38,
         "frames": [
           {
             "frame": 1,
@@ -35592,6 +35598,9 @@
         "subtype": 1,
         "asset_name": "cfid",
         "target_scene": 201,
+        "idle_end_frame": 34,
+        "hover_start_frame": 35,
+        "end_frame": 59,
         "frames": [
           {
             "frame": 0,
@@ -41142,6 +41151,9 @@
         "subtype": 1,
         "asset_name": "DarylFid",
         "target_scene": 101,
+        "idle_end_frame": 41,
+        "hover_start_frame": 42,
+        "end_frame": 48,
         "frames": [
           {
             "frame": 1,
