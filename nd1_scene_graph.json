@@ -1,0 +1,5340 @@
+{
+  "10": [
+    {
+      "target": 824,
+      "action": "To Diner Node",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[5]==1"
+      ]
+    },
+    {
+      "target": 824,
+      "action": "To Diner Node",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[5]==2",
+        "flag[20]==2"
+      ]
+    },
+    {
+      "target": 890,
+      "action": "To Diner Door",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[5]==2",
+        "flag[20]==1"
+      ]
+    }
+  ],
+  "1041": [
+    {
+      "target": 1042,
+      "action": "kitchen->calander cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1045,
+      "action": "Kitchen stove ->gas line",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1045,
+      "action": "Kitchen under table->gas line",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1044,
+      "action": "kitchen->bus bin",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 843,
+      "action": "kitchen->door",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1051,
+      "action": "kitchen->fridge cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1053,
+      "action": "kitchen->door",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1042": [
+    {
+      "target": 1041,
+      "action": "1FR scene exit -> kitchen",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==1"
+      ]
+    },
+    {
+      "target": 1050,
+      "action": "1FR scene exit -> kitchen",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==2"
+      ]
+    },
+    {
+      "target": 1043,
+      "action": "kitchen, calander extra cu",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1049,
+      "action": "1FR scene exit -> kitchen",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==1"
+      ]
+    }
+  ],
+  "1043": [
+    {
+      "target": 1042,
+      "action": "1FR scene exit -> clander cu",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1044": [
+    {
+      "target": 1041,
+      "action": "bus bin->kitchen node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==1"
+      ]
+    },
+    {
+      "target": 1041,
+      "action": "bus bin->kitchen node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==1"
+      ]
+    },
+    {
+      "target": 1050,
+      "action": "bus bin->kitchen node unsabatoge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==2"
+      ]
+    },
+    {
+      "target": 1050,
+      "action": "bus bin->kitchen node unsabatoge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==2"
+      ]
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1049,
+      "action": "bus bin->kitchen node unsabatoge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==1"
+      ]
+    },
+    {
+      "target": 1049,
+      "action": "bus bin->kitchen node unsabatoge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==1"
+      ]
+    }
+  ],
+  "1045": [
+    {
+      "target": 1041,
+      "action": "gas line->kitchen node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1048,
+      "action": "kitchen, gas line w/cutter->gas ",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1041,
+      "action": "gas line->kitchen node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1047": [
+    {
+      "target": 1050,
+      "action": "gas line->kitchen node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1048": [
+    {
+      "target": 1047,
+      "action": "kitchen, Gas line cu->gas line c",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1049,
+      "action": "gas line->kitchen node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1049,
+      "action": "gas line->kitchen node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1049": [
+    {
+      "target": 1042,
+      "action": "kitchen->calander cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1045,
+      "action": "Kitchen stove ->gas line",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1045,
+      "action": "Kitchen under table->gas line",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1044,
+      "action": "kitchen->bus bin",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "kitchen->explosion",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1051,
+      "action": "kitchen->fridge cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1053,
+      "action": "kitchen->cutting board",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1050": [
+    {
+      "target": 1042,
+      "action": "kitchen->calander cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1047,
+      "action": "Kitchen stove ->gas line",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1044,
+      "action": "kitchen->bus bin",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 843,
+      "action": "kitchen->door",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1051,
+      "action": "kitchen->fridge cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1053,
+      "action": "kitchen->cutting board",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1051": [
+    {
+      "target": 1041,
+      "action": "1FR scene exit -> kitchen",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==1"
+      ]
+    },
+    {
+      "target": 1050,
+      "action": "1FR scene exit -> kitchen",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==2"
+      ]
+    },
+    {
+      "target": 1052,
+      "action": "kitchen, fridge extra cu",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1049,
+      "action": "1FR scene exit -> kitchen",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==1"
+      ]
+    }
+  ],
+  "1052": [
+    {
+      "target": 1051,
+      "action": "1FR scene exit -> fridge cu",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1053": [
+    {
+      "target": 1041,
+      "action": "1FR scene exit -> kitchen",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==1"
+      ]
+    },
+    {
+      "target": 1050,
+      "action": "1FR scene exit -> kitchen",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==2"
+      ]
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1046,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1049,
+      "action": "1FR scene exit -> kitchen",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[101]==1"
+      ]
+    }
+  ],
+  "11": [
+    {
+      "target": 1440,
+      "action": "school ext.  -> school entrance",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1650,
+      "action": "To Exterior with cover",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[62]==1"
+      ]
+    },
+    {
+      "target": 1655,
+      "action": "To Exterior w/ Cover",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[62]==2"
+      ]
+    }
+  ],
+  "1105": [
+    {
+      "target": 1107,
+      "action": "1FR scene - bboard-->locker clue",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1110,
+      "action": "1FR scene exit->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1107": [
+    {
+      "target": 1105,
+      "action": "",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1110": [
+    {
+      "target": 1105,
+      "action": "Dome Node (sd1x) ---> Bulletin B",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1113,
+      "action": "Dome Node (sd1x) ---> Psych Club",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1455,
+      "action": "Dome Node (sd1x) ---> Hall Bulle",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 401,
+      "action": "Hal Fidget in Dome",
+      "type": "PLAY_SECONDARY_VIDEO",
+      "conditions": null
+    },
+    {
+      "target": 1450,
+      "action": "Dome Node (sd1x) ---> Hallway 5 ",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1410,
+      "action": "Dome Node (sd1x) ---> Hallway 2 ",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 515,
+      "action": "Dome Node (sd1x) ---> Student Un",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1113": [
+    {
+      "target": 1110,
+      "action": "",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1200": [
+    {
+      "target": 1299,
+      "action": "1FR scene - pharm-->door",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1250": [
+    {
+      "target": 1251,
+      "action": "Intro Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "1251": [
+    {
+      "target": 1253,
+      "action": "Intro Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    },
+    {
+      "target": 1252,
+      "action": "hold gun on Mitch/win game",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1252": [
+    {
+      "target": 2070,
+      "action": "Intro Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "1299": [
+    {
+      "target": 1200,
+      "action": "",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1333": [
+    {
+      "target": 1338,
+      "action": "Gym Node (sg1x) ---> Bulletin Bo",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1335,
+      "action": "Gym Node (sg1x) ---> Crane Poste",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1337,
+      "action": "Gym Node (sg1x) ---> Eye Chart (",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 301,
+      "action": "Hulk Fidget in Gym",
+      "type": "PLAY_SECONDARY_VIDEO",
+      "conditions": null
+    },
+    {
+      "target": 1400,
+      "action": "Gym Node (sg1x) ---> Hallway 1 N",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1335": [
+    {
+      "target": 1333,
+      "action": "1FR scene exit->lounge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1337": [
+    {
+      "target": 1333,
+      "action": "1FR scene exit->lounge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1338": [
+    {
+      "target": 1333,
+      "action": "1FR scene exit-> gym",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1339,
+      "action": "1FR scene - bulletin board --> E",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1339": [
+    {
+      "target": 1333,
+      "action": "1FR scene exit->lounge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1400": [
+    {
+      "target": 1410,
+      "action": "hall1 node--->library node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1420,
+      "action": "hall1 node--->hall3 node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1333,
+      "action": "hall1 1 node ----> gym node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1401,
+      "action": "hall1 1 node ----> BULLETIN BOAR",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1401": [
+    {
+      "target": 1402,
+      "action": "1FR scene - gym hall bul --> bul",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1400,
+      "action": "1FR scene exit->lib entrance nod",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1402": [
+    {
+      "target": 1401,
+      "action": "1FR scene exit->bulletin board",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1410": [
+    {
+      "target": 1110,
+      "action": "school library node--->dome node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1400,
+      "action": "schoollibrary node--->hallway1 n",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1413,
+      "action": "school library node--->library b",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1416,
+      "action": "school library node--->library D",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1411,
+      "action": "school library node--->library b",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1411": [
+    {
+      "target": 1410,
+      "action": "1FR scene exit->lib entrance nod",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1412,
+      "action": "1FR scene - lib bul --> bull c/u",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1412": [
+    {
+      "target": 1411,
+      "action": "1FR scene exit->bulletin board",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1413": [
+    {
+      "target": 1410,
+      "action": "1FR scene exit->lib entrance nod",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1414,
+      "action": "bb --> boiler clue",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1414": [
+    {
+      "target": 1413,
+      "action": "1FR scene exit->bulletin board",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1416": [
+    {
+      "target": 1410,
+      "action": "1FR scene exit-> library node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1417": [
+    {
+      "target": 1846,
+      "action": "1FR scene open lib door --> lib",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1420": [
+    {
+      "target": 1400,
+      "action": "hall3 node--->hall1 node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1440,
+      "action": "hall3 node--->hall4 node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1423,
+      "action": "hall3 node--->MANATEE POSTER",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1436,
+      "action": "hall3 node--->film lab doors",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1421,
+      "action": "hall3 node--->bulletin board",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1425,
+      "action": "hall3 node--->jakes locker",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1421": [
+    {
+      "target": 1420,
+      "action": "1FR scene exit->HALLWYA 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1422,
+      "action": "1FR scene - lib bul --> bull c/u",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1422": [
+    {
+      "target": 1421,
+      "action": "1FR scene exit->bulletin board",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1423": [
+    {
+      "target": 1420,
+      "action": "1FR scene exit->hallway 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1424": [
+    {
+      "target": 1425,
+      "action": "1FR scene exit->locker",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1425": [
+    {
+      "target": 1420,
+      "action": "1FR scene exit->hallway 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 5000,
+      "action": "cu LOCKER ---> PADLOCK",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1426": [
+    {
+      "target": 1427,
+      "action": "1FR scene top locker---> bottom ",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1432,
+      "action": "1FR scene top locker---> Empty V",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1432,
+      "action": "1FR scene top locker---> Empty V",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1434,
+      "action": "1FR scene top locker---> English",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1434,
+      "action": "1FR scene top locker---> English",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1434,
+      "action": "1FR scene top locker---> English",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1434,
+      "action": "1FR scene top locker---> English",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1428,
+      "action": "1FR scene top locker---> Judo To",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1427": [
+    {
+      "target": 1426,
+      "action": "1FR scene top locker---> top loc",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1428": [
+    {
+      "target": 1426,
+      "action": "1FR scene Judo Today---> top of ",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1426,
+      "action": "1FR scene Judo Today 2---> top o",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1429": [
+    {
+      "target": 1437,
+      "action": "1FR scene --> article cu",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1430": [
+    {
+      "target": 1431,
+      "action": "1FR scene newspaper---> article ",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1427,
+      "action": "1FR scene newspaper---> bottom o",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1431": [
+    {
+      "target": 1430,
+      "action": "1FR scene Break I C/U---> Newspa",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1432": [
+    {
+      "target": 1426,
+      "action": "1FR scene video tape---> top of ",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1434": [
+    {
+      "target": 1426,
+      "action": "1FR scene book 1---> top of lock",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1426,
+      "action": "1FR scene book 2---> top of lock",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1436": [
+    {
+      "target": 1420,
+      "action": "1FR scene exit->hallway 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1437": [
+    {
+      "target": 1428,
+      "action": "1FR scene exit->Judo Today",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1440": [
+    {
+      "target": 1450,
+      "action": "school entrance node--->hallway5",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1420,
+      "action": "school entrance node--->hallway3",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1444,
+      "action": "school entrance node--->main tro",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1443,
+      "action": "school entrance node--->red team",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1441,
+      "action": "school entrance node--->school d",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1442,
+      "action": "school entrance node--->blue tea",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1446,
+      "action": "school entrance node--->hallway ",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1441": [
+    {
+      "target": 1440,
+      "action": "1FR scene exit->node4",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1442": [
+    {
+      "target": 1440,
+      "action": "1FR scene exit->node4",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1443": [
+    {
+      "target": 1440,
+      "action": "1FR scene exit->node4",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1444": [
+    {
+      "target": 1445,
+      "action": "cu spirit--->cu photo",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1440,
+      "action": "1FR scene exit->node4",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1445": [
+    {
+      "target": 1444,
+      "action": "1FR scene exit->node4",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1446": [
+    {
+      "target": 1447,
+      "action": "1FR scene bb --> map",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1440,
+      "action": "1FR scene exit1->node4",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1440,
+      "action": "1FR scene exit2->node4",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1447": [
+    {
+      "target": 1410,
+      "action": "to library",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1110,
+      "action": "to dome",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 515,
+      "action": "to union",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1450,
+      "action": "to hall5",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1440,
+      "action": "to entry",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1420,
+      "action": "to hall3",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1400,
+      "action": "to hall1",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1333,
+      "action": "to gym",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1446,
+      "action": "1FR scene exit->bboard",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1450": [
+    {
+      "target": 1110,
+      "action": "hallway5 node--->study",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1440,
+      "action": "hallway5 node--->school entry no",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1457,
+      "action": "hallway5 node--->boiler entry",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 515,
+      "action": "hallway5 node--->lounge",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1451,
+      "action": "hallway5 node--->bulletin board1",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1453,
+      "action": "hallway5 node--->bulletin board2",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1458,
+      "action": "hallway5 node--->scrap of paper",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1451": [
+    {
+      "target": 1450,
+      "action": "1FR 1 scene exit->node5",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1450,
+      "action": "1FR 2 scene exit->node5",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1452,
+      "action": "1FR scene open lib door --> lib",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1452": [
+    {
+      "target": 1451,
+      "action": "1FR 1 scene exit->bulletin board",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1453": [
+    {
+      "target": 1450,
+      "action": "1FR scene exit->node5",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1454,
+      "action": "bb --> yearbook clue",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1454": [
+    {
+      "target": 1453,
+      "action": "1FR scene exit->bulletin board",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1455": [
+    {
+      "target": 1110,
+      "action": "1FR scene exit->STUDY NODE",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1456,
+      "action": "1FR scene - study bul --> bull c",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1456": [
+    {
+      "target": 1455,
+      "action": "1FR scene exit->bulletin board",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1457": [
+    {
+      "target": 1450,
+      "action": "1FR scene exit->hallway 5",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 50,
+      "action": "BOILER DOOR --> BOILER DOOR LOCK",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1458": [
+    {
+      "target": 1450,
+      "action": "1FR scene exit->Hall 5 Node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1459,
+      "action": "1FR scene - yellow page c/u --> ",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1459": [
+    {
+      "target": 1458,
+      "action": "1FR scene exit->bulletin board",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1460": [
+    {
+      "target": 52,
+      "action": "1FR scene open maint door --> el",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[62]==1"
+      ]
+    },
+    {
+      "target": 58,
+      "action": "1FR scene open maint door --> el",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[62]==2"
+      ]
+    }
+  ],
+  "1601": [
+    {
+      "target": 1610,
+      "action": "Teacher Lounge Node ---> White B",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1608,
+      "action": "Teacher Lounge Node ---> Bulleti",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1609,
+      "action": "Teacher Lounge Node ---> Desk It",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "Teacher Lounge Node ---> Compute",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1685,
+      "action": "TLounge Node ---> Computer Print",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": [
+        "flag[7]==1"
+      ]
+    },
+    {
+      "target": 1614,
+      "action": "TLounge Node ---> Computer Print",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": [
+        "flag[7]==2"
+      ]
+    },
+    {
+      "target": 1615,
+      "action": "Teacher Lounge Node ---> TOE (sl",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1604,
+      "action": "Teacher Lounge Node ---> File Ca",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1616,
+      "action": "Teacher Lounge Node ---> Map of ",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1618,
+      "action": "Teacher Lounge Node ---> Book Ca",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1603": [
+    {
+      "target": 1623,
+      "action": "Desktop to File Cabinet",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1624,
+      "action": "Desktop to Gears",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1632,
+      "action": "Desktop to Floppy Disk",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1625,
+      "action": "Desktop to CD Rom",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1627,
+      "action": "Desktop to Help Icon",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1628,
+      "action": "Desktop to Key",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1629,
+      "action": "Desktop to Envelopes",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1630,
+      "action": "Desktop to Globe",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1631,
+      "action": "Desktop to Trash Can",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1604": [
+    {
+      "target": 1601,
+      "action": "lounge, exit file cabinet closeu",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1606": [
+    {
+      "target": 1605,
+      "action": "1FR scene exit->OPEN FILE CABINE",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1608": [
+    {
+      "target": 1601,
+      "action": "1FR scene exit->diner",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1609": [
+    {
+      "target": 1601,
+      "action": "lounge, exit computer closeup",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1610": [
+    {
+      "target": 1601,
+      "action": "1FR scene exit->diner",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1612": [
+    {
+      "target": 1609,
+      "action": "1FR scene exit->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1613": [
+    {
+      "target": 1601,
+      "action": "1FR scene exit->lounge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1620,
+      "action": "Computer Screen Saver to Login S",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1614": [
+    {
+      "target": 1601,
+      "action": "1FR scene exit->lounge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1617,
+      "action": "To security report closeup",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1615": [
+    {
+      "target": 1601,
+      "action": "1FR scene exit->lounge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1616": [
+    {
+      "target": 1601,
+      "action": "1FR scene exit->lounge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1617": [
+    {
+      "target": 1635,
+      "action": "to printer node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1618": [
+    {
+      "target": 1601,
+      "action": "1FR scene exit->lounge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1621": [
+    {
+      "target": 1620,
+      "action": "Back to Login Screen",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1622": [
+    {
+      "target": 1603,
+      "action": "Go to desktop after welcome",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1623": [
+    {
+      "target": 1603,
+      "action": "Return to Desktop",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1624": [
+    {
+      "target": 1603,
+      "action": "Return to Desktop",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1625": [
+    {
+      "target": 1603,
+      "action": "Return to Desktop",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1626": [
+    {
+      "target": 1603,
+      "action": "Return to Desktop",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1627": [
+    {
+      "target": 1603,
+      "action": "Return to Desktop",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1628": [
+    {
+      "target": 1603,
+      "action": "Return to Desktop",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1629": [
+    {
+      "target": 1603,
+      "action": "Return to Desktop",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1630": [
+    {
+      "target": 1603,
+      "action": "Return to Desktop",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1631": [
+    {
+      "target": 1603,
+      "action": "Return to Desktop",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1632": [
+    {
+      "target": 1603,
+      "action": "Return to Desktop",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 1",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1613,
+      "action": "lounge, exit computer closeup 2",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1635": [
+    {
+      "target": 1614,
+      "action": "to printer node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1650": [
+    {
+      "target": 11,
+      "action": "1FR scene exit->school side exte",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1652,
+      "action": "To Lounge Window without hole",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[85]==1"
+      ]
+    },
+    {
+      "target": 1651,
+      "action": "To Lounge Window with hole",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[85]==2"
+      ]
+    }
+  ],
+  "1651": [
+    {
+      "target": 1650,
+      "action": "1FR scene exit->side w/ cover",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==1"
+      ]
+    },
+    {
+      "target": 1655,
+      "action": "1FR scene exit->side w/o cover",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==2"
+      ]
+    }
+  ],
+  "1652": [
+    {
+      "target": 1650,
+      "action": "1FR scene exit->school side exte",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1653": [
+    {
+      "target": 11,
+      "action": "1FR scene exit->school side exte",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1651,
+      "action": "To Lounge Window",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1654": [
+    {
+      "target": 1650,
+      "action": "1FR scene exit->side w/ cover",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==1"
+      ]
+    },
+    {
+      "target": 1655,
+      "action": "1FR scene exit->side w/o cover",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==2"
+      ]
+    },
+    {
+      "target": 1601,
+      "action": "1FR scene --> lounge node",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1655": [
+    {
+      "target": 11,
+      "action": "1FR scene exit->school side exte",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1651,
+      "action": "To Lounge Window with hole",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2050,
+      "action": "To Vent Shaft",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1661": [
+    {
+      "target": 1665,
+      "action": "1FR scene exit->side w/o cover",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1664": [
+    {
+      "target": 1665,
+      "action": "1FR scene exit->school side exte",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1601,
+      "action": "1FR scene --> lounge node",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1665": [
+    {
+      "target": 21,
+      "action": "1FR scene exit->school side exte",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1661,
+      "action": "To Lounge Window with hole",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2050,
+      "action": "To Vent Shaft",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1685": [
+    {
+      "target": 1601,
+      "action": "1FR scene exit->lounge",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1840": [
+    {
+      "target": 1899,
+      "action": "libary study, books->table ",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1841": [
+    {
+      "target": 1894,
+      "action": "library, trastion to study",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1885,
+      "action": "1FR scene exit->stair transtiona",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1842": [
+    {
+      "target": 1903,
+      "action": "to catwalk",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1901,
+      "action": "1FR scene exit->back catwalk",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1843": [
+    {
+      "target": 1850,
+      "action": "1FR scene exit -> info desk",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1844": [
+    {
+      "target": 1850,
+      "action": "1FR scene exit -> info desk",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1846": [
+    {
+      "target": 1872,
+      "action": "lib entry -> left bookshelves no",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1849,
+      "action": "Lib entry -> right ref area node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1847,
+      "action": "Lib entry -> info desk cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1884,
+      "action": "Lib entry -> stair landing",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1847": [
+    {
+      "target": 1846,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1848": [
+    {
+      "target": 1847,
+      "action": "1FR scene exit -> info desk",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1849": [
+    {
+      "target": 1846,
+      "action": "right node -> entry node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1872,
+      "action": "right node -> left bookshelves n",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1850,
+      "action": "right node -> magazine rack cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1854,
+      "action": "right node -> map drawer cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1850,
+      "action": "right node -> magazine rack cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1859,
+      "action": "right node -> mcard catalog",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1862,
+      "action": "right node -> encyclopedia 4",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1864,
+      "action": "right node -> encyclopedia 3",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1867,
+      "action": "right node -> encyclopedia 2",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1869,
+      "action": "right node -> encyclopedia 1",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1871,
+      "action": "right node -> encyclopedia 6",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1884,
+      "action": "right node -> stair landing",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1850": [
+    {
+      "target": 1849,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1851,
+      "action": "ref area, magazine rack->sports ",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1843,
+      "action": "ref area, magazine rack->wildlif",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1844,
+      "action": "ref area, magazine rack->hiking",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1851": [
+    {
+      "target": 1850,
+      "action": "ref area, cover->magazine rack",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1852": [
+    {
+      "target": 1851,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1853,
+      "action": "ref area, magazine rack->steriod",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1853": [
+    {
+      "target": 1851,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1854": [
+    {
+      "target": 1849,
+      "action": "1FR scene exit -> lib ref area 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1855": [
+    {
+      "target": 1854,
+      "action": "1FR scene exit -> drawer closed ",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1857": [
+    {
+      "target": 1854,
+      "action": "1FR scene exit -> drawer closed ",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1859": [
+    {
+      "target": 1849,
+      "action": "1FR scene exit -> lib ref node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1860": [
+    {
+      "target": 1861,
+      "action": "ref area, card on english essays",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1861": [
+    {
+      "target": 1860,
+      "action": "1FR scene exit -> card cataloge ",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1862": [
+    {
+      "target": 1849,
+      "action": "1FR scene exit -> lib ref node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1864": [
+    {
+      "target": 1849,
+      "action": "1FR scene exit -> lib ref node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1866": [
+    {
+      "target": 1849,
+      "action": "1FR scene exit -> lib ref node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1867": [
+    {
+      "target": 1849,
+      "action": "1FR scene exit -> lib ref node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1849,
+      "action": "1FR scene exit -> lib ref node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1869": [
+    {
+      "target": 1849,
+      "action": "1FR scene exit -> lib ref node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1871": [
+    {
+      "target": 1849,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1872": [
+    {
+      "target": 1846,
+      "action": "left node -> entry node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1849,
+      "action": "left node -> ref node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1873,
+      "action": "left node -> bookshelf cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1884,
+      "action": "left node -> stair landing",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1875,
+      "action": "left node -> bookshelf 1",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1879,
+      "action": "left node -> bookshelf 3",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1882,
+      "action": "left node -> bookshelf 4",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1873": [
+    {
+      "target": 1872,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1872,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1875": [
+    {
+      "target": 1872,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1872,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1879": [
+    {
+      "target": 1872,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1872,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1882": [
+    {
+      "target": 1872,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1884": [
+    {
+      "target": 1846,
+      "action": "stair landing -> entry node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1872,
+      "action": "stair landing -> left bookshelve",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1849,
+      "action": "stair landing->right node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1895,
+      "action": "landing node --> upper bookshelv",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1897,
+      "action": "landing --> upper study area",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1885": [
+    {
+      "target": 1896,
+      "action": "upper book area->stair landing",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1886,
+      "action": "right node -> bookshelf 5",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1888,
+      "action": "upper area,bookshelf 7",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1890,
+      "action": "upper area->6",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1892,
+      "action": "upper area->bookself 8",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1841,
+      "action": "upper area->bookself 8",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1906,
+      "action": "upper area->cat corner",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1886": [
+    {
+      "target": 1885,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1885,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1888": [
+    {
+      "target": 1885,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1890": [
+    {
+      "target": 1885,
+      "action": "1FR scene exit -> lib upper area",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1885,
+      "action": "1FR scene exit -> lib upper area",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1892": [
+    {
+      "target": 1885,
+      "action": "1FR scene exit -> lib entrance 3",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1894": [
+    {
+      "target": 1898,
+      "action": "study area->stair landing",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1904,
+      "action": "study area->cat walk",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1895": [
+    {
+      "target": 1885,
+      "action": "library, trastion to upper book ",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1896,
+      "action": "1FR scene exit->stair transtiona",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1896": [
+    {
+      "target": 1884,
+      "action": "library, trastion to upper book ",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1895,
+      "action": "1FR scene exit->upper node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1897": [
+    {
+      "target": 1894,
+      "action": "library, trastion to study area",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1898,
+      "action": "1FR scene exit->stair transtiona",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1898": [
+    {
+      "target": 1884,
+      "action": "library, trastion to stair landi",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1897,
+      "action": "1FR scene exit->stair transtiona",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1899": [
+    {
+      "target": 1840,
+      "action": "library, books on tabel extra cu",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1904,
+      "action": "1FR scene exit, table->node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1900": [
+    {
+      "target": 1901,
+      "action": "library, transition to catwalk c",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1903,
+      "action": "1FR scene exit->node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1901": [
+    {
+      "target": 1902,
+      "action": "to catwalk",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1899,
+      "action": "to catwalk",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1842,
+      "action": "1FR scene exit->back catwalk",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1902": [
+    {
+      "target": 1894,
+      "action": "to study node",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1904,
+      "action": "1FR scene exit->back catwalk",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1903": [
+    {
+      "target": 1905,
+      "action": "library, transition to catwalk c",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1900,
+      "action": "1FR scene exit->node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1904": [
+    {
+      "target": 1842,
+      "action": "library, transition to catwalk",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1902,
+      "action": "1FR scene exit->node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1899,
+      "action": "library, transition to desk c/u",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "1905": [
+    {
+      "target": 1907,
+      "action": "library, transition to book corn",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1900,
+      "action": "1FR scene exit->node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1906": [
+    {
+      "target": 1900,
+      "action": "library, transition cat middle",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1907,
+      "action": "1FR scene exit->toward book node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1907": [
+    {
+      "target": 1885,
+      "action": "library, book node",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1906,
+      "action": "1FR scene exit->toward cat",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "1920": [
+    {
+      "target": 1410,
+      "action": "1FR scene open lib door --> hall",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1846,
+      "action": "lib, exit open doors",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "2050": [
+    {
+      "target": 1665,
+      "action": "1FR scene exit -> school ext.",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2051,
+      "action": "vent shaft 2 down",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2051": [
+    {
+      "target": 2050,
+      "action": "1FR scene exit -> vent1 down",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2050,
+      "action": "1FR scene exit -> vent1 down",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2052,
+      "action": "vent shaft 3 down",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2052": [
+    {
+      "target": 2051,
+      "action": "1FR scene exit -> vent2 down",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2053,
+      "action": "vent shaft 4 down",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2053": [
+    {
+      "target": 2052,
+      "action": "1FR scene exit -> vent3 down",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2061,
+      "action": "boiler node",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2059": [
+    {
+      "target": 2091,
+      "action": "1FR scene exit -> vent3 up",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1665,
+      "action": "outside cd1",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2060": [
+    {
+      "target": 2093,
+      "action": "Boiler->button cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 5002,
+      "action": "Boiler->lever close up",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2080,
+      "action": "Boiler->dedication stone",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2082,
+      "action": "Boiler->tool box closed",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2084,
+      "action": "Boiler->circut box",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2085,
+      "action": "Boiler->bucket",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2086,
+      "action": "Boiler->coffee cup",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2097,
+      "action": "Boiler->operating gauges sign ",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2061": [
+    {
+      "target": 2093,
+      "action": "Boiler->button cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2096,
+      "action": "Boiler->lever close up",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2080,
+      "action": "Boiler->dedication stone",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2082,
+      "action": "Boiler->tool box closed",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2084,
+      "action": "Boiler->circut box",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2085,
+      "action": "Boiler->bucket",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2086,
+      "action": "Boiler->coffee cup",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2097,
+      "action": "Boiler->operating gauges sign ",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2087,
+      "action": "Boiler->vent close up ",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2063": [
+    {
+      "target": 2086,
+      "action": "1FR scene exit -> match book/cup",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2086,
+      "action": "1FR scene exit -> match book/cup",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2064,
+      "action": "boiler matchbook open cu",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,boiler explosion w/",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,boiler explosion w/",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,boiler explosion w/",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2064": [
+    {
+      "target": 2063,
+      "action": "1FR scene exit -> match book/cup",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,boiler explosion w/",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,boiler explosion w/",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,boiler explosion w/",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2076": [
+    {
+      "target": 2079,
+      "action": "Boiler->button cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2096,
+      "action": "Boiler->lever close up",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2080,
+      "action": "Boiler->dedication stone",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2082,
+      "action": "Boiler->tool box closed",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2084,
+      "action": "Boiler->circut box",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2085,
+      "action": "Boiler->bucket",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2097,
+      "action": "Boiler->operating gauges sign ",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2087,
+      "action": "Boiler->vent close up ",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2077": [
+    {
+      "target": 2093,
+      "action": "Boiler->button cu",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2099,
+      "action": "Boiler->lever close up",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2080,
+      "action": "Boiler->dedication stone",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2082,
+      "action": "Boiler->tool box closed",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2084,
+      "action": "Boiler->circut box",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2085,
+      "action": "Boiler->bucket",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2086,
+      "action": "Boiler->coffee cup",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2097,
+      "action": "Boiler->operating gauges sign ",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2078": [
+    {
+      "target": 2076,
+      "action": "1FR scene exit -> boiler node no",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==1",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2099,
+      "action": "1FR scene exit -> boiler levers ",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2096,
+      "action": "1FR scene exit -> boiler node af",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==2",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 5002,
+      "action": "1FR scene exit -> boiler node le",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2079": [
+    {
+      "target": 73,
+      "action": "scene change, Button CU->elevato",
+      "type": "SCENE_CHANGE",
+      "conditions": [
+        "flag[10]==1",
+        "flag[44]==2"
+      ]
+    },
+    {
+      "target": 2076,
+      "action": "1FR scene exit -> boiler room",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "2080": [
+    {
+      "target": 2076,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==1",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2077,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2076,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==1",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2077,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2081,
+      "action": "boiler dedication extra cu",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2095,
+      "action": "boiler ladder cu",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2061,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==2",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2061,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==2",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2060,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2060,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2081": [
+    {
+      "target": 2080,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2082": [
+    {
+      "target": 2076,
+      "action": "1FR scene exit -> boiler room",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==1",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2077,
+      "action": "1FR scene exit -> boiler room",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2061,
+      "action": "1FR scene exit -> boiler room",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==2",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2060,
+      "action": "1FR scene exit -> boiler room",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2083": [
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2084": [
+    {
+      "target": 2076,
+      "action": "1FR scene exit -> boiler node no",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==1",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2077,
+      "action": "1FR scene exit -> boiler node wi",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2061,
+      "action": "1FR scene exit -> boiler node af",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==2",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2060,
+      "action": "1FR scene exit -> boiler node le",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2085": [
+    {
+      "target": 2076,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==1",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2077,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2061,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==2",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2060,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2086": [
+    {
+      "target": 2077,
+      "action": "1FR scene exit -> boiler node wi",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2061,
+      "action": "1FR scene exit -> boiler node af",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==2",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2060,
+      "action": "1FR scene exit -> boiler node le",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==1",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2063,
+      "action": "boiler matchbook closed cu",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2077,
+      "action": "1FR scene exit -> boiler node wi",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2061,
+      "action": "1FR scene exit -> boiler node af",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==2",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2060,
+      "action": "1FR scene exit -> boiler node le",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==1",
+        "flag[98]==2"
+      ]
+    }
+  ],
+  "2087": [
+    {
+      "target": 2061,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==2",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2076,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==1",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    }
+  ],
+  "2088": [
+    {
+      "target": 2087,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2089,
+      "action": "vent shaft 1",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2089": [
+    {
+      "target": 2088,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2090,
+      "action": "vent shaft 2",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2090": [
+    {
+      "target": 2089,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2089,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2091,
+      "action": "vent shaft 3",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2091": [
+    {
+      "target": 2090,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2092,
+      "action": "vent shaft 4 closed grate",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[88]==1"
+      ]
+    },
+    {
+      "target": 2059,
+      "action": "vent shaft 4 open grate",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[88]==2"
+      ]
+    }
+  ],
+  "2092": [
+    {
+      "target": 2091,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "2093": [
+    {
+      "target": 2061,
+      "action": "1FR scene exit -> boiler node af",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==2",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2077,
+      "action": "1FR scene exit -> boiler node wi",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2060,
+      "action": "1FR scene exit -> boiler node le",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==1",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2095": [
+    {
+      "target": 2080,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2096": [
+    {
+      "target": 2076,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==1"
+      ]
+    },
+    {
+      "target": 2078,
+      "action": "boiler plate cu 1",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2078,
+      "action": "boiler plate cu 2",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2061,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==2"
+      ]
+    }
+  ],
+  "2097": [
+    {
+      "target": 2076,
+      "action": "1FR scene exit -> boiler node no",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==1",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2077,
+      "action": "1FR scene exit -> boiler node sa",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==1"
+      ]
+    },
+    {
+      "target": 2061,
+      "action": "1FR scene exit -> boiler node af",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==2",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2060,
+      "action": "1FR scene exit -> boiler node le",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[61]==2",
+        "flag[62]==1",
+        "flag[98]==2"
+      ]
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2098": [
+    {
+      "target": 52,
+      "action": "1FR scene exit,closet door cu->f",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 1450,
+      "action": "to hall5 node",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "2099": [
+    {
+      "target": 2061,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==2"
+      ]
+    },
+    {
+      "target": 2078,
+      "action": "boiler plate cu",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 5001,
+      "action": "boiler lock cu",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2077,
+      "action": "1FR scene exit -> boiler node",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[62]==1"
+      ]
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "21": [
+    {
+      "target": 1440,
+      "action": "school ext.  -> school entrance",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1665,
+      "action": "To Exterior w/ Cover",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "30": [
+    {
+      "target": 2077,
+      "action": "1FR scene - elevator->boiler",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,boiler explosion w/",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,boiler explosion w/",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "31": [
+    {
+      "target": 2076,
+      "action": "1FR scene - elevator->boiler",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "32": [
+    {
+      "target": 614,
+      "action": "Aunt house, den, TV & VCR closeu",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 655,
+      "action": "tv->video's",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "5": [
+    {
+      "target": 60,
+      "action": "goto first new game scene",
+      "type": "SCENE_CHANGE",
+      "conditions": [
+        "flag[47]==2"
+      ]
+    }
+  ],
+  "5002": [
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "502": [
+    {
+      "target": 515,
+      "action": "1FR scene exit1->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 515,
+      "action": "1FR scene exit2->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 503,
+      "action": "1FR scene - bboard-->clue",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "503": [
+    {
+      "target": 502,
+      "action": "",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "515": [
+    {
+      "target": 1450,
+      "action": "union node--->hallway5 node",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 526,
+      "action": "union node--->loungedr closed",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 522,
+      "action": "union node--->telephones",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 531,
+      "action": "union node--->bbands music poste",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 518,
+      "action": "union node--->magazine rack",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 517,
+      "action": "union node--->pop machine",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 502,
+      "action": "union node--->union bulletin boa",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 528,
+      "action": "union node--->som board",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 527,
+      "action": "union node--->Hals Library Card",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 530,
+      "action": "union node--->judo contest poste",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 529,
+      "action": "union node--->union prom poster",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 201,
+      "action": "Connie Fidget in Union",
+      "type": "PLAY_SECONDARY_VIDEO",
+      "conditions": null
+    }
+  ],
+  "517": [
+    {
+      "target": 515,
+      "action": "1FR scene exit->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "518": [
+    {
+      "target": 515,
+      "action": "1FR scene exit left side->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 515,
+      "action": "1FR scene exit right side->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "519": [
+    {
+      "target": 518,
+      "action": "1FR scene exit->magazine closeup",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "52": [
+    {
+      "target": 53,
+      "action": "1FR scene - closet->elevator but",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1457,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "520": [
+    {
+      "target": 518,
+      "action": "1FR scene exit->magazine closeup",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "521": [
+    {
+      "target": 518,
+      "action": "1FR scene exit->magazine closeup",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "522": [
+    {
+      "target": 515,
+      "action": "1FR scene exit 1->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 515,
+      "action": "1FR scene exit 2->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 523,
+      "action": "1FR scene - pay phone ---> payph",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 524,
+      "action": "1FR scene - Telephone ---> Yello",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "523": [
+    {
+      "target": 522,
+      "action": "1 FR Exit ---> telephone",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "524": [
+    {
+      "target": 522,
+      "action": "1 FR Exit ---> telephone",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "526": [
+    {
+      "target": 515,
+      "action": "1FR scene exit->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 515,
+      "action": "1FR scene exit->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "527": [
+    {
+      "target": 515,
+      "action": "1FR scene exit->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 532,
+      "action": "1FR scene - can/card ---> card c",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "528": [
+    {
+      "target": 515,
+      "action": "1FR scene exit->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "529": [
+    {
+      "target": 515,
+      "action": "1FR scene exit->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "53": [
+    {
+      "target": 70,
+      "action": "scene change, Button CU->elevato",
+      "type": "SCENE_CHANGE",
+      "conditions": [
+        "flag[10]==1",
+        "flag[44]==2"
+      ]
+    },
+    {
+      "target": 71,
+      "action": "scene change, Button CU->elevato",
+      "type": "SCENE_CHANGE",
+      "conditions": [
+        "flag[10]==2",
+        "flag[44]==2"
+      ]
+    },
+    {
+      "target": 52,
+      "action": "1FR scene - storage room->side g",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "530": [
+    {
+      "target": 515,
+      "action": "1FR scene exit->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "531": [
+    {
+      "target": 515,
+      "action": "1FR scene exit->union",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "532": [
+    {
+      "target": 527,
+      "action": "1 FR Exit ---> card/coke can clo",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "54": [
+    {
+      "target": 31,
+      "action": "elevator Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "55": [
+    {
+      "target": 2098,
+      "action": "elevator Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "57": [
+    {
+      "target": 626,
+      "action": "Aunt house, safe->entry",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 640,
+      "action": "1FR scene - aunt safe to top of ",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "58": [
+    {
+      "target": 59,
+      "action": "1FR scene - closet->elevator but",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 1457,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "59": [
+    {
+      "target": 58,
+      "action": "1FR scene - storage room->side g",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "60": [
+    {
+      "target": 601,
+      "action": "intro abort -> game start",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "600": [
+    {
+      "target": 601,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "601": [
+    {
+      "target": 608,
+      "action": "Aunt Entry -> Aunt Den",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 602,
+      "action": "Aunt entry -> Table drawer close",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 600,
+      "action": "Aunt entry -> rose paintings",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 606,
+      "action": "Aunt entry -> Tapestry ",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 604,
+      "action": "Aunt entry -> Table Clock n Lett",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 607,
+      "action": "Aunt entry -> Entry wall Picture",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "602": [
+    {
+      "target": 601,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "604": [
+    {
+      "target": 605,
+      "action": "Aunt,Entry --> Letter c/u",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 601,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 601,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "605": [
+    {
+      "target": 604,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "606": [
+    {
+      "target": 601,
+      "action": "1FR scene exit -> aunts entry",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "607": [
+    {
+      "target": 601,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "608": [
+    {
+      "target": 601,
+      "action": "Aunt Den -> Entry",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 622,
+      "action": "Aunt Den -> Table close Up",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 612,
+      "action": "Aunt Den -> Right Armoire",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 614,
+      "action": "Aunt Den -> TV & VCR",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 619,
+      "action": "Aunt Den -> Wood Box Close Up",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 609,
+      "action": "Aunt Den -> Hope Chest close up",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 611,
+      "action": "Aunt Den -> painting over chest",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 616,
+      "action": "Aunt Den -> left armoire",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 621,
+      "action": "Aunt Den -> old photos",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 618,
+      "action": "Aunt Den -> painting over couch",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 627,
+      "action": "Aunt Den -> end table",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "609": [
+    {
+      "target": 608,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "61": [
+    {
+      "target": 1420,
+      "action": "Intro Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    },
+    {
+      "target": 1420,
+      "action": "intro abort -> game start",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "611": [
+    {
+      "target": 608,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "612": [
+    {
+      "target": 608,
+      "action": "Aunt house, den, exit right armi",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 613,
+      "action": "Aunt,Den,right armior closeup->o",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "613": [
+    {
+      "target": 612,
+      "action": "Aunt house, den, exit open book ",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "614": [
+    {
+      "target": 608,
+      "action": "Aunt house, den, TV & VCR closeu",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 632,
+      "action": "Aunt,Den,TV VCR off->TV VCR on",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 608,
+      "action": "Aunt house, den, TV & VCR closeu",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "616": [
+    {
+      "target": 608,
+      "action": "Aunt house, den, exit right armi",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "618": [
+    {
+      "target": 608,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "619": [
+    {
+      "target": 608,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "621": [
+    {
+      "target": 608,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "622": [
+    {
+      "target": 608,
+      "action": "Aunt house, den, exit table clos",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "623": [
+    {
+      "target": 622,
+      "action": "Aunt house, den, exit open book ",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "625": [
+    {
+      "target": 57,
+      "action": "1FR scene exit -> aunts safe ",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "626": [
+    {
+      "target": 56,
+      "action": "Aunt,entry,safe closed->safe puz",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "627": [
+    {
+      "target": 608,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "628": [
+    {
+      "target": 631,
+      "action": "Aunt,Den,drawer open->memo pad",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 629,
+      "action": "Aunt,Den,end table open->envelop",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "629": [
+    {
+      "target": 628,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "630": [
+    {
+      "target": 628,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "631": [
+    {
+      "target": 628,
+      "action": "1FR scene exit -> aunts den",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "632": [
+    {
+      "target": 614,
+      "action": "Aunt house, den, TV & VCR closeu",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 655,
+      "action": "tv->video's",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "640": [
+    {
+      "target": 57,
+      "action": "Aunt house, safe->safe open",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 641,
+      "action": "1FR scene - aunt safe to top of ",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 641,
+      "action": "1FR scene - aunt safe to top of ",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 642,
+      "action": "1FR scene - aunt safe to top of ",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "641": [
+    {
+      "target": 640,
+      "action": "Aunt house, safe->entry",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 647,
+      "action": "1FR scene - aunt safe to top of ",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "642": [
+    {
+      "target": 640,
+      "action": "Aunt house, safe->top of box cu",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 647,
+      "action": "1FR scene - aunt safe to top of ",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "643": [
+    {
+      "target": 57,
+      "action": "Aunt house, safe->entry",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 645,
+      "action": "1FR scene - slider puzzle solved",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 640,
+      "action": "Aunt house, safe->entry",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "644": [
+    {
+      "target": 640,
+      "action": "Aunt house, safe->entry",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 57,
+      "action": "Aunt house, safe->entry",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 645,
+      "action": "1FR scene - slider puzzle, passw",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "645": [
+    {
+      "target": 643,
+      "action": "Aunt house, safe->entry",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "650": [
+    {
+      "target": 654,
+      "action": "static Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "651": [
+    {
+      "target": 652,
+      "action": "video Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "652": [
+    {
+      "target": 653,
+      "action": "videob Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "653": [
+    {
+      "target": 650,
+      "action": "video Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "654": [
+    {
+      "target": 32,
+      "action": "videob Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "655": [
+    {
+      "target": 651,
+      "action": "static Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "70": [
+    {
+      "target": 54,
+      "action": "elevator Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "71": [
+    {
+      "target": 72,
+      "action": "elevator Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "72": [
+    {
+      "target": 30,
+      "action": "elevator Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 2062,
+      "action": "scene change,kitchen explosion w",
+      "type": "SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "73": [
+    {
+      "target": 55,
+      "action": "elevator Movie",
+      "type": "PLAY_SECONDARY_MOVIE",
+      "conditions": null
+    }
+  ],
+  "824": [
+    {
+      "target": 833,
+      "action": "diner dd1x -> pinball",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 829,
+      "action": "diner dd1x -> jukebox OFF scene",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": [
+        "flag[54]==1"
+      ]
+    },
+    {
+      "target": 830,
+      "action": "diner dd1x -> jukebox ON scene",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": [
+        "flag[54]==2"
+      ]
+    },
+    {
+      "target": 101,
+      "action": "Daryl fidget in diner",
+      "type": "PLAY_SECONDARY_VIDEO",
+      "conditions": null
+    },
+    {
+      "target": 841,
+      "action": "diner dd1x -> mini jukebox",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 827,
+      "action": "diner dd1x -> menu cover Close U",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 834,
+      "action": "diner dd1x -> Receipt on counter",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 836,
+      "action": "diner dd1x -> Specials Board",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 842,
+      "action": "diner dd1x -> kitchen transtiona",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 837,
+      "action": "diner dd1x ->envelope on counter",
+      "type": "HOT_MULTIFRAME_SCENE_CHANGE",
+      "conditions": [
+        "flag[10]==2"
+      ]
+    }
+  ],
+  "827": [
+    {
+      "target": 824,
+      "action": "diner, exit menu closed close up",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "829": [
+    {
+      "target": 824,
+      "action": "1FR scene exit -> diner 360",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 831,
+      "action": "1FR scene jukebox -> coin slot",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "830": [
+    {
+      "target": 824,
+      "action": "1FR scene exit -> diner 360",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 831,
+      "action": "1FR scene jukebox -> coin slot",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "831": [
+    {
+      "target": 829,
+      "action": "1FR scene exit -> jukebox cu off",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 830,
+      "action": "1FR scene exit -> jukebox cu on",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[54]==2"
+      ]
+    }
+  ],
+  "832": [
+    {
+      "target": 830,
+      "action": "1FR scene exit -> jukebox cu on",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": [
+        "flag[54]==2"
+      ]
+    }
+  ],
+  "833": [
+    {
+      "target": 824,
+      "action": "1FR scene exit -> diner 360",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "834": [
+    {
+      "target": 824,
+      "action": "diner, exit receipt close up",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "835": [
+    {
+      "target": 834,
+      "action": "diner, exit receipt close up",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "836": [
+    {
+      "target": 824,
+      "action": "1FR scene exit->diner",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "837": [
+    {
+      "target": 824,
+      "action": "1FR scene exit->diner ",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "838": [
+    {
+      "target": 837,
+      "action": "1FR scene exit->diner transtiona",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "839": [
+    {
+      "target": 841,
+      "action": "1FR scene exit->diner",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "840": [
+    {
+      "target": 1041,
+      "action": "diner,kitchen doors->kitchen",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[101]==1"
+      ]
+    },
+    {
+      "target": 1050,
+      "action": "diner,kitchen doors->kitchen uns",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": [
+        "flag[101]==2"
+      ]
+    },
+    {
+      "target": 843,
+      "action": "1FR scene exit->diner transtiona",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 843,
+      "action": "1FR scene exit->diner transtiona",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "841": [
+    {
+      "target": 839,
+      "action": "diner, trastion to mini jukebox",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 824,
+      "action": "1FR scene exit->diner",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "842": [
+    {
+      "target": 840,
+      "action": "diner, trastion to kitchen doors",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    },
+    {
+      "target": 824,
+      "action": "1FR scene exit->diner",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "843": [
+    {
+      "target": 840,
+      "action": "1FR scene exit->kitchen doors",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    },
+    {
+      "target": 824,
+      "action": "1FR scene by kitch doors to node",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "888": [
+    {
+      "target": 895,
+      "action": "To Diner Door",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ],
+  "890": [
+    {
+      "target": 10,
+      "action": "1FR scene exit->diner exterior",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "895": [
+    {
+      "target": 888,
+      "action": "1FR scene exit->diner exterior",
+      "type": "HOT_1FR_EXITSCENE",
+      "conditions": null
+    }
+  ],
+  "9": [
+    {
+      "target": 601,
+      "action": "aunt house ext -> entryway",
+      "type": "HOT_1FR_SCENE_CHANGE",
+      "conditions": null
+    }
+  ]
+}
