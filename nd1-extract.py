@@ -98,7 +98,7 @@ for i in range(num_entries):
     base  = INDEX_START + i * ENTRY_SIZE
     entry = data[base:base + ENTRY_SIZE]
 
-    name      = entry[0x00:0x09].rstrip(b'\x00').decode('ascii', errors='replace')
+    name      = entry[0x00:0x09].rstrip(b'\x00').decode('ascii', errors='replace').lower()
     width     = struct.unpack('<H', entry[0x0B:0x0D])[0]
     height    = struct.unpack('<H', entry[0x0F:0x11])[0]
     bpp       = entry[0x11]

@@ -279,9 +279,9 @@ AMBIENT_OVERRIDES = {
 # ── SCENSSUM decoder ─────────────────────────────────────────────────────
 def decode_scenssum(payload):
     """Decode 125-byte SCENSSUM payload."""
-    desc = cstr(payload, 0x00, 32)
-    bg   = cstr(payload, 0x32, 8)
-    amb  = cstr(payload, 0x40, 8)
+    desc = cstr(payload, 0x00, 50)
+    bg   = cstr(payload, 0x32, 10)
+    amb  = cstr(payload, 0x40, 10)
 
     # Timing params at 0x48+
     params = {}

@@ -450,7 +450,7 @@
     <button class="ctrl-btn" onclick="ND.goToScene(document.getElementById('scene-input').value)">Go</button>
     <button class="ctrl-btn" onclick="ND.toggleDebug()">Debug</button>
     <button class="ctrl-btn" onclick="ND.back()">Back</button>
-    <button id="anim-toggle-btn" class="ctrl-btn" onclick="ND.toggleAnimation()">Anim: OFF</button>
+    <button id="anim-toggle-btn" class="ctrl-btn dp-active" onclick="ND.toggleAnimation()">Anim: ON</button>
   </div>
   <div id="scene-info">Loading…</div>
   <div id="debug-info"></div>
@@ -464,6 +464,7 @@
         <input id="dp-scene" type="text" placeholder="S10" class="dp-input">
         <button class="dp-btn" onclick="ND.goToScene(document.getElementById('dp-scene').value)">Go</button>
         <button class="dp-btn" onclick="ND.debugRestart()">Restart</button>
+        <button class="dp-btn" onclick="ND.promptLoadSavFile()" style="background:#1a1a32;color:#9af">Load .SAV</button>
       </div>
       <div class="dp-row" id="dp-checkpoints">
         <button class="dp-btn" onclick="ND.goToScene('S5')">Intro</button>
@@ -480,7 +481,7 @@
         <button class="dp-btn" onclick="ND.debugBoilerEmergency()" style="background:#a33;color:#fff">Boiler Emergency</button>
         <button class="dp-btn" onclick="ND.debugEndgame()" style="background:#a33;color:#fff">Endgame Setup</button>
       </div>
-      <div class="dp-row">
+      <div class="dp-row" id="dp-timer-row" style="display:none">
         <span id="dp-timer" style="font-family:monospace;color:#f84;font-size:13px">Timer: inactive</span>
         <button class="dp-btn" onclick="ND.debugTimerSkip()" style="background:#a33;color:#fff;margin-left:8px">Timer &rarr;10s</button>
         <button class="dp-btn" onclick="ND.debugTimerAdd()" style="margin-left:4px">Timer +10s</button>

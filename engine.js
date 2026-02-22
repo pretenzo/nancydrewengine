@@ -296,7 +296,7 @@ const ND = (() => {
     history: [],          // Scene history for Back button
     timerActive: false,
     timerStartTime: 0,
-    animationEnabled: false,
+    animationEnabled: true,
   };
   let timerCheckInterval = null;
   let secondChanceSave = null; // Auto-checkpoint before dangerous scenes
@@ -386,20 +386,16 @@ const ND = (() => {
     });
   }
 
-  // Try multiple case variants for filename (macOS is case-insensitive, but
-  // the web server may not be)
+  // All asset filenames are lowercase on disk
   async function tryLoadImg(dir, name, ext) {
-    const variants = [name, name.toUpperCase(), name.toLowerCase()];
-    for (const v of variants) {
-      try { return await loadImg(`${dir}/${v}${ext}`); } catch (_) {}
-    }
+    try { return await loadImg(`${dir}/${name.toLowerCase()}${ext.toLowerCase()}`); } catch (_) {}
     return null;
   }
 
   // ── Audio ────────────────────────────────────────────────────────────────
   function playSound(name) {
     if (!name || name.trim() === 'NO SOUND') return null;
-    const a = new Audio(`${AUDIO_DIR}/${name.trim()}.wav`);
+    const a = new Audio(`${AUDIO_DIR}/${name.trim().toLowerCase()}.wav`);
     a.volume = 0.65;
     a.play().catch(() => {});
     return a;
@@ -420,27 +416,16 @@ const ND = (() => {
     if (!name || name.trim() === 'NO SOUND' || name.trim() === '') {
       stopAmbient(); return;
     }
-    const raw = name.trim();
-    const key = raw.toLowerCase();
+    const key = name.trim().toLowerCase();
     if (key === ambientKey) return; // same ambient already playing
     stopAmbient();
     ambientKey = key;
-    // Try case variants: as-is, Title Case, UPPER, lower
-    const cap = raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
-    const variants = [...new Set([raw, cap, raw.toUpperCase(), raw.toLowerCase()])];
-    tryAmbientVariant(variants, 0, key);
-  }
-
-  function tryAmbientVariant(variants, idx, key) {
-    if (idx >= variants.length || ambientKey !== key) return; // aborted or exhausted
-    const a = new Audio(`${AUDIO_DIR}/${variants[idx]}.wav`);
+    const a = new Audio(`${AUDIO_DIR}/${key}.wav`);
     a.loop = true; a.volume = 0.35;
     a.play().then(() => {
       if (ambientKey !== key) { a.pause(); return; } // scene changed while loading
       ambientAudio = a;
-    }).catch(() => {
-      tryAmbientVariant(variants, idx + 1, key);
-    });
+    }).catch(() => {});
   }
 
   function stopAmbient() {
@@ -674,7 +659,7 @@ const ND = (() => {
   }
 
   function debugTimerSkip() {
-    if (!state.timerActive) { startTimer(); }
+    if (!state.timerActive) { startTimer(); } else { showTimerRow(); }
     const deadline = getTimerDeadline();
     // Set start time so only 10 seconds remain
     state.timerStartTime = Date.now() - (deadline - 10) * 1000;
@@ -688,9 +673,15 @@ const ND = (() => {
     updateTimerDisplay();
   }
 
+  function showTimerRow() {
+    const row = document.getElementById('dp-timer-row');
+    if (row) row.style.display = '';
+  }
+
   function startTimer() {
     state.timerActive = true;
     state.timerStartTime = Date.now();
+    showTimerRow();
     startTimerChecks();
   }
 
@@ -770,15 +761,16 @@ const ND = (() => {
 
   // ── Rendering ────────────────────────────────────────────────────────────
   async function renderBackground(avfName, variant = 0) {
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, GAME_W, GAME_H);
-    if (!avfName) return;
+    if (!avfName) {
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, GAME_W, GAME_H);
+      return;
+    }
 
     const vStr = String(variant).padStart(3, '0');
-    // Try variant-specific frame first, then frame 0, then bare name
+    // Try variant-specific frame first, then frame 0
     const img = await tryLoadImg(FRAMES_DIR, avfName, `_${vStr}.png`)
-             ?? await tryLoadImg(FRAMES_DIR, avfName, '_000.png')
-             ?? await tryLoadImg(FRAMES_DIR, avfName, '.png');
+             ?? await tryLoadImg(FRAMES_DIR, avfName, '_000.png');
 
     if (img) {
       bgNativeHeight = img.naturalHeight || img.height || GAME_H;
@@ -1932,6 +1924,174 @@ const ND = (() => {
     return !!localStorage.getItem(SAVE_KEY);
   }
 
+  // ── .SAV file import (original Game.exe save format) ────────────────────
+  //
+  // Binary layout of NANSCK*.SAV (11698 bytes):
+  //   0x00       LE32   valid flag (1 = valid save)
+  //   0x04       30B    publisher string ("HER Interactive Presents")
+  //   0x22       30B    series string ("Nancy Drew")
+  //   0x40       30B    subtitle string ("Secrets Can Kill")
+  //   0x5E       LE32   unknown (always 1)
+  //   0x62       2B     padding
+  //   0x64       var    null-terminated description (padded to 0x7A)
+  //   0x7B       5911B  Block1 (DAT_004c11a5) — primary game state
+  //     +0x134 (file 0x1AF): inventory array — first byte = count,
+  //            then item IDs at 2-byte stride, 0xFF = empty slot
+  //     +0x1D9 (file 0x254): 122 flags as LE32 (values 0/1/2)
+  //   0x1792     5664B  Block2 (DAT_004d0aca) — scene state
+  //     +0x00 (file 0x1792): 50B scene description (null-terminated)
+  //     +0x32 (file 0x17C4): 10B background AVF name
+  //     +0x40 (file 0x17D2): 10B ambient sound name
+
+  function parseSavFile(buf) {
+    const d = new DataView(buf);
+    const u8 = new Uint8Array(buf);
+
+    // Validate
+    if (buf.byteLength !== 11698) throw new Error(`Bad .SAV size: ${buf.byteLength} (expected 11698)`);
+    if (d.getUint32(0, true) !== 1) throw new Error('Invalid save file (valid flag ≠ 1)');
+
+    // Read null-terminated ASCII string from buffer
+    const readStr = (off, maxLen) => {
+      let end = off;
+      while (end < off + maxLen && u8[end] !== 0) end++;
+      return new TextDecoder('ascii').decode(u8.slice(off, end));
+    };
+
+    // Header strings
+    const publisher = readStr(0x04, 30);
+    const series    = readStr(0x22, 30);
+    const subtitle  = readStr(0x40, 30);
+    const saveDesc  = readStr(0x64, 22);
+
+    // Flags: 122 LE32 values at file offset 0x254
+    const flags = {};
+    for (let i = 0; i < 122; i++) {
+      const val = d.getUint32(0x254 + i * 4, true);
+      if (val !== 1) flags[i] = val;  // only store non-default
+    }
+
+    // Inventory: byte at 0x1AF = count, then item IDs at 2-byte stride
+    const invCount = u8[0x1AF];
+    const inventory = [];
+    for (let i = 0; i < invCount && i < 12; i++) {
+      const itemId = u8[0x1AF + 2 + i * 2];
+      if (itemId !== 0xFF) inventory.push(itemId);
+    }
+
+    // Scene identification from Block2
+    const sceneDesc = readStr(0x1792, 50);
+    const bgAvf     = readStr(0x17C4, 10);
+    const ambient   = readStr(0x17D2, 10);
+
+    return { publisher, series, subtitle, saveDesc, flags, inventory, sceneDesc, bgAvf, ambient };
+  }
+
+  function findSceneForSav(parsed) {
+    const targetDesc = parsed.sceneDesc.trim().toLowerCase();
+    const targetBg   = parsed.bgAvf.trim().toLowerCase();
+
+    // Pass 1: match by description + background AVF (most precise)
+    for (const [sid, scene] of Object.entries(scenes)) {
+      const desc = (scene.summary?.description || '').trim().toLowerCase();
+      const bg   = (scene.summary?.bg_avf || '').trim().toLowerCase();
+      if (desc === targetDesc && bg === targetBg) return sid;
+    }
+
+    // Pass 2: match by description only
+    const candidates = [];
+    for (const [sid, scene] of Object.entries(scenes)) {
+      const desc = (scene.summary?.description || '').trim().toLowerCase();
+      if (desc === targetDesc) candidates.push(sid);
+    }
+    if (candidates.length === 1) return candidates[0];
+
+    // Pass 3: substring matching for truncated descriptions
+    if (candidates.length === 0) {
+      for (const [sid, scene] of Object.entries(scenes)) {
+        const desc = (scene.summary?.description || '').trim().toLowerCase();
+        if (desc.startsWith(targetDesc.substring(0, 20)) || targetDesc.startsWith(desc.substring(0, 20))) {
+          candidates.push(sid);
+        }
+      }
+      if (candidates.length === 1) return candidates[0];
+    }
+
+    // Pass 4: among multiple candidates, prefer the one whose bg_avf matches
+    if (candidates.length > 1 && targetBg) {
+      const bgMatch = candidates.find(sid => {
+        const bg = (scenes[sid].summary?.bg_avf || '').trim().toLowerCase();
+        return bg === targetBg;
+      });
+      if (bgMatch) return bgMatch;
+    }
+
+    return candidates[0] || null;
+  }
+
+  function loadSavFile(buf) {
+    const parsed = parseSavFile(buf);
+    console.log('Parsed .SAV:', parsed);
+
+    // Apply flags — start from clean defaults (same as init)
+    state.flags = {};
+    Object.assign(state.flags, INITIAL_FLAGS);
+    for (const qs of Object.values(INVESTIGATION_QUESTIONS)) {
+      for (const q of qs) {
+        for (const c of q.conditions || []) {
+          if (c.expected === 1 && !(c.flag_id in state.flags)) {
+            state.flags[c.flag_id] = 1;
+          }
+        }
+      }
+    }
+    for (const fid of [61, 62, 98]) {
+      if (!(fid in state.flags)) state.flags[fid] = 0;
+    }
+    // Now overlay the save file flags
+    for (const [id, val] of Object.entries(parsed.flags)) {
+      state.flags[+id] = val;
+    }
+
+    // Apply inventory
+    state.inventory = new Set(parsed.inventory);
+    state.activeItem = null;
+    state.history = [];
+
+    // Find the matching scene
+    const sceneId = findSceneForSav(parsed);
+    if (!sceneId) {
+      alert(`Could not identify scene from save file.\nDescription: "${parsed.sceneDesc}"`);
+      return;
+    }
+
+    console.log(`Loading .SAV → scene ${sceneId} (desc: "${parsed.sceneDesc}", bg: "${parsed.bgAvf}")`);
+    updateInventoryBar();
+    refreshDebugPanel();
+    loadScene(sceneId, 0);
+  }
+
+  function promptLoadSavFile() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.SAV,.sav';
+    input.onchange = () => {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          loadSavFile(reader.result);
+        } catch (e) {
+          alert('Error loading .SAV file: ' + e.message);
+          console.error(e);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    };
+    input.click();
+  }
+
   // ── Inventory bar ────────────────────────────────────────────────────────
   async function updateInventoryBar() {
     invBar.innerHTML = '';
@@ -2393,6 +2553,27 @@ const ND = (() => {
     } else if (!autoConv && PUZZLE_DATA[sceneId]) {
       showPuzzle(null, sceneId);
     }
+
+    // Preload backgrounds for scenes reachable from current hotspots
+    preloadAdjacentScenes(hotspots);
+  }
+
+  // ── Scene-adjacent preloading ─────────────────────────────────────────────
+  // Silently prefetch background images for all scenes linked by hotspots
+  // so navigation feels instant.  Errors are ignored (non-critical).
+  function preloadAdjacentScenes(hotspots) {
+    const seen = new Set();
+    for (const hs of hotspots) {
+      const act = hs.action;
+      const targetId = act.target_scene ? `S${act.target_scene}` : null;
+      if (!targetId || seen.has(targetId)) continue;
+      seen.add(targetId);
+      const targetScene = scenes[targetId];
+      if (!targetScene?.summary?.bg_avf) continue;
+      const avf = targetScene.summary.bg_avf;
+      // Preload frame 0 (default variant) — fires and forgets
+      tryLoadImg(FRAMES_DIR, avf, '_000.png').catch(() => {});
+    }
   }
 
   // ── Panoramic scroll ─────────────────────────────────────────────────────
@@ -2760,8 +2941,8 @@ const ND = (() => {
     }
 
     const dir = scrollDir(x);
-    if (dir === -1)      canvas.style.cursor = 'w-resize';
-    else if (dir === 1)  canvas.style.cursor = 'e-resize';
+    if (dir === -1)      canvas.style.cursor = 'e-resize';
+    else if (dir === 1)  canvas.style.cursor = 'w-resize';
     else {
       const hit = hitTest(x, y);
       if (hit) canvas.style.cursor = 'pointer';
@@ -3111,6 +3292,6 @@ const ND = (() => {
 
   return { init, loadScene, hideConv, continueConv, hideMapDialog, toggleDebug, toggleAnimation, goToScene, back, loadSecondChance,
            togglePanel, debugToggleItem, debugRestart, debugAskAllQuestions, debugAddAllItems, debugBoilerEmergency,
-           debugTimerSkip, debugTimerAdd, debugEndgame };
+           debugTimerSkip, debugTimerAdd, debugEndgame, promptLoadSavFile };
 
 })();

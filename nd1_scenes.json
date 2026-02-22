@@ -3730,7 +3730,7 @@
   },
   "S124": {
     "summary": {
-      "description": "have met hulk,not talked  to dar",
+      "description": "have met hulk,not talked  to daryl about hulk",
       "bg_avf": "dd1d",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -4268,7 +4268,7 @@
   },
   "S127": {
     "summary": {
-      "description": "have met hulk,not talked  to dar",
+      "description": "have met hulk,not talked  to daryl about hulk",
       "bg_avf": "dd1d",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -4331,7 +4331,7 @@
   },
   "S128": {
     "summary": {
-      "description": "have met hulk,not talked  to dar",
+      "description": "have met hulk,not talked  to daryl about hulk",
       "bg_avf": "dd1d",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -7370,7 +7370,7 @@
   },
   "S1431": {
     "summary": {
-      "description": "Pharmacy Break In Article Closeu",
+      "description": "Pharmacy Break In Article Closeup",
       "bg_avf": "sh3l",
       "ambient_snd": "feardang",
       "scene_type": 2,
@@ -9717,7 +9717,7 @@
   },
   "S151": {
     "summary": {
-      "description": "have met hulk,not talked  to dar",
+      "description": "have met hulk,not talked  to daryl about hulk",
       "bg_avf": "dd1d",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -9811,7 +9811,7 @@
   },
   "S153": {
     "summary": {
-      "description": "have met hulk,not talked  to dar",
+      "description": "have met hulk,not talked  to daryl about hulk",
       "bg_avf": "dd1d",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -9848,7 +9848,7 @@
   },
   "S154": {
     "summary": {
-      "description": "have met hulk,not talked  to dar",
+      "description": "have met hulk,not talked  to daryl about hulk",
       "bg_avf": "dd1d",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -9908,7 +9908,7 @@
   },
   "S155": {
     "summary": {
-      "description": "have met hulk,not talked  to dar",
+      "description": "have met hulk,not talked  to daryl about hulk",
       "bg_avf": "dd1d",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -12587,7 +12587,7 @@
   },
   "S1635": {
     "summary": {
-      "description": "Lounge, Bottom of Security Repor",
+      "description": "Lounge, Bottom of Security Report",
       "bg_avf": "sl1j",
       "ambient_snd": "excite",
       "scene_type": 2,
@@ -12615,7 +12615,7 @@
   },
   "S1650": {
     "summary": {
-      "description": "School Side Exterior with Vent C",
+      "description": "School Side Exterior with Vent Cover On",
       "bg_avf": "ssexter1",
       "ambient_snd": "mystlght",
       "scene_type": 2,
@@ -12689,7 +12689,7 @@
   },
   "S1651": {
     "summary": {
-      "description": "Teacher Lounge Ext Window - w/ g",
+      "description": "Teacher Lounge Ext Window - w/ glass opening CD2",
       "bg_avf": "swexter1",
       "ambient_snd": "mystlght",
       "scene_type": 2,
@@ -12810,7 +12810,7 @@
   },
   "S1652": {
     "summary": {
-      "description": "Teacher Lounge Ext Window - w/o ",
+      "description": "Teacher Lounge Ext Window - w/o glass opening",
       "bg_avf": "swexter2",
       "ambient_snd": "mystlght",
       "scene_type": 2,
@@ -12884,7 +12884,7 @@
   },
   "S1653": {
     "summary": {
-      "description": "School Side Exterior with vent c",
+      "description": "School Side Exterior with vent cover off",
       "bg_avf": "ssexter2",
       "ambient_snd": "mystlght",
       "scene_type": 2,
@@ -12928,7 +12928,7 @@
   },
   "S1654": {
     "summary": {
-      "description": "Teacher Lounge Ext Window - open",
+      "description": "Teacher Lounge Ext Window - open win",
       "bg_avf": "swexter3",
       "ambient_snd": "mystlght",
       "scene_type": 2,
@@ -13002,7 +13002,7 @@
   },
   "S1655": {
     "summary": {
-      "description": "School Side Exterior w/ Vent Cov",
+      "description": "School Side Exterior w/ Vent Cover Off CD2",
       "bg_avf": "ssexter2",
       "ambient_snd": "mystlght",
       "scene_type": 2,
@@ -13062,7 +13062,7 @@
   },
   "S1661": {
     "summary": {
-      "description": "Teacher Lounge Ext Window - w/ g",
+      "description": "Teacher Lounge Ext Window - w/ glass opening CD1",
       "bg_avf": "swexter1",
       "ambient_snd": "mystlght",
       "scene_type": 2,
@@ -13153,7 +13153,7 @@
   },
   "S1664": {
     "summary": {
-      "description": "Teacher Lounge Ext Window - open",
+      "description": "Teacher Lounge Ext Window - open win CD1",
       "bg_avf": "swexter3",
       "ambient_snd": "mystlght",
       "scene_type": 2,
@@ -13197,7 +13197,7 @@
   },
   "S1665": {
     "summary": {
-      "description": "School Side Exterior w/ Vent Cov",
+      "description": "School Side Exterior w/ Vent Cover Off CD1",
       "bg_avf": "ssexter2",
       "ambient_snd": "mystlght",
       "scene_type": 2,
@@ -13360,7 +13360,7 @@
   },
   "S1840": {
     "summary": {
-      "description": "Library study area, table->book ",
+      "description": "Library study area, table->book cu",
       "bg_avf": "lg1c",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -13388,7 +13388,7 @@
   },
   "S1841": {
     "summary": {
-      "description": "Transtion from upper book to stu",
+      "description": "Transtion from upper book to study area",
       "bg_avf": "lb1j",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -13432,7 +13432,7 @@
   },
   "S1842": {
     "summary": {
-      "description": "Library  trastion from study are",
+      "description": "Library  trastion from study area to upper book",
       "bg_avf": "lg1a",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -13476,7 +13476,7 @@
   },
   "S1843": {
     "summary": {
-      "description": "lib, magazine rack - wildlife no",
+      "description": "lib, magazine rack - wildlife now cu",
       "bg_avf": "lm1z",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -14828,7 +14828,7 @@
   },
   "S1855": {
     "summary": {
-      "description": "Library Ref Area, Map Drawer ope",
+      "description": "Library Ref Area, Map Drawer open CU",
       "bg_avf": "lm1b",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -14896,7 +14896,7 @@
   },
   "S1856": {
     "summary": {
-      "description": "Library Ref Area, Map Drawer ope",
+      "description": "Library Ref Area, Map Drawer open, puzzle CU",
       "bg_avf": "lm1c",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -14948,7 +14948,7 @@
   },
   "S1857": {
     "summary": {
-      "description": "Library Ref Area, Map Drawer ope",
+      "description": "Library Ref Area, Map Drawer open CU",
       "bg_avf": "lm1d",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -15016,7 +15016,7 @@
   },
   "S1858": {
     "summary": {
-      "description": "Library Ref Area, Map Drawer ope",
+      "description": "Library Ref Area, Map Drawer open, puzzle CU",
       "bg_avf": "lm1e",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -15204,7 +15204,7 @@
   },
   "S1861": {
     "summary": {
-      "description": "lib ref area, card on english es",
+      "description": "lib ref area, card on english essays",
       "bg_avf": "lm1h",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -16252,7 +16252,7 @@
   },
   "S1874": {
     "summary": {
-      "description": "library lower book area,dream bo",
+      "description": "library lower book area,dream book",
       "bg_avf": "lh1f",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -16428,7 +16428,7 @@
   },
   "S1876": {
     "summary": {
-      "description": "library lower book area,manatees",
+      "description": "library lower book area,manatees book",
       "bg_avf": "lh1b",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -16480,7 +16480,7 @@
   },
   "S1877": {
     "summary": {
-      "description": "library lower book area,zodiac p",
+      "description": "library lower book area,zodiac pg 1",
       "bg_avf": "lh1c",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -16532,7 +16532,7 @@
   },
   "S1878": {
     "summary": {
-      "description": "library lower book area,zodiac p",
+      "description": "library lower book area,zodiac pg 2 book",
       "bg_avf": "lh1d",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -16708,7 +16708,7 @@
   },
   "S1880": {
     "summary": {
-      "description": "library lower book area,violence",
+      "description": "library lower book area,violence book",
       "bg_avf": "lh1h",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -16760,7 +16760,7 @@
   },
   "S1881": {
     "summary": {
-      "description": "library lower book area,optical ",
+      "description": "library lower book area,optical illusions book",
       "bg_avf": "lh1j",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -16880,7 +16880,7 @@
   },
   "S1883": {
     "summary": {
-      "description": "library lower book area,palm rea",
+      "description": "library lower book area,palm reading book",
       "bg_avf": "lh1l",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -17571,7 +17571,7 @@
   },
   "S1887": {
     "summary": {
-      "description": "library upper book area,sign lan",
+      "description": "library upper book area,sign language book",
       "bg_avf": "lb1b",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -17691,7 +17691,7 @@
   },
   "S1889": {
     "summary": {
-      "description": "library upper area,shelf 7,handw",
+      "description": "library upper area,shelf 7,handwriting book",
       "bg_avf": "lb1f",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -17827,7 +17827,7 @@
   },
   "S1891": {
     "summary": {
-      "description": "library upper area,shelf 6, boil",
+      "description": "library upper area,shelf 6, boiler repair book",
       "bg_avf": "lb1d",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -17947,7 +17947,7 @@
   },
   "S1893": {
     "summary": {
-      "description": "library upper area, shelf 8, jud",
+      "description": "library upper area, shelf 8, judo book",
       "bg_avf": "lb1h",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -18085,7 +18085,7 @@
   },
   "S1895": {
     "summary": {
-      "description": "Library stair landing trastion t",
+      "description": "Library stair landing trastion to upper book area",
       "bg_avf": "ls1b",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -18129,7 +18129,7 @@
   },
   "S1896": {
     "summary": {
-      "description": "Library stair landing trastion t",
+      "description": "Library stair landing trastion to upper book area",
       "bg_avf": "ls1l",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -18173,7 +18173,7 @@
   },
   "S1897": {
     "summary": {
-      "description": "Library stair landing trastion t",
+      "description": "Library stair landing trastion to study area",
       "bg_avf": "ls1g",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -18217,7 +18217,7 @@
   },
   "S1898": {
     "summary": {
-      "description": "Library stair landing trastion f",
+      "description": "Library stair landing trastion from study area",
       "bg_avf": "ls1r",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -18261,7 +18261,7 @@
   },
   "S1899": {
     "summary": {
-      "description": "Library study area->table w/ boo",
+      "description": "Library study area->table w/ books",
       "bg_avf": "lg1b",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -18349,7 +18349,7 @@
   },
   "S1901": {
     "summary": {
-      "description": "Library xtion catwalk to study n",
+      "description": "Library xtion catwalk to study node",
       "bg_avf": "lb1l",
       "ambient_snd": "mysthevy",
       "scene_type": 2,
@@ -21382,7 +21382,7 @@
   },
   "S2076": {
     "summary": {
-      "description": "Boiler, no chains & no match boo",
+      "description": "Boiler, no chains & no match book",
       "bg_avf": "sb1x",
       "ambient_snd": "drone1",
       "scene_type": 2,
@@ -25348,7 +25348,7 @@
   },
   "S2098": {
     "summary": {
-      "description": "elevator->maintance closet door ",
+      "description": "elevator->maintance closet door cu",
       "bg_avf": "evback1",
       "ambient_snd": "feardang",
       "scene_type": 2,
@@ -29251,7 +29251,7 @@
   },
   "S32": {
     "summary": {
-      "description": "Aunt's house, den, TV & VCR CU -",
+      "description": "Aunt's house, den, TV & VCR CU - ON",
       "bg_avf": "ad1t",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -29941,7 +29941,7 @@
   },
   "S3215": {
     "summary": {
-      "description": "have met hulk,not talked  to dar",
+      "description": "have met hulk,not talked  to daryl about hulk",
       "bg_avf": "dd1d",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -34023,7 +34023,7 @@
   },
   "S50": {
     "summary": {
-      "description": "Ordering Puzzle - blinking light",
+      "description": "Ordering Puzzle - blinking lights",
       "bg_avf": "sppd",
       "ambient_snd": "feardang",
       "scene_type": 2,
@@ -36399,7 +36399,7 @@
   },
   "S53": {
     "summary": {
-      "description": "Maintance Closet, evlevator butt",
+      "description": "Maintance Closet, evlevator button CU",
       "bg_avf": "sc1e",
       "ambient_snd": "feardang",
       "scene_type": 2,
@@ -36957,7 +36957,7 @@
   },
   "S58": {
     "summary": {
-      "description": "School, Closet close up Sabotage",
+      "description": "School, Closet close up Sabotaged",
       "bg_avf": "sc1s",
       "ambient_snd": "feardang",
       "scene_type": 2,
@@ -37001,7 +37001,7 @@
   },
   "S59": {
     "summary": {
-      "description": "Maint Closet, broke elevator but",
+      "description": "Maint Closet, broke elevator button CU",
       "bg_avf": "sc1t",
       "ambient_snd": "feardang",
       "scene_type": 2,
@@ -38826,7 +38826,7 @@
   },
   "S610": {
     "summary": {
-      "description": "Aunt's house, den, hope chest op",
+      "description": "Aunt's house, den, hope chest open",
       "bg_avf": "ad1h",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -38900,7 +38900,7 @@
   },
   "S611": {
     "summary": {
-      "description": "Aunts den, oil painting over che",
+      "description": "Aunts den, oil painting over chest",
       "bg_avf": "ad1p",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -38928,7 +38928,7 @@
   },
   "S612": {
     "summary": {
-      "description": "Aunt's house, den, Right Armior ",
+      "description": "Aunt's house, den, Right Armior closeup",
       "bg_avf": "ad1r",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -39022,7 +39022,7 @@
   },
   "S614": {
     "summary": {
-      "description": "Aunt's house, den, TV & VCR clos",
+      "description": "Aunt's house, den, TV & VCR closeup",
       "bg_avf": "ad1v",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -39088,7 +39088,7 @@
   },
   "S616": {
     "summary": {
-      "description": "Aunt's house, den, leftior close",
+      "description": "Aunt's house, den, leftior closeup",
       "bg_avf": "ad1l",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -39156,7 +39156,7 @@
   },
   "S617": {
     "summary": {
-      "description": "Aunt's house, den, open book/flo",
+      "description": "Aunt's house, den, open book/flordia",
       "bg_avf": "ad1a",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -39335,7 +39335,7 @@
   },
   "S620": {
     "summary": {
-      "description": "Aunt's house, den, wooden box op",
+      "description": "Aunt's house, den, wooden box open",
       "bg_avf": "ad1d",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -39455,7 +39455,7 @@
   },
   "S622": {
     "summary": {
-      "description": "Aunt's house, den, Table/books c",
+      "description": "Aunt's house, den, Table/books closeup",
       "bg_avf": "ad1m",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -39523,7 +39523,7 @@
   },
   "S623": {
     "summary": {
-      "description": "Aunt's house, den, open book/pla",
+      "description": "Aunt's house, den, open book/plant book",
       "bg_avf": "ad1k",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -39619,7 +39619,7 @@
   },
   "S626": {
     "summary": {
-      "description": "Aunt's house, entry, Tapestry->s",
+      "description": "Aunt's house, entry, Tapestry->safe cu",
       "bg_avf": "ae1p",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -40004,7 +40004,7 @@
   },
   "S632": {
     "summary": {
-      "description": "Aunt's house, den, TV & VCR CU -",
+      "description": "Aunt's house, den, TV & VCR CU - ON",
       "bg_avf": "ad1t",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -40079,7 +40079,7 @@
   },
   "S640": {
     "summary": {
-      "description": "Aunt's house, entry,inside safe-",
+      "description": "Aunt's house, entry,inside safe->puzzle box cu",
       "bg_avf": "ae1b",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -40179,7 +40179,7 @@
   },
   "S641": {
     "summary": {
-      "description": "Aunt's enryt, puzzle close up ea",
+      "description": "Aunt's enryt, puzzle close up easy & Med",
       "bg_avf": "ae1f",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -40223,7 +40223,7 @@
   },
   "S642": {
     "summary": {
-      "description": "Aunt's entry,inside safe->puzzle",
+      "description": "Aunt's entry,inside safe->puzzle box cu hard",
       "bg_avf": "ae1g",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -40267,7 +40267,7 @@
   },
   "S643": {
     "summary": {
-      "description": "Aunt's enryt, puzzle easy & Med ",
+      "description": "Aunt's enryt, puzzle easy & Med solved",
       "bg_avf": "ae1a",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -40387,7 +40387,7 @@
   },
   "S645": {
     "summary": {
-      "description": "Aunt's entry, slider puzzle, pas",
+      "description": "Aunt's entry, slider puzzle, password cu",
       "bg_avf": "ae1s",
       "ambient_snd": "aunthous",
       "scene_type": 2,
@@ -42310,7 +42310,7 @@
   },
   "S841": {
     "summary": {
-      "description": "Diner,trastion to mini juke box ",
+      "description": "Diner,trastion to mini juke box close up",
       "bg_avf": "dd1h",
       "ambient_snd": "50sdiner",
       "scene_type": 2,
@@ -42398,7 +42398,7 @@
   },
   "S843": {
     "summary": {
-      "description": "Diner,trastion from kitchen door",
+      "description": "Diner,trastion from kitchen doors",
       "bg_avf": "dd1u",
       "ambient_snd": "50sdiner",
       "scene_type": 2,

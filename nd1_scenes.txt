@@ -66,7 +66,7 @@ S31: School, elevator->boiler room
   [0] HOT_1FR_SCENE_CHANGE  "1FR scene - elevator->boiler"  → S2076  hs=(95,58)-(448,265)
 
 ──────────────────────────────────────────────────────────────────────────────
-S32: Aunt's house, den, TV & VCR CU -
+S32: Aunt's house, den, TV & VCR CU - ON
   bg=ad1t  amb=aunthous
   [0] HOT_1FR_SCENE_CHANGE  "Aunt house, den, TV & VCR closeu"  → S614  hs=(144,156)-(407,226)  IF has_item[10]
   [1] PLAY_DIGI_SOUND  "test play DIGI sound"  snd="noise1"
@@ -75,7 +75,7 @@ S32: Aunt's house, den, TV & VCR CU -
   [4] ADD_INVENTORY  "Add Inventory Item, No Hot Spot"  item="Video tape"(#7)
 
 ──────────────────────────────────────────────────────────────────────────────
-S50: Ordering Puzzle - blinking light
+S50: Ordering Puzzle - blinking lights
   bg=sppd  amb=feardang
   [0] SPECIAL_EFFECT  "flashing red light on keypad"  asset="SPKEYPD2"
 
@@ -95,7 +95,7 @@ S52: School, Closet close up
   [2] SAVE_CONTINUE_GAME  "Save a Continue Game"  
 
 ──────────────────────────────────────────────────────────────────────────────
-S53: Maintance Closet, evlevator butt
+S53: Maintance Closet, evlevator button CU
   bg=sc1e  amb=feardang
   [0] SCENE_CHANGE  "scene change, Button CU->elevato"  → S70  IF flag[10]==1,flag[44]==2
   [1] SCENE_CHANGE  "scene change, Button CU->elevato"  → S71  IF flag[10]==2,flag[44]==2
@@ -134,13 +134,13 @@ S57: Aunt's house, entry,inside safe
   [3] HOT_1FR_SCENE_CHANGE  "1FR scene - aunt safe to top of "  → S640  hs=(185,196)-(254,246)
 
 ──────────────────────────────────────────────────────────────────────────────
-S58: School, Closet close up Sabotage
+S58: School, Closet close up Sabotaged
   bg=sc1s  amb=feardang
   [0] HOT_1FR_SCENE_CHANGE  "1FR scene - closet->elevator but"  → S59  hs=(464,149)-(534,272)
   [1] HOT_1FR_EXITSCENE  "1FR scene exit -> aunts den"  → S1457  hs=(1,197)-(466,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S59: Maint Closet, broke elevator but
+S59: Maint Closet, broke elevator button CU
   bg=sc1t  amb=feardang
   [0] HOT_1FR_EXITSCENE  "1FR scene - storage room->side g"  → S58  hs=(1,240)-(529,291)
 
@@ -300,7 +300,7 @@ S123: Daryl in Diner
   [0] CONVERSATION_VIDEO  "daryl:  If I were ned"  node="d27"  NPC: "<i>If I were Ned, I'd be worried about leaving an attractive"  2 choices    [0] "<c1>W<c0>ho was murdered?<h><n>" → nd8a    [1] "<c1>C<c0>ould you help me find Jake Roge" → nd8b
 
 ──────────────────────────────────────────────────────────────────────────────
-S124: have met hulk,not talked  to dar
+S124: have met hulk,not talked  to daryl about hulk
   bg=dd1d  amb=aunthous
   [0] EVENTFLAGS  "Event Flags"  SET 57=2, 44=2
   [1] CONVERSATION_VIDEO  "Daryl diner->half dozen burgers"  node="d28"  NPC: "<i>Well, I know the guy can scarf down half a dozen burgers "  2 choices    [0] "<c1>M<c0>anatees?<h><n>" → nd28a    [1] "<c1>C<c0>ollege football?<h><n>" → nd28b
@@ -316,13 +316,13 @@ S126: Daryl scenes
   [0] CONVERSATION_VIDEO  "Daryl diner->hulk's dream"  node="d50"  NPC: "<i>Hulk's dream is to become a great college football star a"
 
 ──────────────────────────────────────────────────────────────────────────────
-S127: have met hulk,not talked  to dar
+S127: have met hulk,not talked  to daryl about hulk
   bg=dd1d  amb=aunthous
   [0] EVENTFLAGS  "Event Flags"  SET 55=2, 44=2
   [1] CONVERSATION_VIDEO  "Daryl diner->I've seen her aroun"  node="d29"  NPC: "<i>I've seen her around, but we've never had a class togethe"  1 choices    [0] "<c1>W<c0>hy do you think she's never bee" → nd29a
 
 ──────────────────────────────────────────────────────────────────────────────
-S128: have met hulk,not talked  to dar
+S128: have met hulk,not talked  to daryl about hulk
   bg=dd1d  amb=aunthous
   [0] CONVERSATION_VIDEO  "Daryl diner->she's very private"  node="d51"  NPC: "<i>I'm not sure. She's very private about what she does afte"
 
@@ -451,7 +451,7 @@ S150: daryl in diner
   [1] CONVERSATION_VIDEO  "Daryl diner->something more soli"  node="d45"  NPC: "<i>If you only had something more solid. I know the police w"
 
 ──────────────────────────────────────────────────────────────────────────────
-S151: have met hulk,not talked  to dar
+S151: have met hulk,not talked  to daryl about hulk
   bg=dd1d  amb=aunthous
   [0] EVENTFLAGS  "Event Flags"  SET 39=2, 44=2
   [1] CONVERSATION_VIDEO  "Daryl diner->got me there"  node="d47"  NPC: "<i>You got me there detective. But it didn't have to be like"  1 choices    [0] "<c1>W<c0>hat were you selling?  Drugs, t" → nd47az
@@ -462,17 +462,17 @@ S152: Daryl in Diner
   [0] CONVERSATION_VIDEO  "daryl:  Didn't know"  node="d62"  NPC: "<i>I didn't know what I was getting into. This guy, Mitch Di"
 
 ──────────────────────────────────────────────────────────────────────────────
-S153: have met hulk,not talked  to dar
+S153: have met hulk,not talked  to daryl about hulk
   bg=dd1d  amb=aunthous
   [0] CONVERSATION_VIDEO  "Daryl diner->I like you"  node="d65"  NPC: "<i>Because I like you Nancy. You're in extreme danger. If Mi"  1 choices    [0] "<c1>H<c0>ow did Jake find out?<h><n>" → nd62a
 
 ──────────────────────────────────────────────────────────────────────────────
-S154: have met hulk,not talked  to dar
+S154: have met hulk,not talked  to daryl about hulk
   bg=dd1d  amb=aunthous
   [0] CONVERSATION_VIDEO  "Daryl diner->what kind of danger"  node="d48"  NPC: "<i>Nancy, you have no idea what kind of danger you're in rig"  2 choices    [0] "<c1>D<c0>o you really want me to go to t" → nd48a    [1] "<c1>W<c0>e need to get more evidence on " → nd48bz
 
 ──────────────────────────────────────────────────────────────────────────────
-S155: have met hulk,not talked  to dar
+S155: have met hulk,not talked  to daryl about hulk
   bg=dd1d  amb=aunthous
   [0] CONVERSATION_VIDEO  "Daryl diner->just forget"  node="d66"  NPC: "<i>Actually, I wish you could just forget this whole thing e"  1 choices    [0] "<c1>W<c0>e need to get more evidence on " → nd48bz
 
@@ -1401,19 +1401,19 @@ S609: Aunts Den Hope chest closed
   [2] HOT_1FR_EXITSCENE  "1FR scene exit -> aunts den"  → S608  fr=84  hs=(1,238)-(534,290)
 
 ──────────────────────────────────────────────────────────────────────────────
-S610: Aunt's house, den, hope chest op
+S610: Aunt's house, den, hope chest open
   bg=ad1h  amb=aunthous
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(57,1)-(524,91)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI wooden box close sound"  IF flag[44]==2  snd="chstclse"
   [2] SHOW_INVENTORY_ITEM  "show coin in hope chest"  item="Coin"(#2)  sheet="AOBJECTS"  src=(92,59)-(112,79)  dst=(446,152)-(466,172)
 
 ──────────────────────────────────────────────────────────────────────────────
-S611: Aunts den, oil painting over che
+S611: Aunts den, oil painting over chest
   bg=ad1p  amb=aunthous
   [0] HOT_1FR_EXITSCENE  "1FR scene exit -> aunts den"  → S608  fr=84  hs=(0,217)-(525,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S612: Aunt's house, den, Right Armior 
+S612: Aunt's house, den, Right Armior closeup
   bg=ad1r  amb=aunthous
   [0] HOT_1FR_EXITSCENE  "Aunt house, den, exit right armi"  → S608  fr=84  hs=(54,214)-(474,291)
   [1] HOT_1FR_SCENE_CHANGE  "Aunt,Den,right armior closeup->o"  → S613  hs=(276,81)-(306,210)
@@ -1425,21 +1425,21 @@ S613: Aunt's house, den, book safe
   [1] SHOW_INVENTORY_ITEM  "show key on passport"  item="Key on passport"(#5)  sheet="AOBJECTS"  src=(92,1)-(134,57)  dst=(393,119)-(435,175)
 
 ──────────────────────────────────────────────────────────────────────────────
-S614: Aunt's house, den, TV & VCR clos
+S614: Aunt's house, den, TV & VCR closeup
   bg=ad1v  amb=aunthous
   [0] HOT_1FR_EXITSCENE  "Aunt house, den, TV & VCR closeu"  → S608  fr=84  hs=(0,202)-(132,291)
   [1] HOT_1FR_SCENE_CHANGE  "Aunt,Den,TV VCR off->TV VCR on"  → S632  hs=(144,156)-(407,226)  IF has_item[10]
   [2] HOT_1FR_EXITSCENE  "Aunt house, den, TV & VCR closeu"  → S608  fr=84  hs=(411,198)-(529,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S616: Aunt's house, den, leftior close
+S616: Aunt's house, den, leftior closeup
   bg=ad1l  amb=aunthous
   [0] HOT_1FR_EXITSCENE  "Aunt house, den, exit right armi"  → S608  fr=84  hs=(0,221)-(525,291)
   [1] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(113,39)-(209,210)  SET 44=2
   [2] PLAY_DIGI_SOUND  "play DIGI book open sound"  IF flag[44]==2  snd="bookflp"
 
 ──────────────────────────────────────────────────────────────────────────────
-S617: Aunt's house, den, open book/flo
+S617: Aunt's house, den, open book/flordia
   bg=ad1a  amb=aunthous
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(9,200)-(512,279)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI book close sound"  IF flag[44]==2  snd="bookclse"
@@ -1457,7 +1457,7 @@ S619: Aunts Den Wooden box closed
   [2] HOT_1FR_EXITSCENE  "1FR scene exit -> aunts den"  → S608  fr=84  hs=(0,250)-(531,294)
 
 ──────────────────────────────────────────────────────────────────────────────
-S620: Aunt's house, den, wooden box op
+S620: Aunt's house, den, wooden box open
   bg=ad1d  amb=aunthous
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(215,246)-(336,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI wooden box close sound"  IF flag[44]==2  snd="wboxclos"
@@ -1470,14 +1470,14 @@ S621: Aunts den, old photos
   [0] HOT_1FR_EXITSCENE  "1FR scene exit -> aunts den"  → S608  fr=84  hs=(1,215)-(524,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S622: Aunt's house, den, Table/books c
+S622: Aunt's house, den, Table/books closeup
   bg=ad1m  amb=aunthous
   [0] HOT_1FR_EXITSCENE  "Aunt house, den, exit table clos"  → S608  fr=84  hs=(57,234)-(490,290)
   [1] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(83,77)-(317,134)  SET 44=2
   [2] PLAY_DIGI_SOUND  "play DIGI book open sound"  IF flag[44]==2  snd="bookflp"
 
 ──────────────────────────────────────────────────────────────────────────────
-S623: Aunt's house, den, open book/pla
+S623: Aunt's house, den, open book/plant book
   bg=ad1k  amb=aunthous
   [0] HOT_1FR_EXITSCENE  "Aunt house, den, exit open book "  → S622  hs=(57,234)-(490,290)
 
@@ -1489,7 +1489,7 @@ S625: Aunts Entry,safe->puzzle top cu
   [2] HOT_1FR_EXITSCENE  "1FR scene exit -> aunts safe "  → S57  hs=(0,232)-(157,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S626: Aunt's house, entry, Tapestry->s
+S626: Aunt's house, entry, Tapestry->safe cu
   bg=ae1p  amb=aunthous
   [0] EVENTFLAGS  "Safe Lock Locked"  SET 41=1
   [1] HOT_1FR_SCENE_CHANGE  "Aunt,entry,safe closed->safe puz"  → S56  hs=(40,77)-(238,206)
@@ -1530,7 +1530,7 @@ S631: Aunts den, memo pad in end table
   [0] HOT_1FR_EXITSCENE  "1FR scene exit -> aunts den"  → S628  hs=(4,207)-(523,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S632: Aunt's house, den, TV & VCR CU -
+S632: Aunt's house, den, TV & VCR CU - ON
   bg=ad1t  amb=aunthous
   [0] HOT_1FR_SCENE_CHANGE  "Aunt house, den, TV & VCR closeu"  → S614  hs=(144,156)-(407,226)  IF has_item[10]
   [1] PLAY_DIGI_SOUND  "test play DIGI sound"  snd="noise1"
@@ -1538,7 +1538,7 @@ S632: Aunt's house, den, TV & VCR CU -
   [3] HOT_1FR_SCENE_CHANGE  "tv->video's"  → S655  hs=(173,250)-(279,284)  IF has_item[7]
 
 ──────────────────────────────────────────────────────────────────────────────
-S640: Aunt's house, entry,inside safe-
+S640: Aunt's house, entry,inside safe->puzzle box cu
   bg=ae1b  amb=aunthous
   [0] HOT_1FR_EXITSCENE  "Aunt house, safe->safe open"  → S57  hs=(0,232)-(525,291)
   [1] HOT_1FR_SCENE_CHANGE  "1FR scene - aunt safe to top of "  → S641  hs=(141,68)-(374,179)  IF timer(flag[44]==0,15s)
@@ -1546,19 +1546,19 @@ S640: Aunt's house, entry,inside safe-
   [3] HOT_1FR_SCENE_CHANGE  "1FR scene - aunt safe to top of "  → S642  hs=(141,68)-(374,179)  IF timer(flag[44]==2,15s)
 
 ──────────────────────────────────────────────────────────────────────────────
-S641: Aunt's enryt, puzzle close up ea
+S641: Aunt's enryt, puzzle close up easy & Med
   bg=ae1f  amb=aunthous
   [0] HOT_1FR_EXITSCENE  "Aunt house, safe->entry"  → S640  hs=(0,232)-(525,291)
   [1] HOT_1FR_SCENE_CHANGE  "1FR scene - aunt safe to top of "  → S647  hs=(141,68)-(374,179)
 
 ──────────────────────────────────────────────────────────────────────────────
-S642: Aunt's entry,inside safe->puzzle
+S642: Aunt's entry,inside safe->puzzle box cu hard
   bg=ae1g  amb=aunthous
   [0] HOT_1FR_EXITSCENE  "Aunt house, safe->top of box cu"  → S640  hs=(0,232)-(534,291)
   [1] HOT_1FR_SCENE_CHANGE  "1FR scene - aunt safe to top of "  → S647  hs=(141,68)-(374,179)
 
 ──────────────────────────────────────────────────────────────────────────────
-S643: Aunt's enryt, puzzle easy & Med 
+S643: Aunt's enryt, puzzle easy & Med solved
   bg=ae1a  amb=aunthous
   [0] HOT_1FR_EXITSCENE  "Aunt house, safe->entry"  → S57  hs=(0,225)-(181,291)
   [1] HOT_1FR_SCENE_CHANGE  "1FR scene - slider puzzle solved"  → S645  hs=(235,206)-(374,258)
@@ -1572,7 +1572,7 @@ S644: Aunt's enryt, puzzle hard solved
   [2] HOT_1FR_SCENE_CHANGE  "1FR scene - slider puzzle, passw"  → S645  hs=(235,206)-(374,258)
 
 ──────────────────────────────────────────────────────────────────────────────
-S645: Aunt's entry, slider puzzle, pas
+S645: Aunt's entry, slider puzzle, password cu
   bg=ae1s  amb=aunthous
   [0] HOT_1FR_EXITSCENE  "Aunt house, safe->entry"  → S643  hs=(0,225)-(525,291)
 
@@ -1729,7 +1729,7 @@ S840: Diner,kitchen doors
   [3] HOT_1FR_EXITSCENE  "1FR scene exit->diner transtiona"  → S843  hs=(372,226)-(535,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S841: Diner,trastion to mini juke box 
+S841: Diner,trastion to mini juke box close up
   bg=dd1h  amb=50sdiner
   [0] HOT_1FR_SCENE_CHANGE  "diner, trastion to mini jukebox"  → S839  hs=(291,154)-(395,224)
   [1] HOT_1FR_EXITSCENE  "1FR scene exit->diner"  → S824  fr=84  hs=(1,235)-(528,290)
@@ -1741,7 +1741,7 @@ S842: Diner,trastion to mkitchen doors
   [1] HOT_1FR_EXITSCENE  "1FR scene exit->diner"  → S824  fr=84  hs=(0,218)-(527,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S843: Diner,trastion from kitchen door
+S843: Diner,trastion from kitchen doors
   bg=dd1u  amb=50sdiner
   [0] HOT_1FR_EXITSCENE  "1FR scene exit->kitchen doors"  → S840  hs=(3,220)-(529,291)
   [1] HOT_1FR_SCENE_CHANGE  "1FR scene by kitch doors to node"  → S824  fr=84  hs=(114,60)-(305,149)
@@ -2156,7 +2156,7 @@ S1430: Newspaper
   [1] HOT_1FR_EXITSCENE  "1FR scene newspaper---> bottom o"  → S1427  hs=(1,246)-(129,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1431: Pharmacy Break In Article Closeu
+S1431: Pharmacy Break In Article Closeup
   bg=sh3l  amb=feardang
   [0] HOT_1FR_EXITSCENE  "1FR scene Break I C/U---> Newspa"  → S1430  hs=(0,230)-(524,290)
   [1] EVENTFLAGS  "Seen Break In Article"  SET 99=2
@@ -2555,19 +2555,19 @@ S1632: Lounge, Floppies Icon C/U
   [2] HOT_1FR_EXITSCENE  "lounge, exit computer closeup 2"  → S1613  hs=(429,245)-(535,290)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1635: Lounge, Bottom of Security Repor
+S1635: Lounge, Bottom of Security Report
   bg=sl1j  amb=excite
   [0] HOT_1FR_EXITSCENE  "to printer node"  → S1614  hs=(21,229)-(514,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1650: School Side Exterior with Vent C
+S1650: School Side Exterior with Vent Cover On
   bg=ssexter1  amb=mystlght
   [0] HOT_1FR_EXITSCENE  "1FR scene exit->school side exte"  → S11  hs=(1,226)-(534,290)
   [1] HOT_1FR_SCENE_CHANGE  "To Lounge Window without hole"  → S1652  hs=(434,101)-(520,163)  IF flag[85]==1
   [2] HOT_1FR_SCENE_CHANGE  "To Lounge Window with hole"  → S1651  hs=(434,101)-(520,163)  IF flag[85]==2
 
 ──────────────────────────────────────────────────────────────────────────────
-S1651: Teacher Lounge Ext Window - w/ g
+S1651: Teacher Lounge Ext Window - w/ glass opening CD2
   bg=swexter1  amb=mystlght
   [0] HOT_1FR_EXITSCENE  "1FR scene exit->side w/ cover"  → S1650  hs=(11,194)-(516,285)  IF flag[62]==1
   [1] HOT_1FR_EXITSCENE  "1FR scene exit->side w/o cover"  → S1655  hs=(11,194)-(516,285)  IF flag[62]==2
@@ -2577,34 +2577,34 @@ S1651: Teacher Lounge Ext Window - w/ g
   [5] PLAY_DIGI_SOUND  "HS Daytime Ambient"  snd="hsday"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1652: Teacher Lounge Ext Window - w/o 
+S1652: Teacher Lounge Ext Window - w/o glass opening
   bg=swexter2  amb=mystlght
   [0] HOT_1FR_EXITSCENE  "1FR scene exit->school side exte"  → S1650  hs=(11,194)-(516,285)
   [1] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(92,146)-(126,192)  IF has_item[3]  SET 44=2
   [2] PLAY_DIGI_SOUND  "play DIGI glass opening"  IF flag[44]==2  snd="glass"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1653: School Side Exterior with vent c
+S1653: School Side Exterior with vent cover off
   bg=ssexter2  amb=mystlght
   [0] HOT_1FR_EXITSCENE  "1FR scene exit->school side exte"  → S11  hs=(1,226)-(534,290)
   [1] HOT_1FR_SCENE_CHANGE  "To Lounge Window"  → S1651  hs=(434,101)-(520,163)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1654: Teacher Lounge Ext Window - open
+S1654: Teacher Lounge Ext Window - open win
   bg=swexter3  amb=mystlght
   [0] HOT_1FR_EXITSCENE  "1FR scene exit->side w/ cover"  → S1650  hs=(11,194)-(516,285)  IF flag[62]==1
   [1] HOT_1FR_EXITSCENE  "1FR scene exit->side w/o cover"  → S1655  hs=(11,194)-(516,285)  IF flag[62]==2
   [2] HOT_1FR_SCENE_CHANGE  "1FR scene --> lounge node"  → S1601  fr=84  hs=(81,35)-(138,251)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1655: School Side Exterior w/ Vent Cov
+S1655: School Side Exterior w/ Vent Cover Off CD2
   bg=ssexter2  amb=mystlght
   [0] HOT_1FR_EXITSCENE  "1FR scene exit->school side exte"  → S11  hs=(1,226)-(534,290)
   [1] HOT_1FR_SCENE_CHANGE  "To Lounge Window with hole"  → S1651  hs=(434,101)-(520,163)
   [2] HOT_1FR_SCENE_CHANGE  "To Vent Shaft"  → S2050  hs=(393,176)-(427,202)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1661: Teacher Lounge Ext Window - w/ g
+S1661: Teacher Lounge Ext Window - w/ glass opening CD1
   bg=swexter1  amb=mystlght
   [0] HOT_1FR_EXITSCENE  "1FR scene exit->side w/o cover"  → S1665  hs=(11,194)-(516,285)
   [1] EVENTFLAGS  "Lounge Open Flag"  SET 85=2
@@ -2613,13 +2613,13 @@ S1661: Teacher Lounge Ext Window - w/ g
   [4] PLAY_DIGI_SOUND  "HS Daytime Ambient"  snd="hsday"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1664: Teacher Lounge Ext Window - open
+S1664: Teacher Lounge Ext Window - open win CD1
   bg=swexter3  amb=mystlght
   [0] HOT_1FR_EXITSCENE  "1FR scene exit->school side exte"  → S1665  hs=(0,258)-(533,290)
   [1] HOT_1FR_SCENE_CHANGE  "1FR scene --> lounge node"  → S1601  fr=84  hs=(81,35)-(138,251)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1665: School Side Exterior w/ Vent Cov
+S1665: School Side Exterior w/ Vent Cover Off CD1
   bg=ssexter2  amb=mystlght
   [0] HOT_1FR_EXITSCENE  "1FR scene exit->school side exte"  → S21  hs=(1,226)-(534,290)
   [1] HOT_1FR_SCENE_CHANGE  "To Lounge Window with hole"  → S1661  hs=(434,101)-(520,163)
@@ -2639,24 +2639,24 @@ S1685: Printer Closeup No Report
   [0] HOT_1FR_EXITSCENE  "1FR scene exit->lounge"  → S1601  fr=84  hs=(11,194)-(516,285)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1840: Library study area, table->book 
+S1840: Library study area, table->book cu
   bg=lg1c  amb=mysthevy
   [0] HOT_1FR_EXITSCENE  "libary study, books->table "  → S1899  hs=(0,218)-(527,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1841: Transtion from upper book to stu
+S1841: Transtion from upper book to study area
   bg=lb1j  amb=mysthevy
   [0] HOT_1FR_SCENE_CHANGE  "library, trastion to study"  → S1894  fr=84  hs=(225,16)-(354,245)
   [1] HOT_1FR_EXITSCENE  "1FR scene exit->stair transtiona"  → S1885  hs=(0,255)-(527,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1842: Library  trastion from study are
+S1842: Library  trastion from study area to upper book
   bg=lg1a  amb=mysthevy
   [0] HOT_1FR_SCENE_CHANGE  "to catwalk"  → S1903  hs=(199,1)-(311,233)
   [1] HOT_1FR_EXITSCENE  "1FR scene exit->back catwalk"  → S1901  hs=(0,245)-(525,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1843: lib, magazine rack - wildlife no
+S1843: lib, magazine rack - wildlife now cu
   bg=lm1z  amb=mysthevy
   [0] HOT_1FR_EXITSCENE  "1FR scene exit -> info desk"  → S1850  hs=(1,230)-(528,291)
 
@@ -2741,27 +2741,27 @@ S1854: Library Ref Area, Map Drawer CU
   [4] PLAY_DIGI_SOUND  "play DIGI drawer sound open"  IF flag[45]==2  snd="drwropen"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1855: Library Ref Area, Map Drawer ope
+S1855: Library Ref Area, Map Drawer open CU
   bg=lm1b  amb=mysthevy
   [0] HOT_1FR_EXITSCENE  "1FR scene exit -> drawer closed "  → S1854  hs=(0,202)-(535,291)
   [1] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(61,92)-(475,180)  SET 44=2
   [2] PLAY_DIGI_SOUND  "play DIGI drawer open, puzzle cu"  IF flag[44]==2  snd="nwspapr"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1856: Library Ref Area, Map Drawer ope
+S1856: Library Ref Area, Map Drawer open, puzzle CU
   bg=lm1c  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(0,203)-(535,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI drawer open, puzzle cu"  IF flag[44]==2  snd="drwrclse"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1857: Library Ref Area, Map Drawer ope
+S1857: Library Ref Area, Map Drawer open CU
   bg=lm1d  amb=mysthevy
   [0] HOT_1FR_EXITSCENE  "1FR scene exit -> drawer closed "  → S1854  hs=(1,252)-(527,291)
   [1] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(91,154)-(426,229)  SET 44=2
   [2] PLAY_DIGI_SOUND  "play DIGI drawer open, puzzle cu"  IF flag[44]==2  snd="nwspapr"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1858: Library Ref Area, Map Drawer ope
+S1858: Library Ref Area, Map Drawer open, puzzle CU
   bg=lm1e  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(1,234)-(531,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI drawer open, puzzle cu"  IF flag[44]==2  snd="drwrclse"
@@ -2781,7 +2781,7 @@ S1860: lib ref area, car catalog open
   [2] HOT_1FR_SCENE_CHANGE  "ref area, card on english essays"  → S1861  hs=(221,163)-(319,186)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1861: lib ref area, card on english es
+S1861: lib ref area, card on english essays
   bg=lm1h  amb=mysthevy
   [0] HOT_1FR_EXITSCENE  "1FR scene exit -> card cataloge "  → S1860  hs=(0,244)-(523,291)
 
@@ -2872,7 +2872,7 @@ S1873: lib - book shelves 2
   [3] PLAY_DIGI_SOUND  "play DIGI book open"  IF flag[44]==2  snd="bookflp"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1874: library lower book area,dream bo
+S1874: library lower book area,dream book
   bg=lh1f  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(0,216)-(518,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI book open"  IF flag[44]==2  snd="bookclse"
@@ -2888,19 +2888,19 @@ S1875: lib - book shelves 1
   [5] PLAY_DIGI_SOUND  "play DIGI book open"  IF flag[45]==2  snd="bookflp"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1876: library lower book area,manatees
+S1876: library lower book area,manatees book
   bg=lh1b  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(0,216)-(518,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI book open"  IF flag[44]==2  snd="bookclse"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1877: library lower book area,zodiac p
+S1877: library lower book area,zodiac pg 1
   bg=lh1c  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(447,6)-(524,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI book open"  IF flag[44]==2  snd="bookflp"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1878: library lower book area,zodiac p
+S1878: library lower book area,zodiac pg 2 book
   bg=lh1d  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(0,216)-(518,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI book close"  IF flag[44]==2  snd="bookclse"
@@ -2916,13 +2916,13 @@ S1879: lib - book shelves 3
   [5] PLAY_DIGI_SOUND  "play DIGI book open"  IF flag[45]==2  snd="bookflp"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1880: library lower book area,violence
+S1880: library lower book area,violence book
   bg=lh1h  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(0,216)-(518,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI book close"  IF flag[44]==2  snd="bookclse"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1881: library lower book area,optical 
+S1881: library lower book area,optical illusions book
   bg=lh1j  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(0,216)-(518,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI book close"  IF flag[44]==2  snd="bookclse"
@@ -2935,7 +2935,7 @@ S1882: lib - book shelves 3
   [2] PLAY_DIGI_SOUND  "play DIGI book open"  IF flag[44]==2  snd="bookflp"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1883: library lower book area,palm rea
+S1883: library lower book area,palm reading book
   bg=lh1l  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(0,216)-(518,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI book close"  IF flag[44]==2  snd="bookclse"
@@ -2969,7 +2969,7 @@ S1886: lib - book shelves 5
   [3] PLAY_DIGI_SOUND  "play DIGI book open"  IF flag[44]==2  snd="bookflp"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1887: library upper book area,sign lan
+S1887: library upper book area,sign language book
   bg=lb1b  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(0,216)-(518,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI book close"  IF flag[44]==2  snd="bookclse"
@@ -2982,7 +2982,7 @@ S1888: lib - book shelves 7
   [2] PLAY_DIGI_SOUND  "play DIGI book open"  IF flag[44]==2  snd="bookflp"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1889: library upper area,shelf 7,handw
+S1889: library upper area,shelf 7,handwriting book
   bg=lb1f  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(0,216)-(518,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI book close"  IF flag[44]==2  snd="bookclse"
@@ -2996,7 +2996,7 @@ S1890: lib - book shelves 6
   [3] PLAY_DIGI_SOUND  "play DIGI book open"  IF flag[44]==2  snd="bookflp"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1891: library upper area,shelf 6, boil
+S1891: library upper area,shelf 6, boiler repair book
   bg=lb1d  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(0,216)-(518,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI book close"  IF flag[44]==2  snd="bookclse"
@@ -3009,7 +3009,7 @@ S1892: lib - book shelves 8
   [2] PLAY_DIGI_SOUND  "play DIGI book open"  IF flag[44]==2  snd="bookflp"
 
 ──────────────────────────────────────────────────────────────────────────────
-S1893: library upper area, shelf 8, jud
+S1893: library upper area, shelf 8, judo book
   bg=lb1h  amb=mysthevy
   [0] EVENTFLAGS_MULTI_HS  "MF HS Event Flags"  1 frames, f0=(0,216)-(518,291)  SET 44=2
   [1] PLAY_DIGI_SOUND  "play DIGI book close"  IF flag[44]==2  snd="bookclse"
@@ -3021,31 +3021,31 @@ S1894: Library,study area
   [1] HOT_MULTIFRAME_SCENE_CHANGE  "study area->cat walk"  → S1904  3 frames, f0=(1,1)-(160,342)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1895: Library stair landing trastion t
+S1895: Library stair landing trastion to upper book area
   bg=ls1b  amb=mysthevy
   [0] HOT_1FR_SCENE_CHANGE  "library, trastion to upper book "  → S1885  fr=84  hs=(242,86)-(361,216)
   [1] HOT_1FR_EXITSCENE  "1FR scene exit->stair transtiona"  → S1896  hs=(0,218)-(527,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1896: Library stair landing trastion t
+S1896: Library stair landing trastion to upper book area
   bg=ls1l  amb=mysthevy
   [0] HOT_1FR_SCENE_CHANGE  "library, trastion to upper book "  → S1884  fr=84  hs=(242,86)-(361,216)
   [1] HOT_1FR_EXITSCENE  "1FR scene exit->upper node"  → S1895  hs=(0,218)-(527,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1897: Library stair landing trastion t
+S1897: Library stair landing trastion to study area
   bg=ls1g  amb=mysthevy
   [0] HOT_1FR_SCENE_CHANGE  "library, trastion to study area"  → S1894  fr=84  hs=(9,105)-(269,219)
   [1] HOT_1FR_EXITSCENE  "1FR scene exit->stair transtiona"  → S1898  hs=(0,250)-(527,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1898: Library stair landing trastion f
+S1898: Library stair landing trastion from study area
   bg=ls1r  amb=mysthevy
   [0] HOT_1FR_SCENE_CHANGE  "library, trastion to stair landi"  → S1884  fr=84  hs=(242,86)-(361,216)
   [1] HOT_1FR_EXITSCENE  "1FR scene exit->stair transtiona"  → S1897  hs=(0,218)-(527,291)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1899: Library study area->table w/ boo
+S1899: Library study area->table w/ books
   bg=lg1b  amb=mysthevy
   [0] HOT_1FR_SCENE_CHANGE  "library, books on tabel extra cu"  → S1840  hs=(293,73)-(496,206)
   [1] HOT_1FR_EXITSCENE  "1FR scene exit, table->node"  → S1904  hs=(0,218)-(527,291)
@@ -3057,7 +3057,7 @@ S1900: Middle Catwalk to Study
   [1] HOT_1FR_EXITSCENE  "1FR scene exit->node"  → S1903  hs=(0,249)-(531,286)
 
 ──────────────────────────────────────────────────────────────────────────────
-S1901: Library xtion catwalk to study n
+S1901: Library xtion catwalk to study node
   bg=lb1l  amb=mysthevy
   [0] HOT_1FR_SCENE_CHANGE  "to catwalk"  → S1902  hs=(7,4)-(150,218)
   [1] HOT_1FR_SCENE_CHANGE  "to catwalk"  → S1899  hs=(263,187)-(409,264)
@@ -3226,7 +3226,7 @@ S2073: epilogue
   [1] WIN_GAME  "Player has WON"  IF flag[44]==2  YOU WIN
 
 ──────────────────────────────────────────────────────────────────────────────
-S2076: Boiler, no chains & no match boo
+S2076: Boiler, no chains & no match book
   bg=sb1x  amb=drone1
   [0] PLAY_DIGI_SOUND  "boiler"  snd="boilhum"
   [1] HOT_MULTIFRAME_SCENE_CHANGE  "Boiler->button cu"  → S2079  6 frames, f0=(4,173)-(45,258)
@@ -3449,7 +3449,7 @@ S2097: Boiler,operating gauges sign
   [6] SCENE_CHANGE  "scene change,kitchen explosion w"  → S2062  IF flag[44]==2+180s
 
 ──────────────────────────────────────────────────────────────────────────────
-S2098: elevator->maintance closet door 
+S2098: elevator->maintance closet door cu
   bg=evback1  amb=feardang
   [0] HOT_1FR_EXITSCENE  "1FR scene exit,closet door cu->f"  → S52  hs=(4,222)-(531,286)
   [1] HOT_1FR_SCENE_CHANGE  "to hall5 node"  → S1450  fr=84  hs=(215,21)-(319,203)
@@ -3652,7 +3652,7 @@ S3214: Daryl in Diner
   [0] CONVERSATION_VIDEO  "daryl:  cash for school"  node="d63"  NPC: "<i>I needed the cash for school next year. So, I went for it"
 
 ──────────────────────────────────────────────────────────────────────────────
-S3215: have met hulk,not talked  to dar
+S3215: have met hulk,not talked  to daryl about hulk
   bg=dd1d  amb=aunthous
   [0] CONVERSATION_VIDEO  "Daryl diner->Mithch threatned me"  node="d64"  NPC: "<i>But then Mitch threatened me.<n><o>"  1 choices    [0] "<c1>S<c0>o you were a drug runner.  Oh D" → nd62az
 

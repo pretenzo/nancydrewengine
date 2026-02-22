@@ -149,7 +149,7 @@ if __name__ == '__main__':
 
     total_frames = 0
     for avf_path in sorted(avf_files):
-        name = os.path.splitext(os.path.basename(avf_path))[0]
+        name = os.path.splitext(os.path.basename(avf_path))[0].lower()
         try:
             avf = decode_avf(avf_path)
             print(f"{name}: {avf['width']}×{avf['height']}, {avf['num_frames']} frames")
@@ -161,10 +161,6 @@ if __name__ == '__main__':
                 png_path = os.path.join(out_dir, f"{name}_{i:03d}.png")
                 frame.save(png_path)
                 total_frames += 1
-
-            # Also save frame 0 as the "thumbnail" with just the base name
-            if avf['frames'][0] is not None:
-                avf['frames'][0].save(os.path.join(out_dir, f"{name}.png"))
 
             # Save animated GIF for multi-frame AVFs
             if avf['num_frames'] > 1:

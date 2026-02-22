@@ -118,7 +118,7 @@ if __name__ == '__main__':
 
     ok = err = 0
     for src in his_files:
-        name = os.path.splitext(os.path.basename(src))[0]
+        name = os.path.splitext(os.path.basename(src))[0].lower()
         dst  = os.path.join(out_dir, name + '.wav')
         try:
             convert_file(src, dst)
