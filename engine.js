@@ -1010,6 +1010,15 @@ const ND = (() => {
   function showMapDialog() {
     mapBtns.innerHTML = '';
     MAP_LOCATIONS.forEach(loc => {
+      // Day/night diner filtering based on story progression flags:
+      //   F5: 1=early game, 2=watched blackmail tape
+      //   F20: 1=nighttime (default), 2=daytime (post-Connie confession)
+      const f5 = state.flags[5] ?? 1, f20 = state.flags[20] ?? 1;
+      // Hide Diner Day when nighttime (after tape but before Connie confession)
+      if (loc.id === 'S10' && f5 === 2 && f20 !== 2) return;
+      // Hide Diner Night when daytime or early game
+      if (loc.id === 'S888' && (f5 !== 2 || f20 === 2)) return;
+
       const btn = document.createElement('button');
       btn.className = 'map-loc-btn';
       btn.textContent = loc.label;
@@ -1059,7 +1068,7 @@ const ND = (() => {
     'S5000': { name: "Jake's Locker Combination", successFlags: [{flag: 0, value: 2}],  successScene: 'S1426', backScene: 'S1425' },
     'S5001': { name: 'Boiler Chain Padlock',      successFlags: [],                     successScene: 'S5002', backScene: 'S2099' },
     'S5002': { name: 'Boiler Lever Puzzle',       successFlags: [{flag: 62, value: 2}], successScene: 'S2060', backScene: 'S2061' },
-    'S50':   { name: 'Boiler Room Keypad',        successFlags: [{flag: 92, value: 1}], successScene: 'S2061', backScene: 'S1457' },
+    'S50':   { name: 'Boiler Room Keypad',        successFlags: [{flag: 92, value: 1}], successScene: 'S1460', backScene: 'S1457' },
     'S51':   { name: 'Boiler Room Keypad',        successFlags: [{flag: 59, value: 2}], successScene: 'S1460', backScene: 'S1457' },
     'S56':   { name: "Aunt Eloise's Safe",        successFlags: [{flag: 41, value: 2}], successScene: 'S57',   backScene: 'S626' },
     'S1620': { name: 'Computer Login',            successFlags: [{flag: 86, value: 1}], successScene: 'S1622', backScene: 'S1613' },
@@ -1769,7 +1778,20 @@ const ND = (() => {
     // tail_entry). This makes boiler room scenes route to the "chains on /
     // about to explode" variants.
     if (sceneId === 'S3216') {
+      state.flags[62] = 1;  // Boiler crisis active
+      state.flags[10] = 2;  // Sabotaged elevator (routes S53→S71→S72→S30→S2077)
+    }
+    // S1460 (open maint door): Entry hotspots are gated on F62==1 (crisis) and
+    // F62==2 (post-crisis), but F62==0 (pre-crisis) should also allow entry via
+    // the normal closet (S52).  The original engine defaulted F62 to 1.
+    if (sceneId === 'S1460' && (state.flags[62] ?? 0) === 0) {
       state.flags[62] = 1;
+    }
+    // S53 (elevator button CU): The EFMHS sets F45=2 (button pressed) but the
+    // SCENE_CHANGE conditions check F44==2 (likely decoder off-by-one).  Bridge
+    // the gap so the Tier 3 SCENE_CHANGE reload fires the elevator animation.
+    if (sceneId === 'S53' && state.flags[45] === 2) {
+      state.flags[44] = 2;
     }
 
     const sum = scene.summary;
@@ -2506,6 +2528,18 @@ const ND = (() => {
       }
     }
 
+    // Boiler room flags use a 0=initial, 1=triggered pattern (unlike question
+    // flags which use 1=available, 2=asked).  evalCond defaults unset flags to
+    // 1 via ?? 1, which would make the boiler crisis active from game start.
+    // Explicitly init these to 0 so flag_check conditions don't false-positive.
+    //   F61: chain visibility (0=no chains, 1=chains visible after crisis)
+    //   F62: boiler crisis (0=safe, 1=crisis active, 2=lever puzzle solved)
+    //   F88: vent shaft grate (0=closed, 1=open)
+    //   F98: match/lighter state (0=initial, 1=has match)
+    for (const fid of [61, 62, 88, 98]) {
+      if (!(fid in state.flags)) state.flags[fid] = 0;
+    }
+
     canvas.addEventListener('click', onCanvasClick);
     canvas.addEventListener('contextmenu', e => {
       e.preventDefault();
@@ -2717,7 +2751,30 @@ const ND = (() => {
     refreshDebugPanel();
   }
 
+  function debugBoilerEmergency() {
+    // Set all prerequisites for the boiler emergency sequence:
+    // NPCs met
+    state.flags[38] = 2; // Daryl met
+    state.flags[19] = 2; // Connie met
+    state.flags[29] = 2; // Hulk met
+    state.flags[11] = 2; // Hal met
+    // Clues needed for DIC14 (blackmail confrontation with Daryl)
+    state.flags[5]  = 2; // Watched blackmail tape
+    state.flags[39] = 2; // Blackmail evidence found (set to 2 = already asked DIC14)
+    // Simulate having completed the DIC14 conversation chain → S3216
+    state.flags[40] = 2; // Daryl revealed Mitch (set by S3216 tail_entry)
+    state.flags[62] = 1; // Boiler crisis active (set by engine hardcode on S3216)
+    state.flags[10] = 2; // Sabotaged elevator (routes to crisis boiler room)
+    // Inventory items needed to solve the crisis
+    state.inventory.add(0); // Bolt cutters (to cut chains)
+    state.inventory.add(8); // Work gloves (to open padlock)
+    updateInventoryBar();
+    refreshDebugPanel();
+    // Navigate to the boiler room door
+    loadScene('S1457', 0);
+  }
+
   return { init, loadScene, hideConv, continueConv, hideMapDialog, toggleDebug, goToScene, back, loadSecondChance,
-           togglePanel, debugToggleItem, debugRestart, debugAskAllQuestions, debugAddAllItems };
+           togglePanel, debugToggleItem, debugRestart, debugAskAllQuestions, debugAddAllItems, debugBoilerEmergency };
 
 })();
