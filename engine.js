@@ -300,6 +300,7 @@ const ND = (() => {
   };
   let timerCheckInterval = null;
   let secondChanceSave = null; // Auto-checkpoint before dangerous scenes
+  let savTemplate = null;      // ArrayBuffer from last loaded .SAV — used as export template
 
   let scenes = {};         // All scenes from JSON
   let convIndex = {};      // node_id.toUpperCase() → action object
@@ -1926,22 +1927,61 @@ const ND = (() => {
 
   // ── .SAV file import (original Game.exe save format) ────────────────────
   //
-  // Binary layout of NANSCK*.SAV (11698 bytes):
+  // Binary layout of NANSCK*.SAV (11698 bytes = 0x2DB2):
+  //
+  // Header (0x00–0x7A):
   //   0x00       LE32   valid flag (1 = valid save)
-  //   0x04       30B    publisher string ("HER Interactive Presents")
-  //   0x22       30B    series string ("Nancy Drew")
-  //   0x40       30B    subtitle string ("Secrets Can Kill")
-  //   0x5E       LE32   unknown (always 1)
-  //   0x62       2B     padding
-  //   0x64       var    null-terminated description (padded to 0x7A)
-  //   0x7B       5911B  Block1 (DAT_004c11a5) — primary game state
-  //     +0x134 (file 0x1AF): inventory array — first byte = count,
-  //            then item IDs at 2-byte stride, 0xFF = empty slot
-  //     +0x1D9 (file 0x254): 122 flags as LE32 (values 0/1/2)
-  //   0x1792     5664B  Block2 (DAT_004d0aca) — scene state
-  //     +0x00 (file 0x1792): 50B scene description (null-terminated)
-  //     +0x32 (file 0x17C4): 10B background AVF name
-  //     +0x40 (file 0x17D2): 10B ambient sound name
+  //   0x04       30B    publisher ("HER Interactive Presents")
+  //   0x22       30B    series ("Nancy Drew")
+  //   0x40       30B    subtitle ("Secrets Can Kill")
+  //   0x5E       LE16   version field 1 (=1)
+  //   0x60       LE16   version field 2 (=0)
+  //   0x62       LE16   version field 3 (=0)
+  //   0x64       22B    save description (null-terminated)
+  //
+  // Block 1 (0x7B, 5911B) — DAT_004c11a5 — primary game state:
+  //   +0x000  1B     game init flag (1=initialized)
+  //   +0x004  LE32   engine mode (7=playing)
+  //   +0x024  LE32   game phase (3=playing)
+  //   +0x044  120B   30 NPC states (LE32 each, default=2)
+  //   +0x0BC  120B   30 NPC timestamps (LE32 each)
+  //   +0x134  LE16   inventory count
+  //   +0x136  22B    11 inventory item IDs (LE16 each, 0xFFFF=empty)
+  //   +0x14C  44B    11 item states (LE32: 1=not obtained, 2=in inventory)
+  //   +0x178  44B    11 item timestamps (LE32 each)
+  //   +0x1A4  4B     wall clock reference (GetTickCount)
+  //   +0x1A8  4B     total game time (ms)
+  //   +0x1AC  2+2+2  game time S:M:H (LE16 each)
+  //   +0x1B2  4B     segment timer (ms)
+  //   +0x1B6  2+2+2  segment timer S:M:H
+  //   +0x1BC  2+2+2  in-game clock M:H:D
+  //   +0x1C2  4B     next tick threshold
+  //   +0x1C6  4+4    pause-check ticks
+  //   +0x1CE  1B     timed puzzle active (0/1)
+  //   +0x1CF  4+2+2+2 timed puzzle elapsed + S:M:H
+  //   +0x1D9  672B   168 story flags (LE32 each, default=1)
+  //   +0x479  672B   168 flag timestamps (LE32 each)
+  //   +0x719  4002B  scene visit counts (~2001 LE16)
+  //   +0x16BB 8B     character visual state
+  //   +0x16C3 2B     active character index
+  //   +0x16C5 8B     walk animation frames
+  //   +0x16CD 74B    pathfinding state
+  //
+  // Block 2 (0x1792, 5664B) — DAT_004d0aca — scene state:
+  //   +0x000  50B    scene description (null-terminated)
+  //   +0x032  10B    background AVF name
+  //   +0x03C  LE16   scene resource type
+  //   +0x03E  LE16   scroll type (1=panoramic, 2=vertical)
+  //   +0x040  10B    ambient sound name
+  //   +0x068  LE16   navigation mode
+  //   +0x07C  1B     music/CD track (1-4)
+  //   +0x400  LE16   scene ID
+  //   +0x418  LE16   initial camera view
+
+  const B1 = 0x7B;   // Block 1 file offset
+  const B2 = 0x1792;  // Block 2 file offset
+  const NUM_FLAGS = 168;
+  const NUM_ITEMS = 11;
 
   function parseSavFile(buf) {
     const d = new DataView(buf);
@@ -1951,47 +1991,59 @@ const ND = (() => {
     if (buf.byteLength !== 11698) throw new Error(`Bad .SAV size: ${buf.byteLength} (expected 11698)`);
     if (d.getUint32(0, true) !== 1) throw new Error('Invalid save file (valid flag ≠ 1)');
 
-    // Read null-terminated ASCII string from buffer
     const readStr = (off, maxLen) => {
       let end = off;
       while (end < off + maxLen && u8[end] !== 0) end++;
       return new TextDecoder('ascii').decode(u8.slice(off, end));
     };
 
-    // Header strings
+    // Header
     const publisher = readStr(0x04, 30);
     const series    = readStr(0x22, 30);
     const subtitle  = readStr(0x40, 30);
     const saveDesc  = readStr(0x64, 22);
 
-    // Flags: 122 LE32 values at file offset 0x254
+    // Block 1: Flags (168 LE32 values)
     const flags = {};
-    for (let i = 0; i < 122; i++) {
-      const val = d.getUint32(0x254 + i * 4, true);
-      if (val !== 1) flags[i] = val;  // only store non-default
+    for (let i = 0; i < NUM_FLAGS; i++) {
+      const val = d.getUint32(B1 + 0x1D9 + i * 4, true);
+      if (val !== 1) flags[i] = val;
     }
 
-    // Inventory: byte at 0x1AF = count, then item IDs at 2-byte stride
-    const invCount = u8[0x1AF];
+    // Block 1: Inventory (LE16 count + 11 LE16 item IDs)
+    const invCount = d.getUint16(B1 + 0x134, true);
     const inventory = [];
-    for (let i = 0; i < invCount && i < 12; i++) {
-      const itemId = u8[0x1AF + 2 + i * 2];
-      if (itemId !== 0xFF) inventory.push(itemId);
+    for (let i = 0; i < invCount && i < NUM_ITEMS; i++) {
+      const itemId = d.getUint16(B1 + 0x136 + i * 2, true);
+      if (itemId !== 0xFFFF) inventory.push(itemId);
     }
 
-    // Scene identification from Block2
-    const sceneDesc = readStr(0x1792, 50);
-    const bgAvf     = readStr(0x17C4, 10);
-    const ambient   = readStr(0x17D2, 10);
+    // Block 1: Item obtained states (11 LE32: 1=not obtained, 2=obtained)
+    const itemStates = [];
+    for (let i = 0; i < NUM_ITEMS; i++) {
+      itemStates.push(d.getUint32(B1 + 0x14C + i * 4, true));
+    }
 
-    return { publisher, series, subtitle, saveDesc, flags, inventory, sceneDesc, bgAvf, ambient };
+    // Block 1: Game time
+    const gameTimeMs = d.getUint32(B1 + 0x1A8, true);
+
+    // Block 2: Scene identification
+    const sceneDesc = readStr(B2, 50);
+    const bgAvf     = readStr(B2 + 0x32, 10);
+    const ambient   = readStr(B2 + 0x40, 10);
+    const sceneId   = d.getUint16(B2 + 0x400, true);
+
+    return { publisher, series, subtitle, saveDesc, flags, inventory, itemStates, gameTimeMs, sceneDesc, bgAvf, ambient, sceneId };
   }
 
   function findSceneForSav(parsed) {
+    // Pass 0: direct scene ID lookup (most reliable — stored at B2+0x400)
+    if (parsed.sceneId && scenes['S' + parsed.sceneId]) return 'S' + parsed.sceneId;
+
     const targetDesc = parsed.sceneDesc.trim().toLowerCase();
     const targetBg   = parsed.bgAvf.trim().toLowerCase();
 
-    // Pass 1: match by description + background AVF (most precise)
+    // Pass 1: match by description + background AVF
     for (const [sid, scene] of Object.entries(scenes)) {
       const desc = (scene.summary?.description || '').trim().toLowerCase();
       const bg   = (scene.summary?.bg_avf || '').trim().toLowerCase();
@@ -2030,6 +2082,7 @@ const ND = (() => {
   }
 
   function loadSavFile(buf) {
+    savTemplate = buf.slice(0); // stash a copy as export template
     const parsed = parseSavFile(buf);
     console.log('Parsed .SAV:', parsed);
 
@@ -2090,6 +2143,131 @@ const ND = (() => {
       reader.readAsArrayBuffer(file);
     };
     input.click();
+  }
+
+  function promptLoadSavTemplate() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.SAV,.sav';
+    input.onchange = () => {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const buf = reader.result;
+          if (buf.byteLength !== 11698) throw new Error(`Bad .SAV size: ${buf.byteLength}`);
+          if (new DataView(buf).getUint32(0, true) !== 1) throw new Error('Invalid save file');
+          savTemplate = buf.slice(0);
+          sceneInfo.textContent += ' [Template loaded: ' + file.name + ']';
+          console.log('Loaded .SAV template:', file.name);
+          refreshDebugPanel();
+        } catch (e) {
+          alert('Error loading .SAV template: ' + e.message);
+          console.error(e);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    };
+    input.click();
+  }
+
+  // ── .SAV file export (write current state to original binary format) ─────
+  //
+  // Two modes:
+  //   Template mode (savTemplate set): clones the template, preserving timers,
+  //     visit counts, pathfinding, and action records, then overwrites tracked fields.
+  //   Clean mode (no template): builds from scratch with zero-filled unknown regions.
+
+  function buildSavFile() {
+    const SIZE = 11698;
+    const buf = savTemplate ? savTemplate.slice(0) : new ArrayBuffer(SIZE);
+    const d = new DataView(buf);
+    const u8 = new Uint8Array(buf);
+
+    const writeStr = (off, maxLen, str) => {
+      const bytes = new TextEncoder().encode(str);
+      for (let i = 0; i < maxLen; i++) u8[off + i] = i < bytes.length ? bytes[i] : 0;
+    };
+
+    // ── Header (0x00–0x7A) ──
+    d.setUint32(0x00, 1, true);                               // valid flag
+    writeStr(0x04, 30, 'HER Interactive Presents');
+    writeStr(0x22, 30, 'Nancy Drew');
+    writeStr(0x40, 30, 'Secrets Can Kill');
+    d.setUint16(0x5E, 1, true);                               // version field 1
+    d.setUint16(0x60, 0, true);                               // version field 2
+    d.setUint16(0x62, 0, true);                               // version field 3
+    const curScene = scenes[state.currentSceneId];
+    const saveLabel = curScene?.summary?.description || state.currentSceneId || 'Unknown';
+    writeStr(0x64, 22, saveLabel.substring(0, 21));
+
+    // ── Block 1: Game State (B1 = 0x7B) ──
+
+    // +0x000: game init flag
+    u8[B1] = 1;
+    // +0x004: engine mode (7 = playing)
+    d.setUint32(B1 + 0x004, 7, true);
+    // +0x024: game phase (3 = playing)
+    d.setUint32(B1 + 0x024, 3, true);
+
+    // +0x044: 30 NPC states (default = 2)
+    for (let i = 0; i < 30; i++) d.setUint32(B1 + 0x044 + i * 4, 2, true);
+
+    // +0x134: inventory count (LE16) + 11 item IDs (LE16) + 11 item states (LE32)
+    const invItems = [...state.inventory];
+    d.setUint16(B1 + 0x134, invItems.length, true);
+    for (let i = 0; i < NUM_ITEMS; i++) {
+      d.setUint16(B1 + 0x136 + i * 2, i < invItems.length ? invItems[i] : 0xFFFF, true);
+    }
+    for (let i = 0; i < NUM_ITEMS; i++) {
+      d.setUint32(B1 + 0x14C + i * 4, state.inventory.has(i) ? 2 : 1, true);
+    }
+
+    // +0x1D9: 168 story flags (LE32, default=1)
+    for (let i = 0; i < NUM_FLAGS; i++) {
+      const val = (i in state.flags) ? state.flags[i] : 1;
+      d.setUint32(B1 + 0x1D9 + i * 4, val, true);
+    }
+
+    // ── Block 2: Scene State (B2 = 0x1792) ──
+    const desc = curScene?.summary?.description || '';
+    const bg   = curScene?.summary?.bg_avf || '';
+    const amb  = curScene?.summary?.ambient_snd || '';
+    writeStr(B2, 50, desc);                                   // +0x000: scene description
+    writeStr(B2 + 0x32, 10, bg);                              // +0x032: background AVF
+    d.setUint16(B2 + 0x03C, 2, true);                        // +0x03C: scene resource type
+    d.setUint16(B2 + 0x03E, 2, true);                        // +0x03E: scroll type
+    writeStr(B2 + 0x40, 10, amb);                             // +0x040: ambient sound
+    d.setUint16(B2 + 0x068, 1, true);                        // +0x068: navigation mode
+    u8[B2 + 0x07C] = 1;                                      // +0x07C: music track
+
+    const sceneNum = parseInt((state.currentSceneId || '').replace(/\D/g, '')) || 0;
+    d.setUint16(B2 + 0x400, sceneNum, true);                 // +0x400: scene ID
+    d.setUint16(B2 + 0x418, state.currentVariant || 0, true);// +0x418: camera view
+
+    return buf;
+  }
+
+  function hasSavTemplate() { return !!savTemplate; }
+
+  function exportSavFile() {
+    try {
+      const mode = savTemplate ? 'template' : 'clean';
+      const buf = buildSavFile();
+      const blob = new Blob([buf], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'NANSCK_EXPORT.SAV';
+      a.click();
+      URL.revokeObjectURL(url);
+      sceneInfo.textContent += ` [.SAV Exported (${mode})]`;
+      console.log(`.SAV exported (${mode} mode), scene ${state.currentSceneId}`);
+    } catch (e) {
+      alert('Error exporting .SAV file: ' + e.message);
+      console.error(e);
+    }
   }
 
   // ── Inventory bar ────────────────────────────────────────────────────────
@@ -3198,6 +3376,9 @@ const ND = (() => {
         invGrid.appendChild(btn);
       }
     }
+    // Export button template indicator
+    const expBtn = document.getElementById('dp-export-sav');
+    if (expBtn) expBtn.textContent = savTemplate ? 'Export .SAV \u2714' : 'Export .SAV';
   }
 
   function debugToggleItem(id) {
@@ -3292,6 +3473,6 @@ const ND = (() => {
 
   return { init, loadScene, hideConv, continueConv, hideMapDialog, toggleDebug, toggleAnimation, goToScene, back, loadSecondChance,
            togglePanel, debugToggleItem, debugRestart, debugAskAllQuestions, debugAddAllItems, debugBoilerEmergency,
-           debugTimerSkip, debugTimerAdd, debugEndgame, promptLoadSavFile };
+           debugTimerSkip, debugTimerAdd, debugEndgame, promptLoadSavFile, promptLoadSavTemplate, exportSavFile, hasSavTemplate };
 
 })();

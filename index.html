@@ -465,6 +465,8 @@
         <button class="dp-btn" onclick="ND.goToScene(document.getElementById('dp-scene').value)">Go</button>
         <button class="dp-btn" onclick="ND.debugRestart()">Restart</button>
         <button class="dp-btn" onclick="ND.promptLoadSavFile()" style="background:#1a1a32;color:#9af">Load .SAV</button>
+        <button class="dp-btn" onclick="ND.promptLoadSavTemplate()" style="background:#1a1a32;color:#9af" title="Load a reference .SAV as template for export (preserves timers, visit counts, etc.)">Template</button>
+        <button class="dp-btn" onclick="ND.exportSavFile()" style="background:#1a1a32;color:#9af" id="dp-export-sav">Export .SAV</button>
       </div>
       <div class="dp-row" id="dp-checkpoints">
         <button class="dp-btn" onclick="ND.goToScene('S5')">Intro</button>
