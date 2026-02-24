@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nancy Drew: Secrets Can Kill</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d0d0d;
+      color: #ccc;
+      font-family: Georgia, 'Times New Roman', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+    }
+
+    #title {
+      color: #b8903a;
+      font-size: 1em;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    /* ── Game viewport ── */
+    #game-wrap {
+      position: relative;
+      background: #000;
+      border: 1px solid #2a2a2a;
+      box-shadow: 0 0 40px rgba(0,0,0,0.8);
+    }
+
+    #game-canvas {
+      display: block;
+      /* Native 536×292 — CSS-scaled 1.5× */
+      width: 804px;
+      height: 438px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      cursor: default;
+    }
+
+    /* ── Conversation overlay ── */
+    #conv-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 32px;
+      z-index: 20;
+    }
+    #conv-overlay.active { display: flex; }
+
+    #conv-speaker {
+      color: #b8903a;
+      font-size: 0.85em;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    #conv-text {
+      color: #eee;
+      font-size: 0.92em;
+      line-height: 1.7;
+      text-align: center;
+      max-width: 560px;
+      margin-bottom: 22px;
+      white-space: pre-wrap;
+    }
+
+    #conv-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .choice-btn {
+      background: #10101e;
+      border: 1px solid #4a3a18;
+      color: #ddd;
+      padding: 9px 16px;
+      font-family: Georgia, serif;
+      font-size: 0.82em;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .choice-btn:hover { background: #1a1a32; border-color: #b8903a; color: #fff; }
+    .choice-btn .hl { color: #b8903a; font-weight: bold; }
+
+    #conv-continue {
+      margin-top: 14px;
+      background: none;
+      border: 1px solid #444;
+      color: #888;
+      padding: 5px 22px;
+      font-family: Georgia, serif;
+      font-size: 0.78em;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+    #conv-continue:hover { border-color: #b8903a; color: #b8903a; }
+
+    /* ── Inventory bar ── */
+    #inv-bar {
+      width: 804px;
+      min-height: 68px;
+      background: #080808;
+      border-top: 1px solid #1a1a1a;
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
+      gap: 6px;
+      overflow-x: auto;
+    }
+
+    .inv-slot {
+      flex-shrink: 0;
+      width: 58px;
+      height: 58px;
+      border: 1px solid #2a2a2a;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .inv-slot:hover { border-color: #b8903a; }
+    .inv-slot.inv-selected { border-color: #e8c34a; background: #1a1708; box-shadow: 0 0 6px rgba(232,195,74,0.4); }
+    .inv-slot canvas { display: block; }
+    .inv-slot .inv-label {
+      font-size: 7px;
+      color: #888;
+      text-align: center;
+      padding: 1px 2px;
+      line-height: 1.2;
+    }
+
+    #inv-empty {
+      font-size: 0.72em;
+      color: #333;
+      padding: 0 12px;
+      font-style: italic;
+    }
+
+    /* ── Status / debug bar ── */
+    #status-bar {
+      width: 804px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 2px;
+      font-size: 0.68em;
+      color: #444;
+      gap: 12px;
+    }
+
+    #scene-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #scene-input {
+      background: #111;
+      border: 1px solid #333;
+      color: #888;
+      padding: 2px 6px;
+      font-family: monospace;
+      font-size: 0.9em;
+      width: 60px;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: 1px solid #333;
+      color: #555;
+      padding: 2px 8px;
+      font-size: 0.9em;
+      cursor: pointer;
+      font-family: Georgia, serif;
+    }
+    .ctrl-btn:hover { color: #999; border-color: #666; }
+    .ctrl-btn:disabled { color: #333; cursor: default; border-color: #222; }
+    .ctrl-btn:disabled:hover { color: #333; border-color: #222; }
+
+    #scene-info { flex: 1; }
+
+    #debug-info {
+      font-family: monospace;
+      font-size: 0.85em;
+      color: #444;
+      min-width: 120px;
+      text-align: right;
+    }
+
+    /* ── Map / travel overlay ── */
+    #map-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      z-index: 20;
+    }
+    #map-overlay.active { display: flex; }
+
+    #map-title {
+      color: #b8903a;
+      font-size: 0.8em;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    #map-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 260px;
+    }
+
+    .map-loc-btn {
+      background: #10101e;
+      border: 1px solid #4a3a18;
+      color: #ddd;
+      padding: 10px 16px;
+      font-family: Georgia, serif;
+      font-size: 0.85em;
+      cursor: pointer;
+      text-align: center;
+      letter-spacing: 1px;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .map-loc-btn:hover { background: #1a1a32; border-color: #b8903a; color: #fff; }
+    .map-loc-btn.current { border-color: #555; color: #555; cursor: default; }
+    .map-loc-btn.current:hover { background: #10101e; border-color: #555; color: #555; }
+
+    #map-close {
+      margin-top: 6px;
+      background: none;
+      border: 1px solid #333;
+      color: #555;
+      padding: 4px 18px;
+      font-family: Georgia, serif;
+      font-size: 0.75em;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+    #map-close:hover { border-color: #b8903a; color: #b8903a; }
+
+    /* ── Game-end overlay ── */
+    #gameover-overlay, #puzzle-overlay, #continue-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    #gameover-overlay.active, #puzzle-overlay.active, #continue-overlay.active { display: flex; }
+
+    .overlay-title {
+      color: #b8903a;
+      font-size: 1.1em;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .overlay-msg {
+      color: #ccc;
+      font-size: 0.85em;
+      text-align: center;
+      max-width: 420px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .overlay-btn {
+      background: #10101e;
+      border: 1px solid #4a3a18;
+      color: #ddd;
+      padding: 10px 28px;
+      font-family: Georgia, serif;
+      font-size: 0.85em;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .overlay-btn:hover { background: #1a1a32; border-color: #b8903a; color: #fff; }
+
+    /* ── Debug panel ── */
+    #debug-panel {
+      display: none;
+      width: 804px;
+      background: #0a0a0a;
+      border: 1px solid #222;
+      border-top: none;
+      padding: 6px 8px;
+      font-size: 0.68em;
+      color: #888;
+    }
+    #debug-panel.active { display: block; }
+
+    #debug-panel details { margin-bottom: 4px; }
+    #debug-panel summary {
+      cursor: pointer;
+      color: #b8903a;
+      font-size: 0.95em;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 0;
+      user-select: none;
+    }
+
+    .dp-section { padding: 4px 0 4px 4px; }
+    .dp-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; align-items: center; }
+
+    .dp-input {
+      background: #111;
+      border: 1px solid #333;
+      color: #aaa;
+      padding: 2px 6px;
+      font-family: monospace;
+      font-size: 0.95em;
+      width: 60px;
+    }
+    .dp-narrow { width: 44px; }
+
+    .dp-btn {
+      background: #111;
+      border: 1px solid #333;
+      color: #777;
+      padding: 2px 8px;
+      font-family: monospace;
+      font-size: 0.9em;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .dp-btn:hover { color: #ccc; border-color: #666; }
+    .dp-btn.dp-active { color: #6f6; border-color: #4a4; background: #0a140a; }
+    .dp-btn.dp-active:hover { color: #9f9; border-color: #6c6; }
+
+    .dp-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+
+    .dp-dump {
+      font-family: monospace;
+      font-size: 0.9em;
+      color: #666;
+      padding: 4px;
+      max-height: 120px;
+      overflow-y: auto;
+      line-height: 1.6;
+      word-break: break-all;
+    }
+
+    .dp-cat { color: #b8903a; font-size: 0.85em; margin: 6px 0 2px; letter-spacing: 1px; }
+    .dp-cat:first-child { margin-top: 0; }
+    .dp-flag-btn {
+      background: #111;
+      border: 1px solid #333;
+      color: #666;
+      padding: 2px 7px;
+      font-family: monospace;
+      font-size: 0.85em;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .dp-flag-btn:hover { border-color: #666; color: #aaa; }
+    .dp-flag-btn.dp-f1 { color: #aa8; border-color: #554; background: #111108; }
+    .dp-flag-btn.dp-f2 { color: #6f6; border-color: #4a4; background: #0a140a; }
+
+    /* ── Conversation overlay: below-canvas mode (animation ON) ── */
+    #conv-overlay.below-canvas {
+      position: static;
+      background: #0d0d0d;
+      border: 1px solid #2a2a2a;
+      border-top: none;
+      width: 804px;
+      max-height: 250px;
+      overflow-y: auto;
+      padding: 16px 24px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="title">Nancy Drew: Secrets Can Kill</div>
+
+<div id="game-wrap">
+  <canvas id="game-canvas" width="536" height="292"></canvas>
+
+  <div id="conv-overlay">
+    <div id="conv-speaker"></div>
+    <div id="conv-text"></div>
+    <div id="conv-choices"></div>
+    <button id="conv-continue" onclick="ND.continueConv()">[ Continue ]</button>
+  </div>
+
+  <div id="map-overlay">
+    <div id="map-title">Travel Map</div>
+    <div id="map-btns"></div>
+    <button id="map-close" onclick="ND.hideMapDialog()">[ Close ]</button>
+  </div>
+
+  <div id="gameover-overlay">
+    <div id="gameover-title" class="overlay-title"></div>
+    <div id="gameover-msg" class="overlay-msg"></div>
+    <button id="second-chance-btn" class="overlay-btn" onclick="ND.loadSecondChance()" style="display:none">[ Second Chance ]</button>
+    <button class="overlay-btn" onclick="location.reload()">[ Play Again ]</button>
+  </div>
+
+  <div id="puzzle-overlay">
+    <div class="overlay-title">Puzzle</div>
+    <div id="puzzle-name" class="overlay-msg"></div>
+    <button id="puzzle-solve" class="overlay-btn">[ Solve Puzzle ]</button>
+    <button id="puzzle-back" class="overlay-btn">[ Go Back ]</button>
+  </div>
+
+  <div id="continue-overlay">
+    <div class="overlay-title">Nancy Drew: Secrets Can Kill</div>
+    <div class="overlay-msg">A saved game was found.</div>
+    <button id="continue-btn" class="overlay-btn">[ Continue ]</button>
+    <button id="newgame-btn" class="overlay-btn">[ New Game ]</button>
+  </div>
+</div>
+
+<div id="inv-bar">
+  <span id="inv-empty">Inventory empty</span>
+</div>
+
+<div id="status-bar">
+  <div id="scene-nav">
+    <input id="scene-input" type="text" placeholder="S10" title="Go to scene">
+    <button class="ctrl-btn" onclick="ND.goToScene(document.getElementById('scene-input').value)">Go</button>
+    <button id="menu-btn" class="ctrl-btn" onclick="ND.showMenu(true)">Menu</button>
+    <button class="ctrl-btn" onclick="ND.toggleDebug()">Debug</button>
+    <button class="ctrl-btn" onclick="ND.back()">Back</button>
+    <button id="anim-toggle-btn" class="ctrl-btn dp-active" onclick="ND.toggleAnimation()">Anim: ON</button>
+    <button id="voice-toggle-btn" class="ctrl-btn dp-active" onclick="ND.toggleVoices()">Voice: ON</button>
+    <button id="autopan-toggle-btn" class="ctrl-btn dp-active" onclick="ND.toggleAutoPan()">AutoPan: ON</button>
+  </div>
+  <div id="scene-info">Loading…</div>
+  <div id="debug-info"></div>
+</div>
+
+<div id="debug-panel">
+  <details open>
+    <summary>Scene</summary>
+    <div class="dp-section">
+      <div class="dp-row">
+        <input id="dp-scene" type="text" placeholder="S10" class="dp-input">
+        <button class="dp-btn" onclick="ND.goToScene(document.getElementById('dp-scene').value)">Go</button>
+        <button class="dp-btn" onclick="ND.debugRestart()">Restart</button>
+        <button class="dp-btn" onclick="ND.promptLoadSavFile()" style="background:#1a1a32;color:#9af">Load .SAV</button>
+        <button class="dp-btn" onclick="ND.promptLoadSavTemplate()" style="background:#1a1a32;color:#9af" title="Load a reference .SAV as template for export (preserves timers, visit counts, etc.)">Template</button>
+        <button class="dp-btn" onclick="ND.exportSavFile()" style="background:#1a1a32;color:#9af" id="dp-export-sav">Export .SAV</button>
+      </div>
+      <div class="dp-row" id="dp-checkpoints">
+        <button class="dp-btn" onclick="ND.goToScene('S5')">Intro</button>
+        <button class="dp-btn" onclick="ND.goToScene('S9')">Aunt's House</button>
+        <button class="dp-btn" onclick="ND.goToScene('S11')">School</button>
+        <button class="dp-btn" onclick="ND.goToScene('S10')">Diner Day</button>
+        <button class="dp-btn" onclick="ND.goToScene('S888')">Diner Night</button>
+        <button class="dp-btn" onclick="ND.goToScene('S1200')">Pharmacy</button>
+        <button class="dp-btn" onclick="ND.goToScene('S840')">Kitchen Door</button>
+        <button class="dp-btn" onclick="ND.goToScene('S1425')">Jake Locker</button>
+        <button class="dp-btn" onclick="ND.goToScene('S1410')">Library</button>
+        <button class="dp-btn" onclick="ND.goToScene('S1457')">Boiler Room</button>
+        <button class="dp-btn" onclick="ND.goToScene('S1250')">Endgame</button>
+        <button class="dp-btn" onclick="ND.debugBoilerEmergency()" style="background:#a33;color:#fff">Boiler Emergency</button>
+        <button class="dp-btn" onclick="ND.debugEndgame()" style="background:#a33;color:#fff">Endgame Setup</button>
+      </div>
+      <div class="dp-row" id="dp-timer-row" style="display:none">
+        <span id="dp-timer" style="font-family:monospace;color:#f84;font-size:13px">Timer: inactive</span>
+        <button class="dp-btn" onclick="ND.debugTimerSkip()" style="background:#a33;color:#fff;margin-left:8px">Timer &rarr;10s</button>
+        <button class="dp-btn" onclick="ND.debugTimerAdd()" style="margin-left:4px">Timer +10s</button>
+      </div>
+      <div class="dp-row">
+        <button class="dp-btn" onclick="ND.goToScene('S515')">Connie</button>
+        <button class="dp-btn" onclick="ND.goToScene('S824')">Daryl</button>
+        <button class="dp-btn" onclick="ND.goToScene('S1110')">Hal</button>
+        <button class="dp-btn" onclick="ND.goToScene('S1333')">Hulk</button>
+      </div>
+    </div>
+  </details>
+  <details>
+    <summary>Flags</summary>
+    <div class="dp-section">
+      <div class="dp-row">
+        <button class="dp-btn" onclick="ND.debugAskAllQuestions()">Ask All Questions</button>
+      </div>
+      <div id="dp-flags-grid"></div>
+    </div>
+  </details>
+  <details>
+    <summary>Inventory</summary>
+    <div class="dp-section">
+      <div class="dp-row">
+        <button class="dp-btn" onclick="ND.debugAddAllItems()">Add All Items</button>
+      </div>
+      <div id="dp-inv-grid" class="dp-grid"></div>
+    </div>
+  </details>
+</div>
+
+<script src="engine_test.js"></script>
+<script>
+  ND.init({
+    scenesUrl:    'nd1_scenes.json',
+    framesDir:    'nd1_avf_frames_webp',
+    atlasDir:     'nd1_atlases',
+    audioDir:     'nd1_audio',
+    spritesDir:   'nd1_images',
+    startScene:   'S5',
+    // Boot-time flag initialization (not set in scene data).
+    // Flag 5 = game chapter/act; value 1 = first visit.
+    // Flag 101 = kitchen state; value 1 = safe (bolt cutter in place).
+    initialFlags: { 5: 1, 101: 1 },
+  });
+</script>
+</body>
+</html>

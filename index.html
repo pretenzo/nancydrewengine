@@ -40,7 +40,7 @@
       height: 438px;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
-      cursor: crosshair;
+      cursor: default;
     }
 
     /* ── Conversation overlay ── */
@@ -192,6 +192,8 @@
       font-family: Georgia, serif;
     }
     .ctrl-btn:hover { color: #999; border-color: #666; }
+    .ctrl-btn:disabled { color: #333; cursor: default; border-color: #222; }
+    .ctrl-btn:disabled:hover { color: #333; border-color: #222; }
 
     #scene-info { flex: 1; }
 
@@ -448,9 +450,12 @@
   <div id="scene-nav">
     <input id="scene-input" type="text" placeholder="S10" title="Go to scene">
     <button class="ctrl-btn" onclick="ND.goToScene(document.getElementById('scene-input').value)">Go</button>
+    <button id="menu-btn" class="ctrl-btn" onclick="ND.showMenu(true)">Menu</button>
     <button class="ctrl-btn" onclick="ND.toggleDebug()">Debug</button>
     <button class="ctrl-btn" onclick="ND.back()">Back</button>
-    <button id="anim-toggle-btn" class="ctrl-btn dp-active" onclick="ND.toggleAnimation()">Anim: ON</button>
+    <button id="anim-toggle-btn" class="ctrl-btn" onclick="ND.toggleAnimation()">Anim: OFF</button>
+    <button id="voice-toggle-btn" class="ctrl-btn dp-active" onclick="ND.toggleVoices()">Voice: ON</button>
+    <button id="autopan-toggle-btn" class="ctrl-btn dp-active" onclick="ND.toggleAutoPan()">AutoPan: ON</button>
   </div>
   <div id="scene-info">Loading…</div>
   <div id="debug-info"></div>

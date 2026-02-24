@@ -5,6 +5,23 @@ const ND = (() => {
   // ── Constants ────────────────────────────────────────────────────────────
   const GAME_W = 536, GAME_H = 292;
 
+  // Base cursor sprite rects in object0.png + CSS hotspot offsets
+  const CURSOR_DEFS = {
+    arrow:        { sx:506, sy:3,  w:29, h:39, hotX:1,  hotY:1  },
+    hand_pointer: { sx:537, sy:3,  w:29, h:39, hotX:10, hotY:3  },
+    magnify:      { sx:568, sy:3,  w:29, h:39, hotX:14, hotY:14 },
+    walk:         { sx:568, sy:85, w:29, h:39, hotX:14, hotY:5  },
+    look:         { sx:506, sy:44, w:29, h:39, hotX:14, hotY:14 },
+    talk:         { sx:506, sy:85, w:29, h:39, hotX:14, hotY:14 },
+    locked:       { sx:537, sy:44, w:29, h:39, hotX:14, hotY:14 },
+    wait:         { sx:537, sy:85, w:29, h:39, hotX:14, hotY:14 },
+  };
+
+  // Inventory cursor y-positions in toolcur1.png (3 columns at x=2, x=33, x=64)
+  const INV_CURSOR_MAP = {
+    0:166, 1:43, 2:289, 3:125, 4:371, 5:330, 6:207, 7:248, 8:84, 9:494, 10:535,
+  };
+
   const SPEAKERS = {
     d: 'Daryl Gray', c: 'Connie Watson', hd: 'Hulk Sanchez',
     h: 'Hal Tanaka', intro: 'Narrator', epil: 'Nancy Drew',
@@ -194,19 +211,19 @@ const ND = (() => {
     ],
   };
 
-  // Sprite sheet source rects per item (from nd1-scene.py SHOW_INVENTORY_ITEM analysis)
+  // Sprite sheet source rects per item (from TOOL extracted from BOOT)
   const ITEM_SPRITES = {
-    0: { sheet: 'DOBJECTS', x: 100, y:   1, w:  89, h: 152 },
-    1: { sheet: 'AOBJECTS', x:   1, y:   1, w:  89, h:  69 },
-    2: { sheet: 'AOBJECTS', x:  92, y:  59, w:  20, h:  20 },
-    3: { sheet: 'SOBJECTS', x:   1, y:   1, w:  60, h:  37 },
-    4: { sheet: null },   // Gun: no sprite sheet entry
-    5: { sheet: 'AOBJECTS', x:  92, y:   1, w:  42, h:  56 },
-    6: { sheet: 'DOBJECTS', x:   1, y:   1, w:  97, h: 205 },
-    7: { sheet: 'SBOBJECT', x:  52, y: 294, w:  88, h:  27 },
-    8: { sheet: 'SBOBJECT', x: 221, y: 170, w: 176, h: 174 },
-    9: { sheet: 'AOBJECTS', x:  82, y:  81, w:  29, h:  39 },
-   10: { sheet: 'AOBJECTS', x:   1, y:  72, w:  79, h: 108 },
+    0:  { sheet: 'TOOL', x: 102, y:  12, w: 42, h: 54 },  // Bolt cutters
+    1:  { sheet: 'TOOL', x:  91, y:  65, w: 59, h: 70 },  // Phone card
+    2:  { sheet: 'TOOL', x: 174, y: 138, w: 45, h: 46 },  // Coin
+    3:  { sheet: 'TOOL', x:  27, y:  13, w: 38, h: 52 },  // Glass cutter
+    4:  { sheet: 'TOOL', x: 174, y:  72, w: 41, h: 56 },  // Gun
+    5:  { sheet: 'TOOL', x:  27, y: 136, w: 37, h: 52 },  // Key (passport)
+    6:  { sheet: 'TOOL', x:  99, y: 128, w: 44, h: 63 },  // Ladle
+    7:  { sheet: 'TOOL', x: 177, y:  14, w: 41, h: 49 },  // Video tape
+    8:  { sheet: 'TOOL', x:  26, y:  74, w: 45, h: 53 },  // Work gloves
+    9:  { sheet: 'TOOL', x:  27, y: 198, w: 37, h: 52 },  // Key (safe)
+    10: { sheet: 'TOOL', x:  96, y: 188, w: 51, h: 66 },  // Remote control
   };
 
   // ── State ────────────────────────────────────────────────────────────────
@@ -220,8 +237,11 @@ const ND = (() => {
     history: [],          // Scene history for Back button
     timerActive: false,
     timerStartTime: 0,
-    animationEnabled: true,
+    animationEnabled: false,
+    voicesEnabled: true,
+    autoPanEnabled: true,
   };
+  let convAudio = null;        // Currently playing conversation/dialogue audio
   let timerCheckInterval = null;
   let secondChanceSave = null; // Auto-checkpoint before dangerous scenes
   let savTemplate = null;      // ArrayBuffer from last loaded .SAV — used as export template
@@ -232,6 +252,29 @@ const ND = (() => {
   let activeHotspots = [];
   let bgNativeHeight = GAME_H; // native pixel height of current bg (376 for panoramics, 292 for closeups)
   let movieActive = false; // true while a PLAY_SECONDARY_MOVIE is playing
+  let sceneSounds = [];    // Audio elements playing in current scene (stopped on navigate)
+  let autoPanInterval = null; // setInterval handle for auto-panning
+  let autoPanDir = 0;         // current auto-pan direction (+1 or -1)
+
+  // ── Main menu state ──────────────────────────────────────────────────────
+  let menuActive = false;
+  let menuScreen = 'logo'; // 'logo' | 'main' | 'help' | 'credits'
+  let menuHoverIdx = -1;   // index into MENU_BUTTONS, -1 = none
+  let menuBgImg = null;    // cached main.png Image
+
+  // Button definitions: sorted by visual order (top→bottom on screen).
+  // Coordinates are in original 640×480 space; scaled to canvas at render time.
+  // hl_* = highlight sprite source rect in main.png (below y=480).
+  const MENU_BUTTONS = [
+    { id: 'new',      label: 'New Game',         x1: 193, y1:  52, x2: 385, y2:  76, hl_x: 1,   hl_y: 507 },
+    { id: 'load',     label: 'Load & Save Game', x1: 146, y1: 102, x2: 404, y2: 126, hl_x: 195, hl_y: 507 },
+    { id: 'continue', label: 'Continue Game',    x1: 150, y1: 148, x2: 383, y2: 172, hl_x: 1,   hl_y: 585 },
+    { id: 'second',   label: 'Second Chance',    x1: 140, y1: 195, x2: 381, y2: 219, hl_x: 236, hl_y: 585 },
+    { id: 'setup',    label: 'Game Setup',       x1: 165, y1: 242, x2: 375, y2: 270, hl_x: 1,   hl_y: 667 },
+    { id: 'credits',  label: 'Credits',          x1: 198, y1: 290, x2: 357, y2: 314, hl_x: 455, hl_y: 507 },
+    { id: 'help',     label: 'Help',             x1: 198, y1: 336, x2: 342, y2: 364, hl_x: 479, hl_y: 589 },
+    { id: 'exit',     label: 'Exit Game',        x1: 192, y1: 384, x2: 367, y2: 408, hl_x: 213, hl_y: 663 },
+  ];
 
   // Fidget animation state
   let fidgetInterval = null;
@@ -272,6 +315,8 @@ const ND = (() => {
   let ambientAudio = null;
   const imgCache = {};
   const chromaKeyCache = {}; // cacheKey → canvas element (processed removeChromaKey results)
+  const gameCursors = {};    // name → CSS cursor string (e.g. 'url(...) 1 1, auto')
+  const itemCursors = {};    // itemId → { normal, green, red } CSS cursor strings
   const SLOT_SIZE = 54; // px, inventory slot canvas size
 
   // ── Markup helpers ───────────────────────────────────────────────────────
@@ -335,6 +380,19 @@ const ND = (() => {
     });
   }
 
+  // Play a conversation voice line, stopping any previous one.
+  // Returns the Audio element (or null if voices are disabled).
+  function playConvVoice(name) {
+    stopConvVoice();
+    if (!state.voicesEnabled) return null;
+    convAudio = playSound(name);
+    return convAudio;
+  }
+
+  function stopConvVoice() {
+    if (convAudio) { convAudio.pause(); convAudio = null; }
+  }
+
   let ambientKey = null; // lowercase key of current ambient to avoid restarts
 
   function setAmbient(name) {
@@ -356,6 +414,230 @@ const ND = (() => {
   function stopAmbient() {
     ambientKey = null;
     if (ambientAudio) { ambientAudio.pause(); ambientAudio = null; }
+  }
+
+  // ── Main menu ────────────────────────────────────────────────────────────
+  // Logo screen → main menu → sub-screens (help, credits).
+  // Menu renders directly to the game canvas; menuActive blocks normal input.
+
+  const MENU_SCALE_X = GAME_W / 640;  // 536/640 = 0.8375
+  const MENU_SCALE_Y = GAME_H / 480;  // 292/480 ≈ 0.6083
+
+  function menuBtnToCanvas(btn) {
+    return {
+      x1: btn.x1 * MENU_SCALE_X | 0,
+      y1: btn.y1 * MENU_SCALE_Y | 0,
+      x2: btn.x2 * MENU_SCALE_X | 0,
+      y2: btn.y2 * MENU_SCALE_Y | 0,
+    };
+  }
+
+  function isMenuBtnEnabled(btn) {
+    if (btn.id === 'continue') return hasSavedGame();
+    if (btn.id === 'second')   return !!secondChanceSave;
+    return true;
+  }
+
+  async function showMenu(skipLogo) {
+    if (convOL.classList.contains('active')) return;
+    menuActive = true;
+    menuScreen = skipLogo ? 'main' : 'logo';
+    menuHoverIdx = -1;
+
+    // Save current game so "Continue" works when returning mid-game
+    if (skipLogo && state.currentSceneId) saveGame();
+
+    // Stop everything from prior gameplay
+    stopFidget();
+    stopConvAnimation();
+    stopTimer();
+    convOL.classList.remove('active', 'below-canvas');
+    mapOL.classList.remove('active');
+    document.getElementById('gameover-overlay').classList.remove('active');
+    document.getElementById('continue-overlay').classList.remove('active');
+    invBar.style.visibility = 'hidden';
+    sceneInfo.textContent = 'Main Menu';
+
+    // Menu music
+    setAmbient('excite');
+
+    if (skipLogo) {
+      await renderMainMenu();
+    } else {
+      const logo = await tryLoadImg(SPRITES_DIR, 'logo', '.png');
+      if (logo) {
+        ctx.drawImage(logo, 0, 0, 640, 480, 0, 0, GAME_W, GAME_H);
+      } else {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, GAME_W, GAME_H);
+      }
+    }
+  }
+
+  async function renderMainMenu() {
+    if (!menuBgImg) {
+      menuBgImg = await tryLoadImg(SPRITES_DIR, 'main', '.png');
+    }
+    if (!menuBgImg) return;
+
+    // Draw top 480 rows of sprite sheet scaled to canvas
+    ctx.drawImage(menuBgImg, 0, 0, 640, 480, 0, 0, GAME_W, GAME_H);
+
+    // Dim unavailable buttons
+    for (let i = 0; i < MENU_BUTTONS.length; i++) {
+      const btn = MENU_BUTTONS[i];
+      if (!isMenuBtnEnabled(btn)) {
+        const r = menuBtnToCanvas(btn);
+        ctx.fillStyle = 'rgba(0,0,0,0.45)';
+        ctx.fillRect(r.x1, r.y1, r.x2 - r.x1, r.y2 - r.y1);
+      }
+    }
+
+    // Draw highlight on hovered button
+    if (menuHoverIdx >= 0) {
+      const btn = MENU_BUTTONS[menuHoverIdx];
+      if (isMenuBtnEnabled(btn)) {
+        const w = btn.x2 - btn.x1;
+        const h = btn.y2 - btn.y1;
+        const r = menuBtnToCanvas(btn);
+        ctx.drawImage(menuBgImg,
+          btn.hl_x, btn.hl_y, w, h,       // source rect in sprite sheet
+          r.x1, r.y1, r.x2 - r.x1, r.y2 - r.y1  // dest on canvas
+        );
+      }
+    }
+  }
+
+  async function showMenuScreen(screen) {
+    menuScreen = screen;
+    menuHoverIdx = -1;
+
+    if (screen === 'help') {
+      const img = await tryLoadImg(SPRITES_DIR, 'helpscrn', '.png');
+      if (img) ctx.drawImage(img, 0, 0, 640, 480, 0, 0, GAME_W, GAME_H);
+    } else if (screen === 'credits') {
+      const img = await tryLoadImg(SPRITES_DIR, 'creditbk', '.png');
+      if (img) ctx.drawImage(img, 0, 0, 640, 480, 0, 0, GAME_W, GAME_H);
+    }
+  }
+
+  function menuHitTest(cx, cy) {
+    for (let i = 0; i < MENU_BUTTONS.length; i++) {
+      const r = menuBtnToCanvas(MENU_BUTTONS[i]);
+      if (cx >= r.x1 && cx <= r.x2 && cy >= r.y1 && cy <= r.y2) return i;
+    }
+    return -1;
+  }
+
+  function handleMenuClick(cx, cy) {
+    if (menuScreen === 'logo') {
+      playSound('clik7');
+      menuScreen = 'main';
+      renderMainMenu();
+      return;
+    }
+
+    if (menuScreen === 'help' || menuScreen === 'credits') {
+      // Any click returns to main menu
+      playSound('clik7');
+      menuScreen = 'main';
+      renderMainMenu();
+      return;
+    }
+
+    // Main menu
+    const idx = menuHitTest(cx, cy);
+    if (idx < 0) return;
+    const btn = MENU_BUTTONS[idx];
+    if (!isMenuBtnEnabled(btn)) {
+      playSound('squack2');
+      return;
+    }
+
+    playSound('clik7');
+
+    switch (btn.id) {
+      case 'new':
+        menuActive = false;
+        invBar.style.visibility = '';
+        stopAmbient();
+        // Reset state like debugRestart
+        state.flags = {};
+        state.inventory = new Set();
+        state.activeItem = null;
+        state.history = [];
+        Object.assign(state.flags, INITIAL_FLAGS);
+        for (const qs of Object.values(INVESTIGATION_QUESTIONS)) {
+          for (const q of qs) {
+            for (const c of q.conditions || []) {
+              if (c.expected === 1 && !(c.flag_id in state.flags))
+                state.flags[c.flag_id] = 1;
+            }
+          }
+        }
+        localStorage.removeItem(SAVE_KEY);
+        updateInventoryBar();
+        loadScene(START_SCENE_ID, 0, false);
+        break;
+
+      case 'load':
+        promptLoadSavFile();
+        break;
+
+      case 'continue':
+        menuActive = false;
+        invBar.style.visibility = '';
+        stopAmbient();
+        loadSavedGame();
+        break;
+
+      case 'second':
+        menuActive = false;
+        invBar.style.visibility = '';
+        stopAmbient();
+        loadSecondChance();
+        break;
+
+      case 'setup':
+        // Sound settings not applicable to browser engine
+        playSound('squack2');
+        break;
+
+      case 'credits':
+        showMenuScreen('credits');
+        break;
+
+      case 'help':
+        showMenuScreen('help');
+        break;
+
+      case 'exit':
+        window.close();
+        break;
+    }
+  }
+
+  function handleMenuMousemove(cx, cy) {
+    if (menuScreen !== 'main') {
+      canvas.style.cursor = gc('hand_pointer');
+      return;
+    }
+
+    const idx = menuHitTest(cx, cy);
+    if (idx >= 0 && isMenuBtnEnabled(MENU_BUTTONS[idx])) {
+      canvas.style.cursor = gc('hand_pointer');
+      if (idx !== menuHoverIdx) {
+        menuHoverIdx = idx;
+        playSound('clik2');
+        renderMainMenu();
+      }
+    } else {
+      canvas.style.cursor = gc('arrow');
+      if (menuHoverIdx !== -1) {
+        menuHoverIdx = -1;
+        renderMainMenu();
+      }
+    }
   }
 
   // ── Movie playback (PLAY_SECONDARY_MOVIE) ─────────────────────────────────
@@ -382,6 +664,7 @@ const ND = (() => {
       const img = await tryLoadImg(FRAMES_DIR, asset, `_${String(i).padStart(3, '0')}.png`);
       if (img) frames.push({ index: i, img });
       else break; // stop at first missing frame
+      if (endFrame > 5) drawLoadingBar(i + 1, endFrame + 1);
     }
     if (frames.length === 0) return;
 
@@ -676,7 +959,7 @@ const ND = (() => {
     const fw = FAREWELL_DATA[npcPrefix];
     if (!fw) { await exitConversation(); return; }
     // Play Nancy's goodbye audio
-    const audio = playSound(fw.audio);
+    const audio = playConvVoice(fw.audio);
     if (audio) await waitForSound(audio);
     // Pick a random NPC farewell scene
     const scene = fw.scenes[Math.floor(Math.random() * fw.scenes.length)];
@@ -758,6 +1041,41 @@ const ND = (() => {
     return cleaned;
   }
 
+  // ── Cursor extraction ───────────────────────────────────────────────────
+  function extractCursor(sheet, sx, sy, w, h, hotX, hotY) {
+    const clip = document.createElement('canvas');
+    clip.width = w; clip.height = h;
+    clip.getContext('2d').drawImage(sheet, sx, sy, w, h, 0, 0, w, h);
+    const cleaned = removeChromaKey(clip);
+    return `url("${cleaned.toDataURL('image/png')}") ${hotX} ${hotY}, auto`;
+  }
+
+  function gc(name) { return gameCursors[name] || 'default'; }
+
+  async function initCursors() {
+    const obj0 = await tryLoadImg(SPRITES_DIR, 'object0', '.png');
+    const tcur = await tryLoadImg(SPRITES_DIR, 'toolcur1', '.png');
+    if (!obj0) { console.warn('object0.png not found — using default cursors'); return; }
+
+    // Base game cursors from object0.png
+    for (const [name, d] of Object.entries(CURSOR_DEFS)) {
+      gameCursors[name] = extractCursor(obj0, d.sx, d.sy, d.w, d.h, d.hotX, d.hotY);
+    }
+
+    // Inventory item cursors from toolcur1.png (3 color variants per item)
+    if (!tcur) { console.warn('toolcur1.png not found — no item cursors'); return; }
+    const CW = 29, CH = 39;
+    for (const [id, y] of Object.entries(INV_CURSOR_MAP)) {
+      const hx = 14, hy = 19;
+      itemCursors[id] = {
+        normal: extractCursor(tcur, 2,  y, CW, CH, hx, hy),
+        green:  extractCursor(tcur, 33, y, CW, CH, hx, hy),
+        red:    extractCursor(tcur, 64, y, CW, CH, hx, hy),
+      };
+    }
+    console.log(`Cursors: ${Object.keys(gameCursors).length} base, ${Object.keys(itemCursors).length} item`);
+  }
+
   async function renderNPCs(actions, variant) {
     // Render PLAY_SECONDARY_VIDEO character sprites at the correct panoramic position.
     // The hotspot bounds (hs_x1/y1, hs_x2/y2) define the NPC's visible screen area for
@@ -810,13 +1128,15 @@ const ND = (() => {
     stopFidget();
     if (!bgSnapshot) return;
 
-    // Preload and chroma-key all frames
+    // Preload and chroma-key all frames (use endFrame to avoid a 404 probe)
     const frames = [];
-    for (let i = 0; ; i++) {
+    const maxFrame = endFrame ?? 999;
+    for (let i = 0; i <= maxFrame; i++) {
       const ext = `_${String(i).padStart(3, '0')}.png`;
       const img = await tryLoadImg(FRAMES_DIR, assetName, ext);
       if (!img) break;
       frames.push(getChromaKeyFrame(img, `${assetName}${ext}`));
+      if (maxFrame < 999 && maxFrame > 5) drawLoadingBar(i + 1, maxFrame + 1);
     }
     if (frames.length === 0) return;
 
@@ -835,7 +1155,7 @@ const ND = (() => {
     fidgetHovering = false;
 
     fidgetInterval = setInterval(() => {
-      if (!state.animationEnabled) { stopFidget(); return; }
+      if (!fidgetBgSnapshot || !state.animationEnabled) { stopFidget(); return; }
       // Restore background behind previous frame
       ctx.putImageData(fidgetBgSnapshot.data, fidgetBgSnapshot.x, fidgetBgSnapshot.y);
 
@@ -989,7 +1309,7 @@ const ND = (() => {
     if (!skipGreeting) {
       const audioName = act.intro_sound
         || (act.node_id && act.node_id.replace(/^([a-zA-Z]+)0*(\d+.*)$/, '$1$2'));
-      if (audioName) playSound(audioName);
+      if (audioName) playConvVoice(audioName);
     }
 
     // Three-tier routing (matches Game.exe.c ProcessConversation):
@@ -1019,7 +1339,7 @@ const ND = (() => {
         btn.className = 'choice-btn';
         btn.innerHTML = markupToHtml(ch.text);
         btn.onclick = async () => {
-          const nancyAudio = ch.target_node ? playSound(ch.target_node) : null;
+          const nancyAudio = ch.target_node ? playConvVoice(ch.target_node) : null;
           if (nancyAudio) await waitForSound(nancyAudio);
           if (ch.response_scene) {
             hideConv();
@@ -1037,7 +1357,7 @@ const ND = (() => {
         btn.textContent = q.text;
         btn.onclick = async () => {
           pendingReturnHub = hubSceneId;
-          const nancyAudio = playSound(q.id);
+          const nancyAudio = playConvVoice(q.id);
           if (nancyAudio) await waitForSound(nancyAudio);
           if (q.response_scene) {
             hideConv();
@@ -1089,6 +1409,8 @@ const ND = (() => {
     }
 
     convOL.classList.add('active');
+    const menuBtn = document.getElementById('menu-btn');
+    if (menuBtn) menuBtn.disabled = true;
   }
 
   async function popToPreConversationScene() {
@@ -1147,6 +1469,7 @@ const ND = (() => {
   }
 
   function hideConv() {
+    stopConvVoice();
     stopConvAnimation();
     convOL.classList.remove('active', 'below-canvas');
     // Move overlay back inside game-wrap if it was repositioned
@@ -1155,6 +1478,8 @@ const ND = (() => {
       gameWrap.appendChild(convOL);
     }
     pendingConvNav = null;
+    const menuBtn = document.getElementById('menu-btn');
+    if (menuBtn) menuBtn.disabled = false;
   }
 
   // ── Map / travel dialog ──────────────────────────────────────────────────
@@ -1168,6 +1493,7 @@ const ND = (() => {
   ];
 
   function showMapDialog() {
+    if (menuActive || convOL.classList.contains('active') || movieActive) return;
     mapBtns.innerHTML = '';
     const f5 = state.flags[5] ?? 1, f20 = state.flags[20] ?? 1;
     // Endgame night mode: Daryl agreed to help (F40=2) + Connie chickened out (F95=2)
@@ -2006,6 +2332,7 @@ const ND = (() => {
   }
 
   function loadSavFile(buf) {
+    if (menuActive) { menuActive = false; invBar.style.visibility = ''; stopAmbient(); }
     savTemplate = buf.slice(0); // stash a copy as export template
     const parsed = parseSavFile(buf);
     console.log('Parsed .SAV:', parsed);
@@ -2021,9 +2348,6 @@ const ND = (() => {
           }
         }
       }
-    }
-    for (const fid of [61, 62, 98]) {
-      if (!(fid in state.flags)) state.flags[fid] = 0;
     }
     // Now overlay the save file flags
     for (const [id, val] of Object.entries(parsed.flags)) {
@@ -2103,7 +2427,7 @@ const ND = (() => {
   //     visit counts, pathfinding, and action records, then overwrites tracked fields.
   //   Clean mode (no template): builds from scratch with zero-filled unknown regions.
 
-  function buildSavFile() {
+  function buildSavFile(saveDesc) {
     const SIZE = 11698;
     const buf = savTemplate ? savTemplate.slice(0) : new ArrayBuffer(SIZE);
     const d = new DataView(buf);
@@ -2122,9 +2446,11 @@ const ND = (() => {
     d.setUint16(0x5E, 1, true);                               // version field 1
     d.setUint16(0x60, 0, true);                               // version field 2
     d.setUint16(0x62, 0, true);                               // version field 3
+    // Save description (offset 0x64, max 22 chars including null)
+    // In original Game.exe: player-typed text for manual saves, "CONTINUE GAME" for auto-saves
     const curScene = scenes[state.currentSceneId];
-    const saveLabel = curScene?.summary?.description || state.currentSceneId || 'Unknown';
-    writeStr(0x64, 22, saveLabel.substring(0, 21));
+    const label = saveDesc || curScene?.summary?.description || state.currentSceneId || 'Unknown';
+    writeStr(0x64, 22, label.substring(0, 21));
 
     // ── Block 1: Game State (B1 = 0x7B) ──
 
@@ -2176,18 +2502,33 @@ const ND = (() => {
   function hasSavTemplate() { return !!savTemplate; }
 
   function exportSavFile() {
+    // Prompt for save description (like original Game.exe save dialog)
+    const curScene = scenes[state.currentSceneId];
+    const defaultDesc = curScene?.summary?.description || state.currentSceneId || '';
+    const saveDesc = prompt('Save description (max 22 chars, like original game):', defaultDesc.substring(0, 21));
+    if (saveDesc === null) return; // user cancelled
+
+    // Prompt for save slot (1-6, matching NANSCK1-6.SAV)
+    const slotStr = prompt('Save slot (1-6):', '1');
+    if (slotStr === null) return;
+    const slot = parseInt(slotStr);
+    if (isNaN(slot) || slot < 1 || slot > 6) {
+      alert('Invalid slot. Must be 1-6.');
+      return;
+    }
+
     try {
       const mode = savTemplate ? 'template' : 'clean';
-      const buf = buildSavFile();
+      const buf = buildSavFile(saveDesc || undefined);
       const blob = new Blob([buf], { type: 'application/octet-stream' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'NANSCK_EXPORT.SAV';
+      a.download = `NANSCK${slot}.SAV`;
       a.click();
       URL.revokeObjectURL(url);
-      sceneInfo.textContent += ` [.SAV Exported (${mode})]`;
-      console.log(`.SAV exported (${mode} mode), scene ${state.currentSceneId}`);
+      sceneInfo.textContent += ` [.SAV Exported → NANSCK${slot}.SAV (${mode})]`;
+      console.log(`.SAV exported → NANSCK${slot}.SAV (${mode} mode), desc="${saveDesc}", scene ${state.currentSceneId}`);
     } catch (e) {
       alert('Error exporting .SAV file: ' + e.message);
       console.error(e);
@@ -2255,7 +2596,12 @@ const ND = (() => {
   }
 
   function updateCanvasCursor() {
-    canvas.style.cursor = state.activeItem !== null ? 'cell' : 'crosshair';
+    if (state.activeItem !== null) {
+      const ic = itemCursors[state.activeItem];
+      canvas.style.cursor = ic ? ic.normal : gc('arrow');
+    } else {
+      canvas.style.cursor = gc('arrow');
+    }
   }
 
   // ── Scene loading ────────────────────────────────────────────────────────
@@ -2263,9 +2609,12 @@ const ND = (() => {
     const scene = scenes[sceneId];
     if (!scene) { console.warn('Scene not found:', sceneId); return; }
 
-    // Stop any running NPC fidget or conversation animation
+    // Stop any running NPC fidget, conversation animation, auto-pan, or scene sounds
     stopFidget();
     stopConvAnimation();
+    if (sceneId !== state.currentSceneId) stopAutoPan();
+    sceneSounds.forEach(a => { a.pause(); a.currentTime = 0; });
+    sceneSounds = [];
 
     // Clear any active interactive puzzle
     if (activePuzzle?._keyHandler) {
@@ -2297,15 +2646,9 @@ const ND = (() => {
     // tail_entry). This makes boiler room scenes route to the "chains on /
     // about to explode" variants.
     if (sceneId === 'S3216') {
-      state.flags[62] = 1;  // Boiler crisis active
       state.flags[10] = 2;  // Sabotaged elevator (routes S53→S71→S72→S30→S2077)
     }
-    // S1460 (open maint door): Entry hotspots are gated on F62==1 (crisis) and
-    // F62==2 (post-crisis), but F62==0 (pre-crisis) should also allow entry via
-    // the normal closet (S52).  The original engine defaulted F62 to 1.
-    if (sceneId === 'S1460' && (state.flags[62] ?? 0) === 0) {
-      state.flags[62] = 1;
-    }
+
     // F44/F45 are scene-local state flags in the original engine (reset per
     // scene) but we treat them globally.  Reset them on scene entry so stale
     // values from prior scenes don't trigger conditioned sounds/nav_on_end.
@@ -2315,10 +2658,11 @@ const ND = (() => {
       delete state.flags[44];
       delete state.flags[45];
     }
-    // S53 (elevator button CU): The EFMHS sets F45=2 (button pressed) but the
-    // SCENE_CHANGE conditions check F44==2 (likely decoder off-by-one).  Bridge
+    // S53 / S2079 (elevator button CU): The EFMHS sets F45=2 (button pressed)
+    // but the SCENE_CHANGE conditions check F44==2 (decoder off-by-one).  Bridge
     // the gap so the Tier 3 SCENE_CHANGE reload fires the elevator animation.
-    if (sceneId === 'S53' && state.flags[45] === 2) {
+    // S53 = going down (maintenance closet), S2079 = going up (boiler room).
+    if ((sceneId === 'S53' || sceneId === 'S2079') && state.flags[45] === 2) {
       state.flags[44] = 2;
     }
 
@@ -2357,6 +2701,11 @@ const ND = (() => {
     }
 
     for (const act of scene.actions) {
+      if (act.type === 'HOT_1FR_EXITSCENE' || act.type === 'HOT_1FR_SCENE_CHANGE') {
+        const cp = condPass(act);
+        console.log(`[${sceneId}] ${act.type} → S${act.target_scene} condPass=${cp}`,
+          act.conditions?.map(c => `F${c.flag_id}==${c.flag_value}(actual:${state.flags[c.flag_id] ?? 'UNSET→1'})`) || 'no conds');
+      }
       if (!condPass(act)) continue;
 
       switch (act.type) {
@@ -2393,6 +2742,7 @@ const ND = (() => {
           if (!isSameScene && !isEventFlagSound(scene, act)
               && !movieSoundsPlayed?.has(act.sound_file)) {
             const audio = playSound(act.sound_file);
+            if (audio) sceneSounds.push(audio);
             // Navigate when sound finishes (e.g. opening a book/drawer, intro narration).
             // Don't block — continue the loop so hotspots get registered (player
             // can click to skip, e.g. S60 intro has an abort hotspot).  The sound's
@@ -2478,6 +2828,9 @@ const ND = (() => {
         case 'HOT_1FR_EXITSCENE':
           if (act.hotspot) {
             const h = act.hotspot;
+            const passes = condPass(act);
+            console.log(`  [HS] ${act.type} → S${act.target_scene} | condPass=${passes}`,
+              act.conditions?.map(c => `F${c.flag_id}==${c.flag_value}(actual:${state.flags[c.flag_id] ?? '??1'})`));
             hotspots.push({ x1: h.x1, y1: h.y1 * yS, x2: h.x2, y2: h.y2 * yS,
               label: `S${act.target_scene}`, action: act });
           }
@@ -2581,6 +2934,24 @@ const ND = (() => {
       }
     }
 
+    // Inject "back to map" hotspot on exterior map-location scenes
+    if (MAP_LOCATIONS.some(loc => loc.id === sceneId)) {
+      const mapH = 22; // hotspot height at bottom of canvas
+      hotspots.push({
+        x1: 0, y1: GAME_H - mapH, x2: GAME_W, y2: GAME_H,
+        label: '← Travel Map', action: { type: 'MAP_BACK' }
+      });
+      // Draw a subtle indicator
+      ctx.save();
+      ctx.fillStyle = 'rgba(0,0,0,0.5)';
+      ctx.fillRect(0, GAME_H - mapH, GAME_W, mapH);
+      ctx.fillStyle = '#b8903a';
+      ctx.font = '11px Georgia, serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('← Travel Map →', GAME_W / 2, GAME_H - 7);
+      ctx.restore();
+    }
+
     activeHotspots = hotspots;
     drawHotspots(hotspots);
 
@@ -2678,6 +3049,35 @@ const ND = (() => {
     }
   }
 
+  // ── Loading bar ─────────────────────────────────────────────────────────
+  // Draws a thin progress bar on canvas while loading multi-frame animations.
+  function drawLoadingBar(loaded, total) {
+    const barW = 120, barH = 4;
+    const x = (GAME_W - barW) / 2;
+    const y = GAME_H - 20;
+    const pct = total > 0 ? loaded / total : 0;
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(x, y, barW, barH);
+    ctx.fillStyle = '#b8903a';
+    ctx.fillRect(x, y, barW * pct, barH);
+  }
+
+  // ── Hub precaching ────────────────────────────────────────────────────────
+  // Preload backgrounds for the most-visited areas so navigation feels instant.
+  // Runs once after init, loading in the background without blocking gameplay.
+  function precacheHubBackgrounds() {
+    const hubAvfs = [
+      'aext','ae1x',                        // Aunt Eloise's house
+      'dext','dd1v','dd1w','dd1x',           // Diner (day) + interior
+      'dfront02',                            // Diner (night)
+      'sext','sh4x','ssexter1','ssexter2',   // School + hallways
+      'pfexter0','pfexter3',                 // Pharmacy
+    ];
+    for (const avf of hubAvfs) {
+      tryLoadImg(FRAMES_DIR, avf, '_000.png');
+    }
+  }
+
   // ── Panoramic scroll ─────────────────────────────────────────────────────
   const SCROLL_ZONE = 28; // px from edge to trigger scroll
 
@@ -2705,6 +3105,25 @@ const ND = (() => {
     return 0;
   }
 
+  function stopAutoPan() {
+    if (autoPanInterval) { clearInterval(autoPanInterval); autoPanInterval = null; }
+    autoPanDir = 0;
+  }
+
+  function startAutoPan(dir) {
+    if (!state.autoPanEnabled) return;
+    if (autoPanDir === dir && autoPanInterval) return; // already panning this direction
+    stopAutoPan();
+    autoPanDir = dir;
+    autoPanInterval = setInterval(async () => {
+      const sum = scenes[state.currentSceneId]?.summary;
+      const maxFrames = sum?.avf_frames ?? 0;
+      if (maxFrames <= 1) { stopAutoPan(); return; }
+      const newVariant = (state.currentVariant + autoPanDir + maxFrames) % maxFrames;
+      await loadScene(state.currentSceneId, newVariant, false);
+    }, 250);
+  }
+
   // ── Click handling ───────────────────────────────────────────────────────
   function canvasXY(e) {
     const r = canvas.getBoundingClientRect();
@@ -2719,7 +3138,7 @@ const ND = (() => {
       const h = activeHotspots[i];
       const x1 = Math.min(h.x1, h.x2), x2 = Math.max(h.x1, h.x2);
       const y1 = Math.min(h.y1, h.y2), y2 = Math.max(h.y1, h.y2);
-      if (x >= x1 && x <= x2 && y >= y1 && y <= y2) return h;
+      if (x >= x1 && x <= x2 && y >= y1 && y <= y2 && condPass(h.action)) return h;
     }
     return null;
   }
@@ -2731,12 +3150,13 @@ const ND = (() => {
       if (h.action.type === 'EVENTFLAGS_MULTI_HS') continue;
       const x1 = Math.min(h.x1, h.x2), x2 = Math.max(h.x1, h.x2);
       const y1 = Math.min(h.y1, h.y2), y2 = Math.max(h.y1, h.y2);
-      if (x >= x1 && x <= x2 && y >= y1 && y <= y2) return h;
+      if (x >= x1 && x <= x2 && y >= y1 && y <= y2 && condPass(h.action)) return h;
     }
     return null;
   }
 
   async function onCanvasClick(e) {
+    if (menuActive) { const p = canvasXY(e); handleMenuClick(p.x, p.y); return; }
     if (movieActive) return; // block input during movie playback
     if (convOL.classList.contains('active')) return;
     if (mapOL.classList.contains('active')) { hideMapDialog(); return; }
@@ -2998,6 +3418,7 @@ const ND = (() => {
 
       case 'MAP_CALL_HOT_1FR':
       case 'MAP_CALL_HOT_MULTIFRAME':
+      case 'MAP_BACK':
         showMapDialog();
         break;
 
@@ -3029,26 +3450,54 @@ const ND = (() => {
   }
 
   function onCanvasMousemove(e) {
-    if (movieActive) { canvas.style.cursor = 'default'; return; }
-    if (convOL.classList.contains('active')) { canvas.style.cursor = 'default'; return; }
+    if (menuActive) { const p = canvasXY(e); handleMenuMousemove(p.x, p.y); return; }
+    if (movieActive) { canvas.style.cursor = gc('wait'); return; }
+    if (convOL.classList.contains('active')) { canvas.style.cursor = gc('arrow'); return; }
     const { x, y } = canvasXY(e);
 
     // Puzzle mode cursor
     if (activePuzzle) {
       for (const r of getPuzzleClickRects()) {
-        if (inRect(x, y, r)) { canvas.style.cursor = 'pointer'; return; }
+        if (inRect(x, y, r)) { canvas.style.cursor = gc('hand_pointer'); return; }
       }
-      canvas.style.cursor = activePuzzle.type === 'PASSWORD_PUZZLE' ? 'text' : 'default';
+      canvas.style.cursor = activePuzzle.type === 'PASSWORD_PUZZLE' ? 'text' : gc('arrow');
       return;
     }
 
     const dir = scrollDir(x);
-    if (dir === -1)      canvas.style.cursor = 'e-resize';
-    else if (dir === 1)  canvas.style.cursor = 'w-resize';
-    else {
+    if (dir !== 0) {
+      canvas.style.cursor = gc('magnify');
+      startAutoPan(dir);
+    } else {
+      if (autoPanInterval) stopAutoPan();
       const hit = hitTest(x, y);
-      if (hit) canvas.style.cursor = 'pointer';
-      else     canvas.style.cursor = state.activeItem !== null ? 'cell' : 'crosshair';
+      if (hit) {
+        if (state.activeItem !== null) {
+          // Inventory item selected — show item cursor, green if valid target
+          const ic = itemCursors[state.activeItem];
+          if (ic) {
+            const valid = hit.action.conditions?.some(
+              c => c.type === 'inventory_check' && c.item_id === state.activeItem);
+            canvas.style.cursor = valid ? ic.green : ic.normal;
+          } else {
+            canvas.style.cursor = gc('hand_pointer');
+          }
+        } else {
+          const atype = hit.action.type;
+          if (atype === 'HOT_1FR_EXITSCENE'
+              || atype === 'MAP_CALL_HOT_1FR' || atype === 'MAP_CALL_HOT_MULTIFRAME'
+              || atype === 'MAP_BACK') {
+            canvas.style.cursor = gc('walk');
+          } else {
+            canvas.style.cursor = gc('hand_pointer');
+          }
+        }
+      } else if (state.activeItem !== null) {
+        const ic = itemCursors[state.activeItem];
+        canvas.style.cursor = ic ? ic.normal : gc('arrow');
+      } else {
+        canvas.style.cursor = gc('arrow');
+      }
 
       // Fidget hover: switch to hover animation when over NPC hotspot
       if (fidgetInterval) {
@@ -3093,11 +3542,33 @@ const ND = (() => {
     }
   }
 
+  function toggleVoices() {
+    state.voicesEnabled = !state.voicesEnabled;
+    const btn = document.getElementById('voice-toggle-btn');
+    if (btn) {
+      btn.textContent = state.voicesEnabled ? 'Voice: ON' : 'Voice: OFF';
+      btn.classList.toggle('dp-active', state.voicesEnabled);
+    }
+    if (!state.voicesEnabled) stopConvVoice();
+  }
+
+  function toggleAutoPan() {
+    state.autoPanEnabled = !state.autoPanEnabled;
+    const btn = document.getElementById('autopan-toggle-btn');
+    if (btn) {
+      btn.textContent = state.autoPanEnabled ? 'AutoPan: ON' : 'AutoPan: OFF';
+      btn.classList.toggle('dp-active', state.autoPanEnabled);
+    }
+    if (!state.autoPanEnabled) stopAutoPan();
+  }
+
   function goToScene(rawId) {
     let id = rawId.trim().toUpperCase();
     if (!id.startsWith('S')) id = 'S' + id;
-    if (scenes[id]) loadScene(id, 0);
-    else alert(`Scene not found: ${id}`);
+    if (scenes[id]) {
+      if (menuActive) { menuActive = false; invBar.style.visibility = ''; }
+      loadScene(id, 0);
+    } else alert(`Scene not found: ${id}`);
   }
 
   function back() {
@@ -3127,19 +3598,8 @@ const ND = (() => {
       }
     }
 
-    // Boiler room flags use a 0=initial, 1=triggered pattern (unlike question
-    // flags which use 1=available, 2=asked).  evalCond defaults unset flags to
-    // 1 via ?? 1, which would make the boiler crisis active from game start.
-    // Explicitly init these to 0 so flag_check conditions don't false-positive.
-    //   F61: chain visibility (0=no chains, 1=chains visible after crisis)
-    //   F62: boiler crisis (0=safe, 1=crisis active, 2=lever puzzle solved)
-    //   F98: match/lighter state (0=initial, 1=has match)
-    // NOTE: F88 (vent grate) is NOT included — its default of 1 (via ?? 1) is
-    // correct: 1=closed grate (initial), 2=opened (by slider puzzle).
-    for (const fid of [61, 62, 98]) {
-      if (!(fid in state.flags)) state.flags[fid] = 0;
-    }
-
+    // F62 (boiler crisis) uses a 0=safe, 1=crisis, 2=solved pattern.  evalCond
+    // defaults unset flags to 1 via ?? 1, which would make the crisis active
     canvas.addEventListener('click', onCanvasClick);
     canvas.addEventListener('contextmenu', e => {
       e.preventDefault();
@@ -3150,6 +3610,7 @@ const ND = (() => {
       }
     });
     canvas.addEventListener('mousemove', onCanvasMousemove);
+    canvas.addEventListener('mouseleave', () => stopAutoPan());
 
     // Allow Enter key on scene input
     document.getElementById('scene-input')
@@ -3171,12 +3632,14 @@ const ND = (() => {
 
     console.log(`ND engine: ${Object.keys(scenes).length} scenes, ${Object.keys(convIndex).length} conversation nodes`);
 
-    // Offer continue if a save exists
-    if (hasSavedGame()) {
-      showContinueDialog(startScene);
-    } else {
-      await loadScene(startScene, 0, false);
-    }
+    // Precache hub area backgrounds in the background
+    precacheHubBackgrounds();
+
+    // Load original game cursors from sprite sheets
+    await initCursors();
+
+    // Show main menu on startup
+    await showMenu();
   }
 
   function showContinueDialog(startScene) {
@@ -3395,8 +3858,8 @@ const ND = (() => {
     showMapDialog();
   }
 
-  return { init, loadScene, hideConv, continueConv, hideMapDialog, toggleDebug, toggleAnimation, goToScene, back, loadSecondChance,
-           togglePanel, debugToggleItem, debugRestart, debugAskAllQuestions, debugAddAllItems, debugBoilerEmergency,
+  return { init, loadScene, hideConv, continueConv, showMapDialog, hideMapDialog, toggleDebug, toggleAnimation, toggleVoices, toggleAutoPan, goToScene, back, loadSecondChance,
+           showMenu, togglePanel, debugToggleItem, debugRestart, debugAskAllQuestions, debugAddAllItems, debugBoilerEmergency,
            debugTimerSkip, debugTimerAdd, debugEndgame, promptLoadSavFile, promptLoadSavTemplate, exportSavFile, hasSavTemplate };
 
 })();
