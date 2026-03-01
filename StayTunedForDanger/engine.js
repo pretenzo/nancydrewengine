@@ -961,6 +961,7 @@ const STFD = (() => {
   let calBgSnapshot = null;
   let calBgRect = null;
   let calActive = false;
+  let calAudio = null;          // reference to the NPC audio for this animation
 
   // ── LZSS decompressor (matches stfd-extract.py) ──
   function lzssDecompress(data, expectedSize) {
@@ -1108,7 +1109,7 @@ const STFD = (() => {
       d[idx]     = r;
       d[idx + 1] = g;
       d[idx + 2] = b;
-      d[idx + 3] = word === 0 ? 0 : 255; // black = transparent
+      d[idx + 3] = 255; // CAL frames are pre-composited with scene background — opaque
     }
 
     octx.putImageData(imgData, 0, 0);
@@ -1176,6 +1177,8 @@ const STFD = (() => {
     calXSheet = xsheet;
     calFrameIndex = 0;
     calActive = true;
+    // Capture NPC audio (playConvVoice ran synchronously before this async resolved)
+    calAudio = convAudio;
 
     // Compute bounding rect from ALL entry dest rects in both CALs
     // (different body poses have different widths, so we need the full union)
@@ -1205,10 +1208,10 @@ const STFD = (() => {
       if (!calActive || !calXSheet) { stopCALAnimation(); return; }
 
       let targetFrame = calFrameIndex;
-      if (convAudio && !convAudio.paused && convAudio.duration > 0) {
-        // Sync to audio position
-        const tickRate = calXSheet.length / convAudio.duration;
-        targetFrame = Math.min(calXSheet.length - 1, Math.floor(convAudio.currentTime * tickRate));
+      if (calAudio && !calAudio.paused && calAudio.duration > 0) {
+        // Sync to NPC audio position (not convAudio, which may be Nancy's voice)
+        const tickRate = calXSheet.length / calAudio.duration;
+        targetFrame = Math.min(calXSheet.length - 1, Math.floor(calAudio.currentTime * tickRate));
       }
       // Only redraw if frame changed
       if (targetFrame !== calFrameIndex) {
@@ -1254,6 +1257,7 @@ const STFD = (() => {
     calBgSnapshot = null;
     calBgRect = null;
     calActive = false;
+    calAudio = null;
   }
 
   // ── Panoramic scrolling ────────────────────────────────────────────────
