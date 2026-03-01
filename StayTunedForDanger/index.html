@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nancy Drew: Stay Tuned for Danger</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d0d0d;
+      color: #ccc;
+      font-family: Georgia, 'Times New Roman', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+    }
+
+    #title {
+      color: #b8903a;
+      font-size: 1em;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    /* ── Game viewport ── */
+    #game-wrap {
+      position: relative;
+      background: #000;
+      border: 1px solid #2a2a2a;
+      box-shadow: 0 0 40px rgba(0,0,0,0.8);
+    }
+
+    #game-canvas {
+      display: block;
+      /* Native 535×291 — CSS-scaled ~1.5× */
+      width: 802px;
+      height: 436px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      cursor: crosshair; /* overridden by JS once cursors load */
+    }
+
+    /* ── Conversation overlay ── */
+    #conv-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 32px;
+      z-index: 20;
+    }
+    #conv-overlay.active { display: flex; }
+
+    #conv-speaker {
+      color: #b8903a;
+      font-size: 0.85em;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    #conv-text {
+      color: #eee;
+      font-size: 0.92em;
+      line-height: 1.7;
+      text-align: center;
+      max-width: 560px;
+      margin-bottom: 22px;
+      white-space: pre-wrap;
+    }
+
+    #conv-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .choice-btn {
+      background: #10101e;
+      border: 1px solid #4a3a18;
+      color: #ddd;
+      padding: 9px 16px;
+      font-family: Georgia, serif;
+      font-size: 0.82em;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .choice-btn:hover { background: #1a1a32; border-color: #b8903a; color: #fff; }
+    .choice-btn .hl { color: #b8903a; font-weight: bold; }
+
+    #conv-continue {
+      margin-top: 14px;
+      background: none;
+      border: 1px solid #444;
+      color: #888;
+      padding: 5px 22px;
+      font-family: Georgia, serif;
+      font-size: 0.78em;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+    #conv-continue:hover { border-color: #b8903a; color: #b8903a; }
+
+    /* ── Inventory bar ── */
+    #inv-bar {
+      width: 802px;
+      min-height: 68px;
+      background: #080808;
+      border-top: 1px solid #1a1a1a;
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
+      gap: 6px;
+      overflow-x: auto;
+    }
+
+    .inv-slot {
+      flex-shrink: 0;
+      width: 58px;
+      height: 58px;
+      border: 1px solid #2a2a2a;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .inv-slot:hover { border-color: #b8903a; }
+    .inv-slot.inv-selected { border-color: #e8c34a; background: #1a1708; box-shadow: 0 0 6px rgba(232,195,74,0.4); }
+    .inv-slot canvas { display: block; }
+    .inv-slot .inv-label {
+      font-size: 7px;
+      color: #888;
+      text-align: center;
+      padding: 1px 2px;
+      line-height: 1.2;
+    }
+
+    #inv-empty {
+      font-size: 0.72em;
+      color: #333;
+      padding: 0 12px;
+      font-style: italic;
+    }
+
+    /* ── Status / debug bar ── */
+    #status-bar {
+      width: 802px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 2px;
+      font-size: 0.68em;
+      color: #444;
+      gap: 12px;
+    }
+
+    #scene-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #scene-input {
+      background: #111;
+      border: 1px solid #333;
+      color: #888;
+      padding: 2px 6px;
+      font-family: monospace;
+      font-size: 0.9em;
+      width: 60px;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: 1px solid #333;
+      color: #555;
+      padding: 2px 8px;
+      font-size: 0.9em;
+      cursor: pointer;
+      font-family: Georgia, serif;
+    }
+    .ctrl-btn:hover { color: #999; border-color: #666; }
+    .ctrl-btn:disabled { color: #333; cursor: default; border-color: #222; }
+    .ctrl-btn:disabled:hover { color: #333; border-color: #222; }
+
+    #scene-info { flex: 1; }
+
+    #debug-info {
+      font-family: monospace;
+      font-size: 0.85em;
+      color: #444;
+      min-width: 120px;
+      text-align: right;
+    }
+
+    /* ── Map overlay (not used — STFD maps are scenes) ── */
+    #map-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      z-index: 20;
+    }
+    #map-overlay.active { display: flex; }
+
+    /* ── Game-end overlay ── */
+    #gameover-overlay, #puzzle-overlay, #continue-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    #gameover-overlay.active, #puzzle-overlay.active, #continue-overlay.active { display: flex; }
+
+    .overlay-title {
+      color: #b8903a;
+      font-size: 1.1em;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .overlay-msg {
+      color: #ccc;
+      font-size: 0.85em;
+      text-align: center;
+      max-width: 420px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .overlay-btn {
+      background: #10101e;
+      border: 1px solid #4a3a18;
+      color: #ddd;
+      padding: 10px 28px;
+      font-family: Georgia, serif;
+      font-size: 0.85em;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .overlay-btn:hover { background: #1a1a32; border-color: #b8903a; color: #fff; }
+
+    /* ── Debug panel ── */
+    #debug-panel {
+      display: none;
+      width: 802px;
+      background: #0a0a0a;
+      border: 1px solid #222;
+      border-top: none;
+      padding: 6px 8px;
+      font-size: 0.68em;
+      color: #888;
+    }
+    #debug-panel.active { display: block; }
+
+    #debug-panel details { margin-bottom: 4px; }
+    #debug-panel summary {
+      cursor: pointer;
+      color: #b8903a;
+      font-size: 0.95em;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 0;
+      user-select: none;
+    }
+
+    .dp-section { padding: 4px 0 4px 4px; }
+    .dp-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; align-items: center; }
+
+    .dp-input {
+      background: #111;
+      border: 1px solid #333;
+      color: #aaa;
+      padding: 2px 6px;
+      font-family: monospace;
+      font-size: 0.95em;
+      width: 60px;
+    }
+
+    .dp-btn {
+      background: #111;
+      border: 1px solid #333;
+      color: #777;
+      padding: 2px 8px;
+      font-family: monospace;
+      font-size: 0.9em;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .dp-btn:hover { color: #ccc; border-color: #666; }
+    .dp-btn.dp-active { color: #6f6; border-color: #4a4; background: #0a140a; }
+
+    .dp-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+
+    .dp-cat { color: #b8903a; font-size: 0.85em; margin: 6px 0 2px; letter-spacing: 1px; }
+    .dp-cat:first-child { margin-top: 0; }
+    .dp-flag-btn {
+      background: #111;
+      border: 1px solid #333;
+      color: #666;
+      padding: 2px 7px;
+      font-family: monospace;
+      font-size: 0.85em;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .dp-flag-btn:hover { border-color: #666; color: #aaa; }
+    .dp-flag-btn.dp-f1 { color: #aa8; border-color: #554; background: #111108; }
+    .dp-flag-btn.dp-f2 { color: #6f6; border-color: #4a4; background: #0a140a; }
+
+    /* ── Conversation overlay: below-canvas mode ── */
+    #conv-overlay.below-canvas {
+      position: static;
+      background: #0d0d0d;
+      border: 1px solid #2a2a2a;
+      border-top: none;
+      width: 802px;
+      max-height: 250px;
+      overflow-y: auto;
+      padding: 16px 24px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="title">Nancy Drew: Stay Tuned for Danger</div>
+
+<div id="game-wrap">
+  <canvas id="game-canvas" width="535" height="291"></canvas>
+
+  <div id="conv-overlay">
+    <div id="conv-speaker"></div>
+    <div id="conv-text"></div>
+    <div id="conv-choices"></div>
+    <button id="conv-continue" onclick="STFD.continueConv()">[ Continue ]</button>
+  </div>
+
+  <div id="map-overlay"></div>
+
+  <div id="gameover-overlay">
+    <div id="gameover-title" class="overlay-title"></div>
+    <div id="gameover-msg" class="overlay-msg"></div>
+    <button id="second-chance-btn" class="overlay-btn" onclick="STFD.loadSecondChance()" style="display:none">[ Second Chance ]</button>
+    <button class="overlay-btn" onclick="location.reload()">[ Play Again ]</button>
+  </div>
+
+  <div id="puzzle-overlay">
+    <div class="overlay-title">Puzzle</div>
+    <div id="puzzle-name" class="overlay-msg"></div>
+    <button id="puzzle-solve" class="overlay-btn">[ Solve Puzzle ]</button>
+    <button id="puzzle-back" class="overlay-btn">[ Go Back ]</button>
+  </div>
+
+  <div id="continue-overlay">
+    <div class="overlay-title">Nancy Drew: Stay Tuned for Danger</div>
+    <div class="overlay-msg">A saved game was found.</div>
+    <button id="continue-btn" class="overlay-btn">[ Continue ]</button>
+    <button id="newgame-btn" class="overlay-btn">[ New Game ]</button>
+  </div>
+</div>
+
+<div id="inv-bar">
+  <span id="inv-empty">Inventory empty</span>
+</div>
+
+<div id="status-bar">
+  <div id="scene-nav">
+    <input id="scene-input" type="text" placeholder="S10" title="Go to scene">
+    <button class="ctrl-btn" onclick="STFD.goToScene(document.getElementById('scene-input').value)">Go</button>
+    <button class="ctrl-btn" onclick="STFD.toggleDebug()">Debug</button>
+    <button class="ctrl-btn" onclick="STFD.back()">Back</button>
+    <button id="voice-toggle-btn" class="ctrl-btn dp-active" onclick="STFD.toggleVoices()">Voice: ON</button>
+  </div>
+  <div id="scene-info">Loading…</div>
+  <div id="debug-info"></div>
+</div>
+
+<div id="debug-panel">
+  <details open>
+    <summary>Scene</summary>
+    <div class="dp-section">
+      <div class="dp-row">
+        <input id="dp-scene" type="text" placeholder="S10" class="dp-input">
+        <button class="dp-btn" onclick="STFD.goToScene(document.getElementById('dp-scene').value)">Go</button>
+        <button class="dp-btn" onclick="STFD.debugRestart()">Restart</button>
+      </div>
+      <div class="dp-row" id="dp-checkpoints">
+        <button class="dp-btn" onclick="STFD.goToScene('S0')">Difficulty</button>
+        <button class="dp-btn" onclick="STFD.goToScene('S5')">Intro Letter</button>
+        <button class="dp-btn" onclick="STFD.goToScene('S50')">Map (Mattie)</button>
+        <button class="dp-btn" onclick="STFD.goToScene('S60')">Map (Day)</button>
+        <button class="dp-btn" onclick="STFD.goToScene('S71')">Map (Full)</button>
+        <button class="dp-btn" onclick="STFD.goToScene('S1000')">Studio Lobby</button>
+        <button class="dp-btn" onclick="STFD.goToScene('S100')">Mattie Apt</button>
+        <button class="dp-btn" onclick="STFD.goToScene('S400')">Ralph Gate</button>
+        <button class="dp-btn" onclick="STFD.goToScene('S1100')">Hallway</button>
+      </div>
+      <div class="dp-row" id="dp-timer-row" style="display:none">
+        <span id="dp-timer" style="font-family:monospace;color:#f84;font-size:13px">Timer: inactive</span>
+      </div>
+    </div>
+  </details>
+  <details>
+    <summary>Flags</summary>
+    <div class="dp-section">
+      <div class="dp-row">
+        <button class="dp-btn" onclick="STFD.debugGivePass()" title="Give Visitor's Pass (item 10) + set met flags">Give Pass</button>
+        <span style="font-family:monospace;color:#888;font-size:10px">visitor pass + met flags</span>
+      </div>
+      <div class="dp-row">
+        <button class="dp-btn" onclick="STFD.debugKliegLight()" title="Set flag 61=2 (klieg light incident happened)">Klieg Light</button>
+        <span style="font-family:monospace;color:#888;font-size:10px">flag 61 — klieg light happened</span>
+      </div>
+      <div class="dp-row">
+        <button class="dp-btn" onclick="STFD.debugPostKlieg()" title="Full post-klieg state + teleport to hallway">Post-Klieg</button>
+        <span style="font-family:monospace;color:#888;font-size:10px">flags 61+46+104 + pass — teleports to hallway</span>
+      </div>
+      <div class="dp-row">
+        <button class="dp-btn" onclick="STFD.debugHireNancy()" title="Set flag 117=2 (Dwayne hired Nancy) + give Employee Pass">Hire Nancy</button>
+        <span style="font-family:monospace;color:#888;font-size:10px">flag 117 — Dwayne hired Nancy + employee pass</span>
+      </div>
+      <div class="dp-row">
+        <button class="dp-btn" onclick="STFD.debugDwayneOffice()" title="Post-klieg, met Rick & Lillian, pass taken, Mattie suggested Dwayne — teleports to his door">Dwayne Door</button>
+        <span style="font-family:monospace;color:#888;font-size:10px">met Rick+Lil, pass taken — teleports to agency</span>
+      </div>
+      <div class="dp-row">
+        <button class="dp-btn" onclick="STFD.toggleDayNight()">Toggle Day/Night</button>
+        <span id="dp-daytime" style="font-family:monospace;color:#f84;font-size:11px">Day</span>
+      </div>
+      <div id="dp-flags-grid"></div>
+    </div>
+  </details>
+  <details>
+    <summary>Inventory</summary>
+    <div class="dp-section">
+      <div id="dp-inv-grid" class="dp-grid"></div>
+    </div>
+  </details>
+</div>
+
+<script src="engine.js"></script>
+<script>
+  STFD.init({
+    scenesUrl:    'stfd_scenes.json',
+    framesDir:    'stfd_avf_frames',
+    audioDir:     'stfd_audio',
+    spritesDir:   'stfd_images',
+    startScene:   'S0',
+    initialFlags: {},
+  });
+</script>
+</body>
+</html>

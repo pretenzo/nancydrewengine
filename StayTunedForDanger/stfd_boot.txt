@@ -1,0 +1,195 @@
+==============================================================
+NANCY DREW: STAY TUNED FOR DANGER  —  BOOT.bin Decoded
+==============================================================
+
+──────────────────────────────────────────────────────────────
+GAME IDENTITY  (BOOTBSUM)
+──────────────────────────────────────────────────────────────
+  Publisher : HER Interactive Presents
+  Series    : Nancy Drew Case File
+  Subtitle  : Stay Tuned For Danger
+  Save ID   :     Fonts: 0
+  BG sprites: 8 anims + 65 overlays
+    [ 0] 'K'           pos=(0,0) fr=0
+    [ 1] ''          
+    [ 2] ''          
+    [ 3] ''          
+    [ 4] ''          
+
+──────────────────────────────────────────────────────────────
+VIEWPORTS  (VIEW)
+──────────────────────────────────────────────────────────────
+  primary_view        : (52,18)-(587,309)  535×291
+  full_screen         : (0,0)-(535,291)  535×291
+  sidebar             : (0,0)-(267,145)  267×145
+  portrait_area       : (0,0)-(535,291)  535×291
+
+──────────────────────────────────────────────────────────────
+HINTS  (HINT)
+──────────────────────────────────────────────────────────────
+  Junior: 15  Senior: 15  Master: 15
+
+──────────────────────────────────────────────────────────────
+MAP  (MAP)  —  MAPDAY / MAPNIGHT
+──────────────────────────────────────────────────────────────
+  7 clickable hotspot(s):
+    (152,127)-(195,245)  43×118px
+    (3,337)-(46,455)  43×118px
+    (292,181)-(556,234)  264×53px
+    (292,127)-(556,180)  264×53px
+    (3,252)-(267,305)  264×53px
+    (292,235)-(556,288)  264×53px
+    (292,289)-(388,311)  96×22px
+  Locations:
+    scene    9  scroll=1200  "Maxine's Diner"                     pin=(177,28)
+    scene   11  scroll= 888  'Aunt Eloise House'                  pin=(340,85)
+    scene  666  scroll=1250  'Vandelay Pharmacy'                  pin=(429,50)
+    scene 1666  scroll=   0  'Paseo Del Mar High School'          pin=(534,118)
+
+──────────────────────────────────────────────────────────────
+FONTS  (FONT)  —  11 fonts
+──────────────────────────────────────────────────────────────
+  Font 0: id='1'  name='FONT'  (78/78 glyphs)
+    'A'  (17,60)-(27,53)  11×8px
+    'B'  (28,60)-(38,50)  11×11px
+    'C'  (43,60)-(52,53)  10×8px
+  Font 1: id='N'  name='U2FONT4'  (78/78 glyphs)
+    'A'  (79,54)-(84,42)  6×13px
+    'B'  (89,54)-(94,42)  6×13px
+    'C'  (98,54)-(105,42)  8×13px
+  Font 2: id='3'  name='FONT'  (78/78 glyphs)
+    'A'  (33,115)-(48,99)  16×17px
+    'B'  (52,114)-(73,101)  22×14px
+    'C'  (77,117)-(96,99)  20×19px
+  Font 3: id='N'  name='U4FONT'  (78/78 glyphs)
+    'A'  (48,170)-(64,140)  17×31px
+    'B'  (73,170)-(89,140)  17×31px
+    'C'  (96,170)-(111,140)  16×31px
+  Font 4: id='N'  name='U2FONT5'  (78/78 glyphs)
+    'A'  (79,54)-(84,42)  6×13px
+    'B'  (89,54)-(94,42)  6×13px
+    'C'  (98,54)-(105,42)  8×13px
+  Font 5: id='S'  name='LoadFnt'  (78/78 glyphs)
+    'A'  (79,54)-(84,42)  6×13px
+    'B'  (89,54)-(94,42)  6×13px
+    'C'  (98,54)-(105,42)  8×13px
+  Font 6: id='H'  name='LoadFnt'  (78/78 glyphs)
+    'A'  (79,54)-(84,42)  6×13px
+    'B'  (89,54)-(94,42)  6×13px
+    'C'  (98,54)-(105,42)  8×13px
+  Font 7: id='D'  name='LoadFnt'  (78/78 glyphs)
+    'A'  (79,54)-(84,42)  6×13px
+    'B'  (89,54)-(94,42)  6×13px
+    'C'  (98,54)-(105,42)  8×13px
+  Font 8: id='C'  name='onvoDef'  (78/78 glyphs)
+    'A'  (79,54)-(84,42)  6×13px
+    'B'  (89,54)-(94,42)  6×13px
+    'C'  (98,54)-(105,42)  8×13px
+  Font 9: id='C'  name='onvoHil'  (78/78 glyphs)
+    'A'  (79,54)-(84,42)  6×13px
+    'B'  (89,54)-(94,42)  6×13px
+    'C'  (98,54)-(105,42)  8×13px
+  Font 10: id='3'  name='FontBlk'  (78/78 glyphs)
+    'A'  (33,115)-(48,99)  16×17px
+    'B'  (52,114)-(73,101)  22×14px
+    'C'  (77,117)-(96,99)  20×19px
+
+──────────────────────────────────────────────────────────────
+CURSORS  (CURS)  —  158 cursors
+──────────────────────────────────────────────────────────────
+  [ 0] arrow                   sprite=( 506,   3)  hot=(535, 42)
+  [ 1] hand_pointer            sprite=( 537,   3)  hot=(566, 42)
+  [ 2] magnify                 sprite=( 568,   3)  hot=(597, 42)
+  [ 3] walk                    sprite=( 568,  85)  hot=(597,124)
+  [ 4] look                    sprite=( 568, 126)  hot=(597,165)
+  [ 5] talk                    sprite=( 506,  44)  hot=(535, 83)
+  [ 6] grab                    sprite=( 506,  85)  hot=(535,124)
+  [ 7] push                    sprite=( 506,  85)  hot=(535,124)
+  [ 8] locked                  sprite=( 506,  85)  hot=(597,124)
+  [ 9] wait                    sprite=( 568, 126)  hot=(597,165)
+  [10] cursor_10               sprite=( 537,  44)  hot=(566, 83)
+  [11] cursor_11               sprite=( 537,  85)  hot=(566,124)
+  … 146 more cursor entries
+
+──────────────────────────────────────────────────────────────
+UI SOUNDS
+──────────────────────────────────────────────────────────────
+  MSND  menu_music            : 'ndsig'  id=28  vol=100  flags=0x0
+  BUOK  button_ok             : 'CLIK7'  id=24  vol=80  flags=0x2b11
+  BUDE  button_denied         : 'SQUACK2'  id=23  vol=80  flags=0x2b11
+  BULS  button_select         : 'CLIK2'  id=22  vol=80  flags=0x2b11
+  GLOB  global_click          : 'CLIK2'  id=20  vol=80  flags=0x2b11
+  SLID  slider_drag           : 'SLIDER5'  id=21  vol=90  flags=0x2b11
+  CURT  curtain_transition    : 'SLIDER3'  id=18  vol=100  flags=0x2b11
+  TH1   tension_music_1       : 'FX312'  id=25  vol=100  flags=0x4000
+  TH2   tension_music_2       : 'FX62'  id=26  vol=100  flags=0x4000
+
+  Tension tracks (2 entries):
+    'DADA'  id=29  vol=60
+    'THUNDER3'  id=30  vol=25
+
+──────────────────────────────────────────────────────────────
+COMBINATION PUZZLE ANSWER  (SPUZ)
+──────────────────────────────────────────────────────────────
+  Slider sequence: [6, 5, 1, 2, 7, 3, 4, 0]
+
+──────────────────────────────────────────────────────────────
+SCREEN LAYOUTS
+──────────────────────────────────────────────────────────────
+  Menu        : 'MAIN'  640×480
+  Help        : 'HELPSCRN'  640×480
+  Settings    : 'SETUP'  640×480
+  Credits     : 'CREDITBK'  640×480
+  Load/Save   : 'LOADSAVE'
+
+──────────────────────────────────────────────────────────────
+LOAD/SAVE SCREEN  (LOAD)
+──────────────────────────────────────────────────────────────
+  bg_image            : 'LOADSAVE'
+  nancy_ck_img        : 'NANSTD'
+  console_ck_img      : 'CONSTD'
+  cheat_img           : 'CHEAT'
+  save_img            : 'SAV'
+
+──────────────────────────────────────────────────────────────
+CREDITS  (CRED)
+──────────────────────────────────────────────────────────────
+  bg='CREDITBK'  img='CRED01'  scroll_speed=320
+
+──────────────────────────────────────────────────────────────
+INTRO SEQUENCE  (INTR)
+──────────────────────────────────────────────────────────────
+  ['INTRO', 'INTROPAL', 'HER_PAL', 'HER_LG', 'HER_SM']
+
+──────────────────────────────────────────────────────────────
+BITMAP RESOURCES  (DATA)
+──────────────────────────────────────────────────────────────
+  ['BIMGFR0', 'FRAME', 'LG0', 'LOGO', 'OB0', 'OBJECT0']
+
+──────────────────────────────────────────────────────────────
+LOADING QUOTES  (QUOT)  —  20 developer in-jokes
+──────────────────────────────────────────────────────────────
+  [ 0] "Setting up meetings here is"
+  [ 1] "You're not going to take that out - not if you"
+  [ 2] "Bat phone!  3..2..1..."
+  [ 3] "You got a nice deep case..."
+  [ 4] "I'm going back to the arctic"
+  [ 5] "Robert said...pull your pants up!"
+  [ 6] "Warning: You may have art in your"
+  [ 7] "Just puking on a page."
+  [ 8] "Whenever I try to talk to her, her head"
+  [ 9] "Now if we could only get them"
+  [10] "They're our age."
+  [11] "That's a lot of mustard."
+  [12] "You just can't polish a turd..."
+  [13] "Its not a bug - that's just the way it works..."
+  [14] "Our previous game was VD, then we had SCK as"
+  [15] "Now I know why there's a bald spot on top"
+  [16] "We don't care about no stinkin' head movement..."
+  [17] "No brag, just fact."
+  [18] "Josh, put the ear back..."
+  [19] "Do you wanna just tweak my thing a little bit?"
+
+==============================================================
+Decoded 21 chunk groups  |  BOOT.bin complete
+==============================================================
