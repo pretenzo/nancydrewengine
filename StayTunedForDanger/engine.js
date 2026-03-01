@@ -946,6 +946,316 @@ const STFD = (() => {
     fidgetUnhovering = false;
   }
 
+  // ── CAL Character Animation System ────────────────────────────────────
+  // Composited 2-layer (body + head) NPC conversation animations.
+  // CAL files are CIF TREE archives containing pre-rendered RGB555 frames.
+  // XSHEET files script which body/head frame to display per animation tick.
+
+  const calCache = {};          // calName → {buffer, entries} (persists across conversations)
+  const calFrameCanvasCache = {}; // frameName → offscreen canvas (with transparency)
+  let calBodyCAL = null;
+  let calHeadCAL = null;
+  let calXSheet = null;
+  let calFrameIndex = 0;
+  let calInterval = null;
+  let calBgSnapshot = null;
+  let calBgRect = null;
+  let calActive = false;
+
+  // ── LZSS decompressor (matches stfd-extract.py) ──
+  function lzssDecompress(data, expectedSize) {
+    const WINDOW = 0x1000;
+    const buf = new Uint8Array(WINDOW);
+    buf.fill(0x20);
+    let pos = 0xFEE;
+    const out = [];
+    let i = 0;
+    while (i < data.length) {
+      const flags = data[i++];
+      for (let bit = 0; bit < 8; bit++) {
+        if (i >= data.length) break;
+        if (flags & (1 << bit)) {
+          const b = data[i++];
+          out.push(b);
+          buf[pos] = b;
+          pos = (pos + 1) & 0xFFF;
+        } else {
+          if (i + 1 >= data.length) break;
+          const b1 = data[i++], b2 = data[i++];
+          let ref = b1 | ((b2 & 0xF0) << 4);
+          const length = (b2 & 0x0F) + 3;
+          for (let j = 0; j < length; j++) {
+            const byte = buf[ref & 0xFFF];
+            out.push(byte);
+            buf[pos] = byte;
+            pos = (pos + 1) & 0xFFF;
+            ref++;
+          }
+        }
+        if (expectedSize && out.length >= expectedSize) {
+          return new Uint8Array(out.slice(0, expectedSize));
+        }
+      }
+    }
+    return new Uint8Array(out);
+  }
+
+  // ── CIF TREE positional decrypt ──
+  function cifDecrypt(data) {
+    const out = new Uint8Array(data.length);
+    for (let i = 0; i < data.length; i++) {
+      out[i] = (data[i] - i) & 0xFF;
+    }
+    return out;
+  }
+
+  // ── CAL file loader ──
+  async function loadCAL(calName) {
+    const key = calName.toUpperCase();
+    if (calCache[key]) return calCache[key];
+
+    const resp = await fetch(`CD/Game/${calName}.cal`);
+    if (!resp.ok) { console.warn(`CAL not found: ${calName}`); return null; }
+    const buffer = await resp.arrayBuffer();
+    const view = new DataView(buffer);
+    const bytes = new Uint8Array(buffer);
+
+    // Verify magic
+    const magic = String.fromCharCode(...bytes.slice(0, 20)).replace(/\0/g, '');
+    if (!magic.startsWith('CIF TREE')) {
+      console.warn(`Bad CAL magic: ${calName}`); return null;
+    }
+
+    const entryCount = view.getUint16(0x1C, true);
+    const entries = new Map();
+
+    for (let i = 0; i < entryCount; i++) {
+      const base = 0x820 + i * 70;
+      if (base + 70 > buffer.byteLength) break;
+
+      // Name: bytes [0:9], null-terminated
+      let name = '';
+      for (let j = 0; j < 9; j++) {
+        const c = bytes[base + j];
+        if (c === 0) break;
+        name += String.fromCharCode(c);
+      }
+      if (!name) continue;
+
+      const type = bytes[base + 0x43];
+      if (type !== 0x02) continue; // Only PLAIN (image) entries
+
+      const width  = view.getUint16(base + 0x2B, true);
+      const height = view.getUint16(base + 0x2F, true);
+      const destRect = {
+        x: view.getUint32(base + 0x1B, true),
+        y: view.getUint32(base + 0x1F, true),
+        x2: view.getUint32(base + 0x23, true),
+        y2: view.getUint32(base + 0x27, true),
+      };
+      const dataOffset = view.getUint32(base + 0x33, true);
+      const decompSize = view.getUint32(base + 0x3B, true);
+      const compSize   = view.getUint32(base + 0x3F, true);
+      const compression = bytes[base + 0x32];
+
+      if (dataOffset === 0 || compSize === 0 || dataOffset + compSize > buffer.byteLength) continue;
+
+      entries.set(name.toUpperCase(), {
+        width, height, destRect, dataOffset, compSize, decompSize, compression
+      });
+    }
+
+    const cal = { buffer, entries };
+    calCache[key] = cal;
+    console.log(`CAL loaded: ${calName} (${entries.size} frames)`);
+    return cal;
+  }
+
+  // ── Get a single frame from a CAL archive, with caching ──
+  function getCALFrame(cal, frameName) {
+    const key = frameName.toUpperCase();
+    if (calFrameCanvasCache[key]) return calFrameCanvasCache[key];
+
+    const entry = cal.entries.get(key);
+    if (!entry) return null;
+
+    // Read compressed data
+    const raw = new Uint8Array(cal.buffer, entry.dataOffset, entry.compSize);
+    const decrypted = cifDecrypt(raw);
+
+    // Decompress
+    let pixels;
+    if (entry.compression === 2) {
+      pixels = lzssDecompress(decrypted, entry.decompSize);
+    } else {
+      pixels = decrypted;
+    }
+
+    // RGB555 → RGBA on offscreen canvas
+    const w = entry.width, h = entry.height;
+    const oc = document.createElement('canvas');
+    oc.width = w; oc.height = h;
+    const octx = oc.getContext('2d');
+    const imgData = octx.createImageData(w, h);
+    const d = imgData.data;
+
+    for (let i = 0, p = 0; i < w * h && p + 1 < pixels.length; i++, p += 2) {
+      const word = pixels[p] | (pixels[p + 1] << 8);
+      const r = ((word >> 10) & 0x1F) << 3;
+      const g = ((word >>  5) & 0x1F) << 3;
+      const b = ( word        & 0x1F) << 3;
+      const idx = i * 4;
+      d[idx]     = r;
+      d[idx + 1] = g;
+      d[idx + 2] = b;
+      d[idx + 3] = word === 0 ? 0 : 255; // black = transparent
+    }
+
+    octx.putImageData(imgData, 0, 0);
+
+    const result = { canvas: oc, destRect: entry.destRect, width: w, height: h };
+    calFrameCanvasCache[key] = result;
+    return result;
+  }
+
+  // ── XSHEET parser ──
+  async function loadXSheet(nodeId) {
+    const resp = await fetch(`stfd_extracted/${nodeId.toLowerCase()}.bin`);
+    if (!resp.ok) { console.warn(`XSHEET not found: ${nodeId}`); return null; }
+    const buffer = await resp.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    const view = new DataView(buffer);
+
+    // Verify magic
+    const magic = String.fromCharCode(...bytes.slice(0, 6));
+    if (magic !== 'XSHEET') {
+      console.warn(`Bad XSHEET magic: ${nodeId}`); return null;
+    }
+
+    const frameCount = view.getUint16(0x22, true);
+    const frames = [];
+
+    for (let i = 0; i < frameCount; i++) {
+      const off = 0x2A + i * 0x30;
+      if (off + 0x14 > buffer.byteLength) break;
+
+      let body = '', head = '';
+      for (let j = 0; j < 10; j++) {
+        const c = bytes[off + j];
+        if (c === 0) break;
+        body += String.fromCharCode(c);
+      }
+      for (let j = 0; j < 10; j++) {
+        const c = bytes[off + 0x0A + j];
+        if (c === 0) break;
+        head += String.fromCharCode(c);
+      }
+      frames.push({ body, head });
+    }
+
+    return frames;
+  }
+
+  // ── CAL animation renderer ──
+  async function startCALAnimation(act) {
+    stopCALAnimation();
+    stopFidget();
+
+    if (!act.body_cal || !act.head_cal || !act.node_id) return false;
+
+    const [bodyCAL, headCAL, xsheet] = await Promise.all([
+      loadCAL(act.body_cal),
+      loadCAL(act.head_cal),
+      loadXSheet(act.node_id),
+    ]);
+
+    if (!bodyCAL || !headCAL || !xsheet || xsheet.length === 0) return false;
+
+    calBodyCAL = bodyCAL;
+    calHeadCAL = headCAL;
+    calXSheet = xsheet;
+    calFrameIndex = 0;
+    calActive = true;
+
+    // Compute bounding rect from ALL entry dest rects in both CALs
+    // (different body poses have different widths, so we need the full union)
+    let minX = GAME_W, minY = GAME_H, maxX = 0, maxY = 0;
+    for (const cal of [bodyCAL, headCAL]) {
+      for (const entry of cal.entries.values()) {
+        minX = Math.min(minX, entry.destRect.x);
+        minY = Math.min(minY, entry.destRect.y);
+        maxX = Math.max(maxX, entry.destRect.x2);
+        maxY = Math.max(maxY, entry.destRect.y2);
+      }
+    }
+    if (minX >= maxX || minY >= maxY) return false;
+    minX = Math.max(0, minX);
+    minY = Math.max(0, minY);
+    maxX = Math.min(GAME_W, maxX);
+    maxY = Math.min(GAME_H, maxY);
+
+    calBgRect = { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+    calBgSnapshot = ctx.getImageData(calBgRect.x, calBgRect.y, calBgRect.w, calBgRect.h);
+
+    // Draw first frame immediately
+    drawCALFrame(0);
+
+    // Start animation loop
+    calInterval = setInterval(() => {
+      if (!calActive || !calXSheet) { stopCALAnimation(); return; }
+
+      let targetFrame = calFrameIndex;
+      if (convAudio && !convAudio.paused && convAudio.duration > 0) {
+        // Sync to audio position
+        const tickRate = calXSheet.length / convAudio.duration;
+        targetFrame = Math.min(calXSheet.length - 1, Math.floor(convAudio.currentTime * tickRate));
+      }
+      // Only redraw if frame changed
+      if (targetFrame !== calFrameIndex) {
+        calFrameIndex = targetFrame;
+        drawCALFrame(calFrameIndex);
+      }
+    }, 50); // ~20fps check rate
+
+    return true;
+  }
+
+  function drawCALFrame(idx) {
+    if (!calXSheet || idx >= calXSheet.length) return;
+    const frame = calXSheet[idx];
+
+    // Restore background
+    if (calBgSnapshot && calBgRect) {
+      ctx.putImageData(calBgSnapshot, calBgRect.x, calBgRect.y);
+    }
+
+    // Draw body
+    const bodyFrame = getCALFrame(calBodyCAL, frame.body);
+    if (bodyFrame) {
+      ctx.drawImage(bodyFrame.canvas, bodyFrame.destRect.x, bodyFrame.destRect.y);
+    }
+
+    // Draw head on top
+    const headFrame = getCALFrame(calHeadCAL, frame.head);
+    if (headFrame) {
+      ctx.drawImage(headFrame.canvas, headFrame.destRect.x, headFrame.destRect.y);
+    }
+  }
+
+  function stopCALAnimation() {
+    if (calInterval) { clearInterval(calInterval); calInterval = null; }
+    if (calBgSnapshot && calBgRect && calActive) {
+      ctx.putImageData(calBgSnapshot, calBgRect.x, calBgRect.y);
+    }
+    calBodyCAL = null;
+    calHeadCAL = null;
+    calXSheet = null;
+    calFrameIndex = 0;
+    calBgSnapshot = null;
+    calBgRect = null;
+    calActive = false;
+  }
+
   // ── Panoramic scrolling ────────────────────────────────────────────────
   async function detectPanoFrameCount(bgAvf) {
     if (!bgAvf) return 1;
@@ -1124,6 +1434,18 @@ const STFD = (() => {
     // Speaker name
     const speaker = getSpeaker(act.node_id || act.name);
     convSpkr.textContent = speaker || (act.type === 'CONVERSATION_CEL' ? 'NPC' : 'Phone');
+
+    // CAL animation for face-to-face conversations
+    if (act.type === 'CONVERSATION_CEL' && act.body_cal && act.head_cal) {
+      stopCALAnimation();
+      convOL.classList.add('below-canvas');
+      // Move overlay outside game-wrap so it sits below the canvas
+      const gameWrap = document.getElementById('game-wrap');
+      if (convOL.parentNode === gameWrap) {
+        gameWrap.after(convOL);
+      }
+      startCALAnimation(act);
+    }
 
     // NPC text
     if (!skipGreeting) {
@@ -1339,6 +1661,7 @@ const STFD = (() => {
   }
 
   async function continueConv() {
+    stopCALAnimation();
     if (pendingConvNav) {
       // Tier 2: load next conversation inline (or via default_exit_scene chain)
       const target = pendingConvNav;
@@ -1455,6 +1778,7 @@ const STFD = (() => {
 
   function hideConv() {
     stopConvVoice();
+    stopCALAnimation();
     convOL.classList.remove('active', 'below-canvas');
     const gameWrap = document.getElementById('game-wrap');
     if (convOL.parentNode !== gameWrap) gameWrap.appendChild(convOL);
