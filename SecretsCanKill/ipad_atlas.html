@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>Nancy Drew: Secrets Can Kill</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #000;
+      color: #ccc;
+      font-family: Georgia, 'Times New Roman', serif;
+      touch-action: none;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      position: fixed;
+      inset: 0;
+    }
+
+    /* ── Fullscreen container ── */
+    #game-container {
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    /* ── Canvas fills all available space ── */
+    #game-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+
+    #game-canvas {
+      display: block;
+      width: 100%;
+      max-height: 100%;
+      aspect-ratio: 536 / 292;
+      object-fit: contain;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    /* ── Splash overlay ── */
+    #splash-overlay {
+      position: absolute;
+      inset: 0;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 30;
+    }
+    #splash-overlay.hidden { display: none; }
+
+    .splash-title {
+      color: #b8903a;
+      font-size: 1.2em;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .splash-msg {
+      color: #999;
+      font-size: 0.9em;
+      text-align: center;
+      max-width: 400px;
+      line-height: 1.7;
+      padding: 0 20px;
+    }
+
+    .splash-btn {
+      margin-top: 8px;
+      background: #10101e;
+      border: 1px solid #4a3a18;
+      color: #ddd;
+      padding: 16px 40px;
+      font-family: Georgia, serif;
+      font-size: 1.1em;
+      cursor: pointer;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .splash-btn:active { background: #1a1a32; border-color: #b8903a; color: #fff; }
+
+    /* ── Guide overlay ── */
+    #guide-overlay {
+      position: absolute;
+      inset: 0;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 35;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #guide-overlay.hidden { display: none; }
+
+    #guide-content {
+      max-width: 600px;
+      padding: 28px 24px 20px;
+      color: #ccc;
+      font-size: 0.88em;
+      line-height: 1.75;
+    }
+
+    #guide-content h1 {
+      color: #b8903a;
+      font-size: 1.3em;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    #guide-content h2 {
+      color: #b8903a;
+      font-size: 1.05em;
+      letter-spacing: 1px;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+
+    #guide-content h3 {
+      color: #b8903a;
+      font-size: 0.95em;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+
+    #guide-content p { margin-bottom: 10px; }
+    #guide-content ul, #guide-content ol { margin: 6px 0 12px 20px; }
+    #guide-content li { margin-bottom: 6px; }
+    #guide-content strong { color: #e8c34a; }
+    #guide-content hr { border: none; border-top: 1px solid #2a2a2a; margin: 18px 0; }
+
+    #guide-ok-wrap { text-align: center; padding: 12px 0 36px; }
+
+    #guide-ok {
+      background: #10101e;
+      border: 1px solid #4a3a18;
+      color: #ddd;
+      padding: 16px 48px;
+      font-family: Georgia, serif;
+      font-size: 1.1em;
+      cursor: pointer;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    #guide-ok:active { background: #1a1a32; border-color: #b8903a; color: #fff; }
+
+    /* ── Conversation overlay (dark overlay on canvas) ── */
+    #conv-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 24px;
+      z-index: 20;
+    }
+    #conv-overlay.active { display: flex; }
+
+    #conv-speaker {
+      color: #b8903a;
+      font-size: 1em;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    #conv-text {
+      color: #eee;
+      font-size: 1.05em;
+      line-height: 1.7;
+      text-align: center;
+      max-width: 85%;
+      margin-bottom: 18px;
+      white-space: pre-wrap;
+    }
+
+    #conv-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .choice-btn {
+      background: #10101e;
+      border: 1px solid #4a3a18;
+      color: #ddd;
+      padding: 14px 20px;
+      font-family: Georgia, serif;
+      font-size: 1em;
+      cursor: pointer;
+      text-align: left;
+    }
+    .choice-btn:active { background: #1a1a32; border-color: #b8903a; color: #fff; }
+    .choice-btn .hl { color: #b8903a; font-weight: bold; }
+
+    #conv-continue {
+      margin-top: 14px;
+      background: none;
+      border: 1px solid #444;
+      color: #888;
+      padding: 12px 36px;
+      font-family: Georgia, serif;
+      font-size: 1em;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+    #conv-continue:active { border-color: #b8903a; color: #b8903a; }
+
+    /* ── Below-canvas conversation mode (animation ON) ── */
+    #conv-overlay.below-canvas {
+      position: static;
+      background: #0a0a0a;
+      border-top: 1px solid #2a2a2a;
+      width: 100%;
+      flex: 0 0 auto;
+      max-height: 45%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 16px 24px;
+    }
+
+    #game-container:has(#conv-overlay.below-canvas.active) #game-wrap { flex: 1; }
+
+    /* ── Map overlay ── */
+    #map-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 20;
+    }
+    #map-overlay.active { display: flex; }
+
+    #map-title {
+      color: #b8903a;
+      font-size: 1em;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    #map-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 300px;
+      max-width: 80%;
+    }
+
+    .map-loc-btn {
+      background: #10101e;
+      border: 1px solid #4a3a18;
+      color: #ddd;
+      padding: 14px 20px;
+      font-family: Georgia, serif;
+      font-size: 1em;
+      cursor: pointer;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .map-loc-btn:active { background: #1a1a32; border-color: #b8903a; color: #fff; }
+    .map-loc-btn.current { border-color: #555; color: #555; }
+
+    #map-close {
+      margin-top: 6px;
+      background: none;
+      border: 1px solid #333;
+      color: #555;
+      padding: 10px 28px;
+      font-family: Georgia, serif;
+      font-size: 0.95em;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+    #map-close:active { border-color: #b8903a; color: #b8903a; }
+
+    /* ── Game-end / puzzle / continue overlays ── */
+    #gameover-overlay, #puzzle-overlay, #continue-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      z-index: 25;
+    }
+    #gameover-overlay.active, #puzzle-overlay.active, #continue-overlay.active { display: flex; }
+
+    .overlay-title {
+      color: #b8903a;
+      font-size: 1.2em;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .overlay-msg {
+      color: #ccc;
+      font-size: 1em;
+      text-align: center;
+      max-width: 80%;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .overlay-btn {
+      background: #10101e;
+      border: 1px solid #4a3a18;
+      color: #ddd;
+      padding: 14px 36px;
+      font-family: Georgia, serif;
+      font-size: 1em;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+    .overlay-btn:active { background: #1a1a32; border-color: #b8903a; color: #fff; }
+
+    /* ── Inventory bar ── */
+    #inv-bar {
+      width: 100%;
+      min-height: 68px;
+      background: #080808;
+      border-top: 1px solid #1a1a1a;
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      flex-shrink: 0;
+    }
+
+    .inv-slot {
+      flex-shrink: 0;
+      width: 58px; height: 58px;
+      border: 1px solid #2a2a2a;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .inv-slot.inv-selected { border-color: #e8c34a; background: #1a1708; box-shadow: 0 0 6px rgba(232,195,74,0.4); }
+    .inv-slot canvas { display: block; }
+    .inv-slot .inv-label {
+      font-size: 7px;
+      color: #888;
+      text-align: center;
+      padding: 1px 2px;
+      line-height: 1.2;
+    }
+
+    #inv-empty {
+      font-size: 0.8em;
+      color: #333;
+      padding: 0 12px;
+      font-style: italic;
+    }
+
+    /* ── Toolbar (Guide + Bug Report) ── */
+    #ipad-toolbar {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 8px;
+      background: #050505;
+      border-top: 1px solid #1a1a1a;
+      flex-shrink: 0;
+    }
+
+    .tb-btn {
+      background: none;
+      border: 1px solid #333;
+      color: #555;
+      padding: 8px 16px;
+      font-family: Georgia, serif;
+      font-size: 0.85em;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+    .tb-btn:active { border-color: #b8903a; color: #b8903a; }
+    .tb-btn.tb-bug { color: #f88; border-color: #a44; }
+    .tb-btn.tb-bug:active { color: #faa; border-color: #c66; }
+
+    /* ── Hidden elements the engine expects in DOM ── */
+    #status-bar { display: none; }
+    #status-bar.ipad-visible {
+      display: flex;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 5px 8px;
+      gap: 6px;
+      font-size: 0.72em;
+      color: #444;
+      background: #080808;
+      border-top: 1px solid #1a1a1a;
+      flex-shrink: 0;
+    }
+    #status-bar.ipad-visible #scene-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    #status-bar.ipad-visible #scene-input {
+      background: #111;
+      border: 1px solid #333;
+      color: #888;
+      padding: 4px 8px;
+      font-family: monospace;
+      font-size: 1em;
+      width: 60px;
+    }
+    #status-bar.ipad-visible .ctrl-btn {
+      background: none;
+      border: 1px solid #333;
+      color: #555;
+      padding: 4px 10px;
+      font-size: 1em;
+      font-family: Georgia, serif;
+    }
+    #status-bar.ipad-visible .ctrl-btn.dp-active { color: #6f6; border-color: #4a4; }
+
+    #debug-panel { display: none; }
+    #debug-panel.ipad-visible {
+      display: block;
+      width: 100%;
+      font-size: 0.72em;
+      color: #888;
+      background: #0a0a0a;
+      border-top: 1px solid #222;
+      padding: 6px 8px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      max-height: 40vh;
+    }
+    #debug-panel summary {
+      cursor: pointer;
+      color: #b8903a;
+      font-size: 0.95em;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 0;
+      user-select: none;
+    }
+    #debug-panel details { margin-bottom: 4px; }
+    .dp-section { padding: 4px 0 4px 4px; }
+    .dp-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; align-items: center; }
+    .dp-input {
+      background: #111; border: 1px solid #333; color: #aaa;
+      padding: 2px 6px; font-family: monospace; font-size: 0.95em; width: 60px;
+    }
+    .dp-btn {
+      background: #111; border: 1px solid #333; color: #777;
+      padding: 4px 10px; font-family: monospace; font-size: 0.9em; cursor: pointer; white-space: nowrap;
+    }
+    .dp-btn:active { color: #ccc; border-color: #666; }
+    .dp-btn.dp-active { color: #6f6; border-color: #4a4; background: #0a140a; }
+    .dp-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+    .dp-cat { color: #b8903a; font-size: 0.85em; margin: 6px 0 2px; letter-spacing: 1px; }
+    .dp-flag-btn {
+      background: #111; border: 1px solid #333; color: #666;
+      padding: 2px 7px; font-family: monospace; font-size: 0.85em; cursor: pointer; white-space: nowrap;
+    }
+    .dp-flag-btn.dp-f1 { color: #aa8; border-color: #554; background: #111108; }
+    .dp-flag-btn.dp-f2 { color: #6f6; border-color: #4a4; background: #0a140a; }
+
+    #scene-info { display: none; }
+    #debug-info { display: none; }
+    #title { display: none; }
+
+    /* ── Debug tap zone (top-left corner) ── */
+    #debug-tap-zone {
+      position: absolute;
+      top: 0; left: 0;
+      width: 44px; height: 44px;
+      z-index: 30;
+    }
+
+    /* ── Disable hover effects on touch devices ── */
+    @media (hover: none) {
+      .choice-btn:hover, .map-loc-btn:hover, .splash-btn:hover,
+      #guide-ok:hover, .overlay-btn:hover, .tb-btn:hover { all: unset; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="game-container">
+  <div id="title">Nancy Drew: Secrets Can Kill</div>
+
+  <div id="game-wrap">
+    <div id="debug-tap-zone"></div>
+    <canvas id="game-canvas" width="536" height="292"></canvas>
+
+    <div id="guide-overlay">
+      <div id="guide-content">
+        <h1>Secrets Can Kill &mdash; Play Tester's Guide</h1>
+        <p>Welcome, and thank you for helping test this fan-made web recreation of Nancy Drew: Secrets Can Kill! Your job is to play through the game from start to finish and let us know if you hit any walls that prevent you from progressing. Don't worry about small visual glitches or minor oddities &mdash; we're focused on making sure the game is <strong>completable from beginning to end</strong>.</p>
+
+        <hr>
+        <h2>Getting Started</h2>
+        <p>You'll see the main game screen after tapping OK. You can start a new game or load a save file from the original game.</p>
+        <h3>Controls</h3>
+        <ul>
+          <li><strong>Tap</strong> to interact with the world &mdash; doors, objects, characters, etc.</li>
+          <li><strong>Tap and hold</strong> to deselect an inventory item.</li>
+          <li>Your <strong>inventory</strong> appears at the bottom of the screen.</li>
+        </ul>
+
+        <hr>
+        <h2>What to Focus On</h2>
+        <p>We need to know if anything <strong>stops you from finishing the game</strong>. Specifically:</p>
+        <ul>
+          <li>Can you get from one location to the next?</li>
+          <li>Can you talk to every character you need to?</li>
+          <li>Do conversations flow correctly &mdash; do the right dialogue options appear?</li>
+          <li>Can you pick up the items you need?</li>
+          <li>Can you progress through the major story beats?</li>
+          <li>Does the game ever get stuck with no way to move forward?</li>
+        </ul>
+        <p><strong>If you hit a dead end where you can't progress, that's the most important thing to report.</strong></p>
+
+        <hr>
+        <h2>Known Issues (Don't Report These)</h2>
+        <ul>
+          <li><strong>Character/video animations may load slowly</strong> depending on your internet connection. If you experience repeated buffering or freezing during character animations, we recommend turning them off to keep testing smooth.</li>
+          <li><strong>Character audio may load slowly or start late.</strong> Tapping one of Nancy's dialogue responses may cause her audio to overlap with the other character still talking.</li>
+          <li><strong>Certain investigative questions and their responses play their audio too fast.</strong> Note which conversation dialogue lines this happens on so it can be corrected.</li>
+          <li><strong>The telephone dialing system is not implemented.</strong> You won't be able to dial numbers on the phone.</li>
+          <li><strong>Some music plays at the wrong time</strong>, and some sound effects don't play or play incorrectly.</li>
+          <li><strong>Not all puzzles are implemented yet.</strong> If you reach a puzzle that doesn't seem to respond, note which one it is and move on.</li>
+          <li><strong>Tapping inventory items onto hotspots doesn't work yet.</strong> However, <strong>if you have the required item in your inventory and tap the hotspot normally, the game should still progress.</strong></li>
+          <li><strong>Day/Night transitions don't trigger on their own</strong>, but the game should still be playable through to the end.</li>
+          <li><strong>Picking up items doesn't play the "add to inventory" sound.</strong></li>
+          <li><strong>Game credits don't work yet.</strong></li>
+        </ul>
+
+        <hr>
+        <h2>The DEBUG Menu</h2>
+        <p><strong>Triple-tap the top-left corner</strong> of the screen to show/hide debug controls. These include:</p>
+        <ul>
+          <li><strong>Hotspot overlays</strong>: Highlight all the tappable areas on screen.</li>
+          <li><strong>Scene navigation</strong>: Jump to specific scenes to re-test or skip past sections.</li>
+          <li><strong>Flags and inventory</strong>: View and change game state to get past stuck points.</li>
+        </ul>
+
+        <hr>
+        <h2>How to Report Issues</h2>
+        <p>Tap the <strong>Bug Report</strong> button at the bottom of the screen to open the report form. Include:</p>
+        <ol>
+          <li><strong>Where you are</strong> &mdash; What location? Who were you talking to?</li>
+          <li><strong>What you were trying to do</strong></li>
+          <li><strong>What happened</strong> &mdash; "Nothing happened," "The screen went black," etc.</li>
+          <li><strong>What you expected</strong></li>
+        </ol>
+        <p>A screenshot is always helpful if you can grab one.</p>
+
+        <hr>
+        <p style="text-align:center;color:#999;">Your testing helps make this game a reality. Have fun replaying a classic!</p>
+        <div id="guide-ok-wrap">
+          <button id="guide-ok">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="splash-overlay" class="hidden">
+      <div class="splash-title">Nancy Drew: Secrets Can Kill</div>
+      <div class="splash-msg">
+        This is a test version of the Nancy Drew Engine browser reimplementation.<br>
+        Don't steal games.
+      </div>
+      <button class="splash-btn" id="splash-start">Start Game</button>
+    </div>
+
+    <div id="conv-overlay">
+      <div id="conv-speaker"></div>
+      <div id="conv-text"></div>
+      <div id="conv-choices"></div>
+      <button id="conv-continue" onclick="ND.continueConv()">[ Continue ]</button>
+    </div>
+
+    <div id="map-overlay">
+      <div id="map-title">Travel Map</div>
+      <div id="map-btns"></div>
+      <button id="map-close" onclick="ND.hideMapDialog()">[ Close ]</button>
+    </div>
+
+    <div id="gameover-overlay">
+      <div id="gameover-title" class="overlay-title"></div>
+      <div id="gameover-msg" class="overlay-msg"></div>
+      <button id="second-chance-btn" class="overlay-btn" onclick="ND.loadSecondChance()" style="display:none">[ Second Chance ]</button>
+      <button class="overlay-btn" onclick="location.reload()">[ Play Again ]</button>
+    </div>
+
+    <div id="puzzle-overlay">
+      <div class="overlay-title">Puzzle</div>
+      <div id="puzzle-name" class="overlay-msg"></div>
+      <button id="puzzle-solve" class="overlay-btn">[ Solve Puzzle ]</button>
+      <button id="puzzle-back" class="overlay-btn">[ Go Back ]</button>
+    </div>
+
+    <div id="continue-overlay">
+      <div class="overlay-title">Nancy Drew: Secrets Can Kill</div>
+      <div class="overlay-msg">A saved game was found.</div>
+      <button id="continue-btn" class="overlay-btn">[ Continue ]</button>
+      <button id="newgame-btn" class="overlay-btn">[ New Game ]</button>
+    </div>
+  </div>
+
+  <div id="inv-bar">
+    <span id="inv-empty">Inventory empty</span>
+  </div>
+
+  <div id="ipad-toolbar">
+    <button class="tb-btn" onclick="document.getElementById('guide-overlay').classList.remove('hidden')">Guide</button>
+    <button class="tb-btn tb-bug" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSfvcx-1isaCDXLME9PlbI6Gm_84MdbQrBl18z0iiV6WdFeTBA/viewform?usp=publish-editor','_blank')">Bug Report</button>
+  </div>
+
+  <div id="status-bar">
+    <div id="scene-nav">
+      <input id="scene-input" type="text" placeholder="S10" title="Go to scene">
+      <button class="ctrl-btn" onclick="ND.goToScene(document.getElementById('scene-input').value)">Go</button>
+      <button id="menu-btn" class="ctrl-btn" onclick="ND.showMenu(true)">Menu</button>
+      <button class="ctrl-btn" onclick="ND.toggleDebug()">Debug</button>
+      <button class="ctrl-btn" onclick="ND.back()">Back</button>
+      <button id="anim-toggle-btn" class="ctrl-btn" onclick="ND.toggleAnimation()">Anim: OFF</button>
+      <button id="voice-toggle-btn" class="ctrl-btn dp-active" onclick="ND.toggleVoices()">Voice: ON</button>
+      <button id="autopan-toggle-btn" class="ctrl-btn" onclick="ND.toggleAutoPan()">AutoPan: OFF</button>
+    </div>
+    <div id="scene-info"></div>
+    <div id="debug-info"></div>
+  </div>
+
+  <div id="debug-panel">
+    <details open>
+      <summary>Scene</summary>
+      <div class="dp-section">
+        <div class="dp-row">
+          <input id="dp-scene" type="text" placeholder="S10" class="dp-input">
+          <button class="dp-btn" onclick="ND.goToScene(document.getElementById('dp-scene').value)">Go</button>
+          <button class="dp-btn" onclick="ND.debugRestart()">Restart</button>
+          <button class="dp-btn" onclick="ND.promptLoadSavFile()" style="background:#1a1a32;color:#9af">Load .SAV</button>
+          <button class="dp-btn" onclick="ND.exportSavFile()" style="background:#1a1a32;color:#9af" id="dp-export-sav">Export .SAV</button>
+        </div>
+        <div class="dp-row" id="dp-checkpoints">
+          <button class="dp-btn" onclick="ND.goToScene('S5')">Intro</button>
+          <button class="dp-btn" onclick="ND.goToScene('S9')">Aunt's</button>
+          <button class="dp-btn" onclick="ND.goToScene('S11')">School</button>
+          <button class="dp-btn" onclick="ND.goToScene('S10')">Diner</button>
+          <button class="dp-btn" onclick="ND.goToScene('S1200')">Pharmacy</button>
+          <button class="dp-btn" onclick="ND.goToScene('S1425')">Locker</button>
+          <button class="dp-btn" onclick="ND.goToScene('S1410')">Library</button>
+          <button class="dp-btn" onclick="ND.goToScene('S1457')">Boiler</button>
+          <button class="dp-btn" onclick="ND.goToScene('S1250')">Endgame</button>
+        </div>
+        <div class="dp-row">
+          <button class="dp-btn" onclick="ND.goToScene('S515')">Connie</button>
+          <button class="dp-btn" onclick="ND.goToScene('S824')">Daryl</button>
+          <button class="dp-btn" onclick="ND.goToScene('S1110')">Hal</button>
+          <button class="dp-btn" onclick="ND.goToScene('S1333')">Hulk</button>
+        </div>
+      </div>
+    </details>
+    <details>
+      <summary>Flags</summary>
+      <div class="dp-section">
+        <div class="dp-row">
+          <button class="dp-btn" onclick="ND.debugAskAllQuestions()">Ask All Questions</button>
+        </div>
+        <div id="dp-flags-grid"></div>
+      </div>
+    </details>
+    <details>
+      <summary>Inventory</summary>
+      <div class="dp-section">
+        <div class="dp-row">
+          <button class="dp-btn" onclick="ND.debugAddAllItems()">Add All Items</button>
+        </div>
+        <div id="dp-inv-grid" class="dp-grid"></div>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script src="engine_atlas.js"></script>
+<script>
+  let gameStarted = false;
+
+  // ── Guide → Splash → Game flow ──
+  document.getElementById('guide-ok').addEventListener('click', () => {
+    document.getElementById('guide-overlay').classList.add('hidden');
+    if (!gameStarted) {
+      document.getElementById('splash-overlay').classList.remove('hidden');
+    }
+  });
+
+  document.getElementById('splash-start').addEventListener('click', () => {
+    document.getElementById('splash-overlay').classList.add('hidden');
+    gameStarted = true;
+    ND.init({
+      scenesUrl:    'nd1_scenes.json',
+      framesDir:    'nd1_avf_frames',
+      audioDir:     'nd1_audio',
+      spritesDir:   'nd1_images',
+      atlasesDir:   'nd1_atlases',
+      startScene:   'S5',
+      initialFlags: { 5: 1, 101: 1 },
+    }).then(() => {
+      // iPad defaults: animation off (slow on mobile), autopan off (no mouse)
+      ND.toggleAnimation();
+      ND.toggleAutoPan();
+    });
+  });
+
+  // ── Pause all audio when leaving Safari / switching tabs ──
+  document.addEventListener('visibilitychange', () => {
+    if (!gameStarted) return;
+    if (document.hidden) {
+      // Pause every <audio> element on the page
+      document.querySelectorAll('audio').forEach(a => {
+        if (!a.paused) { a.dataset.wasPlaying = '1'; a.pause(); }
+      });
+    } else {
+      // Resume audio that was playing before
+      document.querySelectorAll('audio[data-was-playing]').forEach(a => {
+        a.play().catch(() => {});
+        delete a.dataset.wasPlaying;
+      });
+    }
+  });
+
+  // ── Touch → mouse event bridge ──
+  (function() {
+    const canvas = document.getElementById('game-canvas');
+
+    function touchToMouse(type, touch) {
+      return new MouseEvent(type, {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        bubbles: true,
+        cancelable: true,
+      });
+    }
+
+    // Single-tap → click
+    canvas.addEventListener('touchend', function(e) {
+      if (e.changedTouches.length === 1) {
+        e.preventDefault();
+        const touch = e.changedTouches[0];
+        canvas.dispatchEvent(touchToMouse('mousemove', touch));
+        canvas.dispatchEvent(touchToMouse('click', touch));
+      }
+    }, { passive: false });
+
+    // Touch move → mousemove
+    canvas.addEventListener('touchmove', function(e) {
+      if (e.touches.length === 1) {
+        e.preventDefault();
+        canvas.dispatchEvent(touchToMouse('mousemove', e.touches[0]));
+      }
+    }, { passive: false });
+
+    // Touch cancel → mouseleave
+    canvas.addEventListener('touchcancel', function() {
+      canvas.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+    });
+
+    // Long-press → context menu (deselect inventory item)
+    let longPressTimer = null;
+    canvas.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) {
+        longPressTimer = setTimeout(() => {
+          canvas.dispatchEvent(new MouseEvent('contextmenu', {
+            clientX: e.touches[0].clientX,
+            clientY: e.touches[0].clientY,
+            bubbles: true,
+            cancelable: true,
+          }));
+        }, 500);
+      }
+    }, { passive: true });
+
+    canvas.addEventListener('touchend', () => clearTimeout(longPressTimer), { passive: true });
+    canvas.addEventListener('touchmove', () => clearTimeout(longPressTimer), { passive: true });
+  })();
+
+  // ── Triple-tap top-left corner to toggle debug controls ──
+  (function() {
+    const zone = document.getElementById('debug-tap-zone');
+    let tapCount = 0, tapTimer = null;
+    zone.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => { tapCount = 0; }, 400);
+      if (tapCount >= 3) {
+        tapCount = 0;
+        const bar = document.getElementById('status-bar');
+        const panel = document.getElementById('debug-panel');
+        const show = !bar.classList.contains('ipad-visible');
+        bar.classList.toggle('ipad-visible', show);
+        panel.classList.toggle('ipad-visible', show);
+      }
+    }, { passive: false });
+  })();
+</script>
+</body>
+</html>

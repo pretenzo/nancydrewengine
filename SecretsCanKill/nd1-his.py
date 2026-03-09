@@ -6,16 +6,19 @@ Converts HER Interactive Sound (.his) files to standard WAV.
 HIS header (44 bytes):
   [00-21]  22 bytes  "Her Interactive Sound\x1a"  (custom magic)
   [22-23]  u16 LE   Version = 1
-  [24-27]  u32 LE   Sample rate (8000 / 11025 / 16384 / 22050 Hz)
+  [24-27]  u32 LE   Sample rate (8000 / 11025 / 16384 / 22050 / 44100 Hz)
   [28-31]  u32 LE   file_size - 8  (RIFF-style remaining length)
-  [32-33]  u16 LE   Channels (1=mono, 2=stereo)
+  [32-33]  u16 LE   Bytes per sample (1 = 8-bit, 2 = 16-bit)
   [34-35]  u16 LE   Bits per sample (8 or 16)
   [36-39]  4 bytes  "data"
   [40-43]  u32 LE   PCM data size in bytes
   [44+]    bytes    Raw PCM (8-bit unsigned or 16-bit signed LE)
 
+Note: All HIS files are mono. The field at [32-33] is bytes-per-sample
+(NOT channel count). It mirrors [34-35]: bps=1 → bits=8, bps=2 → bits=16.
+Trailing 82 bytes after audio (LIST/INFO chunk from GoldWave) are ignored.
+
 Conversion: replace the 44-byte HIS header with a standard RIFF/WAV header.
-All audio fields are already WAV-compatible.
 """
 
 import struct, os, sys, glob
@@ -29,7 +32,7 @@ def parse_his(data):
         raise ValueError(f"Not a HIS file (magic: {data[:22]!r})")
     version     = struct.unpack_from('<H', data, 22)[0]
     sample_rate = struct.unpack_from('<I', data, 24)[0]
-    channels    = struct.unpack_from('<H', data, 32)[0]
+    bytes_per   = struct.unpack_from('<H', data, 32)[0]  # bytes per sample (1 or 2), NOT channels
     bits        = struct.unpack_from('<H', data, 34)[0]
     data_tag    = data[36:40]
     data_size   = struct.unpack_from('<I', data, 40)[0]
@@ -37,7 +40,7 @@ def parse_his(data):
     return {
         'version': version,
         'sample_rate': sample_rate,
-        'channels': channels,
+        'channels': 1,  # all HIS files are mono
         'bits_per_sample': bits,
         'data_size': data_size,
         'audio': audio,
@@ -86,10 +89,9 @@ def convert_file(src_path, dst_path):
     with open(dst_path, 'wb') as f:
         f.write(wav_data)
     h = parse_his(his_data)
-    duration = h['data_size'] / (h['sample_rate'] * h['channels'] * (h['bits_per_sample'] // 8))
+    duration = h['data_size'] / (h['sample_rate'] * (h['bits_per_sample'] // 8))
     print(f"  {os.path.basename(src_path):20s} → {os.path.basename(dst_path)}"
-          f"  {h['sample_rate']}Hz {'stereo' if h['channels'] == 2 else 'mono'}"
-          f" {h['bits_per_sample']}bit  {duration:.2f}s")
+          f"  {h['sample_rate']}Hz mono {h['bits_per_sample']}bit  {duration:.2f}s")
 
 
 if __name__ == '__main__':

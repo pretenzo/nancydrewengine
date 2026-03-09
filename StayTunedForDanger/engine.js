@@ -220,10 +220,26 @@ const STFD = (() => {
   };
 
   // Item names — mapped from inventory array indices (DAT_004fd37f base)
+  // Sprite sheet: tool.png (normal + highlighted), toolcur1.png (cursor icons, green chroma key)
   const ITEM_NAMES = {
-    2: 'House Keys',       // From Mattie (S110)
-    4: 'Employee Pass',    // From Ralph (S403)
-    10: "Visitor's Pass",  // From Ralph (S401)
+    0:  'Door Knob',            // Box of door-knobs (S1201)
+    1:  'Screwdriver',          // Work bench (S1610)
+    2:  'House Keys',           // From Mattie (S110)
+    3:  'File Cabinet Keys',    // Dwayne's office (S2212)
+    4:  'Employee Pass',        // From Ralph (S403)
+    5:  'Floppy Disk',          // Behind Rick/Lillian photo (S1453)
+    6:  'Pencil',               // Lillian's file tray (S1353)
+    7:  'Oil Can',              // Prop room (S1300)
+    8:  'Clock Hand',           // Old clock (S1206)
+    9:  'Remote Control',       // VCR area (S2541)
+    10: "Visitor's Pass",       // From Ralph (S401)
+    11: 'Trap Door Key',        // Grandfather clock (S1729)
+    12: 'Security Videotape',   // Dwayne's tape shelf (S1625)
+    13: 'Interview Videotape',  // VCR room tapes (S2500+)
+    14: 'Wire Cutters',         // Prop room (S1277)
+    15: 'Cassette Tape',        // Answering machine (S2020)
+    16: 'Desk Drawer Key',      // Mattie's desk drawer (S2539)
+    17: '3D Glasses',           // Rick's vanity drawer (S2130)
   };
   for (let i = 0; i < 30; i++) if (!ITEM_NAMES[i]) ITEM_NAMES[i] = `Item ${i}`;
 

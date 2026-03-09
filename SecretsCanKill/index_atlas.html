@@ -387,6 +387,135 @@
     .dp-flag-btn.dp-f1 { color: #aa8; border-color: #554; background: #111108; }
     .dp-flag-btn.dp-f2 { color: #6f6; border-color: #4a4; background: #0a140a; }
 
+    /* ── Splash / autoplay gate overlay ── */
+    #splash-overlay {
+      position: absolute;
+      inset: 0;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 30;
+    }
+    #splash-overlay.hidden { display: none; }
+
+    #splash-overlay .splash-title {
+      color: #b8903a;
+      font-size: 1.1em;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    #splash-overlay .splash-msg {
+      color: #999;
+      font-size: 0.82em;
+      text-align: center;
+      max-width: 400px;
+      line-height: 1.7;
+    }
+
+    #splash-overlay .splash-btn {
+      margin-top: 8px;
+      background: #10101e;
+      border: 1px solid #4a3a18;
+      color: #ddd;
+      padding: 12px 32px;
+      font-family: Georgia, serif;
+      font-size: 0.9em;
+      cursor: pointer;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    #splash-overlay .splash-btn:hover { background: #1a1a32; border-color: #b8903a; color: #fff; }
+
+    /* ── Playtester guide overlay ── */
+    #guide-overlay {
+      position: absolute;
+      inset: 0;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 35;
+      overflow-y: auto;
+    }
+    #guide-overlay.hidden { display: none; }
+
+    #guide-content {
+      max-width: 640px;
+      padding: 28px 32px 20px;
+      color: #ccc;
+      font-size: 0.82em;
+      line-height: 1.75;
+    }
+
+    #guide-content h1 {
+      color: #b8903a;
+      font-size: 1.3em;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    #guide-content h2 {
+      color: #b8903a;
+      font-size: 1em;
+      letter-spacing: 1px;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+
+    #guide-content h3 {
+      color: #b8903a;
+      font-size: 0.9em;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+
+    #guide-content p {
+      margin-bottom: 10px;
+    }
+
+    #guide-content ul, #guide-content ol {
+      margin: 6px 0 12px 20px;
+    }
+
+    #guide-content li {
+      margin-bottom: 6px;
+    }
+
+    #guide-content strong {
+      color: #e8c34a;
+    }
+
+    #guide-content hr {
+      border: none;
+      border-top: 1px solid #2a2a2a;
+      margin: 18px 0;
+    }
+
+    #guide-ok-wrap {
+      text-align: center;
+      padding: 12px 0 28px;
+    }
+
+    #guide-ok {
+      background: #10101e;
+      border: 1px solid #4a3a18;
+      color: #ddd;
+      padding: 12px 40px;
+      font-family: Georgia, serif;
+      font-size: 0.95em;
+      cursor: pointer;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    #guide-ok:hover { background: #1a1a32; border-color: #b8903a; color: #fff; }
+
     /* ── Conversation overlay: below-canvas mode (animation ON) ── */
     #conv-overlay.below-canvas {
       position: static;
@@ -406,6 +535,110 @@
 
 <div id="game-wrap">
   <canvas id="game-canvas" width="536" height="292"></canvas>
+
+  <div id="guide-overlay">
+    <div id="guide-content">
+      <h1>Secrets Can Kill &mdash; Play Tester's Guide</h1>
+      <p>Welcome, and thank you for helping test this fan-made web recreation of Nancy Drew: Secrets Can Kill! Your job is to play through the game from start to finish and let us know if you hit any walls that prevent you from progressing. Don't worry about small visual glitches or minor oddities &mdash; we're focused on making sure the game is <strong>completable from beginning to end</strong>.</p>
+
+      <hr>
+      <h2>Getting Started</h2>
+      <p>You'll see the main game screen after clicking OK. You can start a new game or load a save file from the original game.</p>
+      <h3>Controls</h3>
+      <ul>
+        <li><strong>Click</strong> to interact with the world &mdash; doors, objects, characters, etc.</li>
+        <li><strong>Hover</strong> your mouse to discover interactive areas ("hotspots") in each scene.</li>
+        <li>Your <strong>inventory</strong> appears at the bottom of the screen. You'll collect items throughout the game.</li>
+      </ul>
+
+      <hr>
+      <h2>What to Focus On</h2>
+      <p>We need to know if anything <strong>stops you from finishing the game</strong>. Specifically:</p>
+      <ul>
+        <li>Can you get from one location to the next?</li>
+        <li>Can you talk to every character you need to?</li>
+        <li>Do conversations flow correctly &mdash; do the right dialogue options appear?</li>
+        <li>Can you pick up the items you need?</li>
+        <li>Can you progress through the major story beats?</li>
+        <li>Does the game ever get stuck with no way to move forward?</li>
+      </ul>
+      <p><strong>If you hit a dead end where you can't progress, that's the most important thing to report.</strong></p>
+
+      <hr>
+      <h2>Known Issues (Don't Report These)</h2>
+      <p>These are things we already know about. You don't need to flag them:</p>
+      <ul>
+        <li><strong>Character/video animations may load slowly</strong> depending on your internet connection. If you experience repeated buffering or freezing during character animations, we recommend turning them off in the settings to keep testing smooth.</li>
+        <li><strong>Character audio may load slowly or start late.</strong> Clicking one of Nancy's dialogue responses may cause her audio to overlap with the other character still talking.</li>
+        <li><strong>Certain investigative questions and their responses play their audio too fast.</strong> Some of Nancy's investigative questions (and the character's responses) play too fast and sound like Alvin and the Chipmunks. Note which conversation dialogue lines this happens on so it can be corrected.</li>
+        <li><strong>The telephone dialing system is not implemented.</strong> You won't be able to dial numbers on the phone.</li>
+        <li><strong>Some music plays at the wrong time</strong>, and some sound effects don't play or play incorrectly.</li>
+        <li><strong>Not all puzzles are implemented yet.</strong> If you reach a puzzle that doesn't seem to respond, note which one it is and move on.</li>
+        <li><strong>Clicking inventory items onto hotspots doesn't work yet.</strong> For example, you can't drag the TV remote item in your inventory onto a TV to turn it on. However, <strong>if you have the required item in your inventory and click the hotspot normally, the game should still progress.</strong> Just click the hotspot &mdash; don't worry about dragging items.</li>
+        <li><strong>Day/Night transitions don't trigger on their own</strong>, but the game should still be playable through to the end.</li>
+        <li><strong>Picking up items doesn't play the "add to inventory" sound.</strong></li>
+        <li><strong>Game credits don't work yet.</strong></li>
+      </ul>
+
+      <hr>
+      <h2>The DEBUG Menu</h2>
+      <p>There's a <strong>DEBUG menu</strong> built into the game to help you test. It has a lot of options &mdash; here's what's most useful:</p>
+      <ul>
+        <li><strong>Hotspot overlays</strong>: Turning these on will highlight all the clickable areas on screen. This is really helpful if you're stuck and can't figure out where to click.</li>
+        <li><strong>Scene navigation</strong>: You can jump to specific scenes if you need to re-test something or skip past a section.</li>
+        <li><strong>Flags and inventory</strong>: You can view and change game flags and inventory items, which can help you get past a stuck point to continue testing the rest of the game.</li>
+      </ul>
+      <p>If you ever get completely stuck and can't progress, try using the DEBUG menu to skip ahead so you can keep testing the rest of the game. Then report where you got stuck.</p>
+
+      <hr>
+      <h2>Saving and Loading</h2>
+      <ul>
+        <li><strong>Save your game</strong> by exporting a SAV file. This downloads a save file to your computer.</li>
+        <li><strong>Load a saved game</strong> by clicking LOAD SAV and selecting a save file. This works with save files from the original game too!</li>
+      </ul>
+      <p>We recommend <strong>saving often</strong>, especially before talking to characters or entering new areas. If something breaks, you can reload and try again or report exactly where the problem happened.</p>
+
+      <hr>
+      <h2>How to Report Issues</h2>
+      <p>When you find something that blocks your progress, please include:</p>
+      <ol>
+        <li><strong>Where you are</strong> &mdash; What scene or location? Who were you talking to?</li>
+        <li><strong>What you were trying to do</strong> &mdash; "I clicked the door to the library" or "I chose the second dialogue option talking to Connie."</li>
+        <li><strong>What happened</strong> &mdash; "Nothing happened," "The screen went black," "The game froze," etc.</li>
+        <li><strong>What you expected</strong> &mdash; "I expected the door to open" or "I expected the conversation to continue."</li>
+      </ol>
+      <p>A screenshot is always helpful if you can grab one.</p>
+
+      <hr>
+      <h2>Quick Refresher: Game Walkthrough Overview</h2>
+      <p>If you haven't played Secrets Can Kill in a while, here's a rough outline of what should happen:</p>
+      <ol>
+        <li><strong>Arrive at Paseo Del Mar High School</strong> &mdash; Explore the school hallways.</li>
+        <li><strong>Meet the suspects</strong> &mdash; Talk to Connie, Hal, Hulk, and Daryl at various locations around the school.</li>
+        <li><strong>Investigate Jake Rogers' locker and the crime scene.</strong></li>
+        <li><strong>Search key locations</strong> &mdash; The library, gym, teacher's lounge, Aunt Eloise's house, the diner, etc.</li>
+        <li><strong>Solve puzzles</strong> &mdash; Boiler room, safe combinations, and more.</li>
+        <li><strong>Gather evidence</strong> &mdash; Collect items, read documents, and put the clues together.</li>
+        <li><strong>Confront the culprit</strong> &mdash; The final confrontation and ending.</li>
+      </ol>
+      <p>Try to get through all of these. If you get stuck at any point, check the DEBUG menu for hotspot overlays to make sure you haven't missed a clickable area.</p>
+
+      <hr>
+      <p style="text-align:center;color:#999;">Your testing helps make this game a reality. Have fun replaying a classic!</p>
+      <div id="guide-ok-wrap">
+        <button id="guide-ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="splash-overlay" class="hidden">
+    <div class="splash-title">Nancy Drew: Secrets Can Kill</div>
+    <div class="splash-msg">
+      This is a test version of the Nancy Drew Engine browser reimplementation.<br>
+      Don't steal games.
+    </div>
+    <button class="splash-btn" id="splash-start">Start Game</button>
+  </div>
 
   <div id="conv-overlay">
     <div id="conv-speaker"></div>
@@ -456,6 +689,8 @@
     <button id="anim-toggle-btn" class="ctrl-btn dp-active" onclick="ND.toggleAnimation()">Anim: ON</button>
     <button id="voice-toggle-btn" class="ctrl-btn dp-active" onclick="ND.toggleVoices()">Voice: ON</button>
     <button id="autopan-toggle-btn" class="ctrl-btn dp-active" onclick="ND.toggleAutoPan()">AutoPan: ON</button>
+    <button class="ctrl-btn" onclick="document.getElementById('guide-overlay').classList.remove('hidden')">Guide</button>
+    <button class="ctrl-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSfvcx-1isaCDXLME9PlbI6Gm_84MdbQrBl18z0iiV6WdFeTBA/viewform?usp=sharing&ouid=116886193446181886056','_blank')" style="color:#f88;border-color:#a44">Bug Report</button>
   </div>
   <div id="scene-info">Loading…</div>
   <div id="debug-info"></div>
@@ -523,17 +758,27 @@
 
 <script src="engine_atlas.js"></script>
 <script>
-  ND.init({
-    scenesUrl:    'nd1_scenes.json',
-    framesDir:    'nd1_avf_frames',
-    audioDir:     'nd1_audio',
-    spritesDir:   'nd1_images',
-    atlasesDir:   'nd1_atlases',
-    startScene:   'S5',
-    // Boot-time flag initialization (not set in scene data).
-    // Flag 5 = game chapter/act; value 1 = first visit.
-    // Flag 101 = kitchen state; value 1 = safe (bolt cutter in place).
-    initialFlags: { 5: 1, 101: 1 },
+  let gameStarted = false;
+
+  document.getElementById('guide-ok').addEventListener('click', () => {
+    document.getElementById('guide-overlay').classList.add('hidden');
+    if (!gameStarted) {
+      document.getElementById('splash-overlay').classList.remove('hidden');
+    }
+  });
+
+  document.getElementById('splash-start').addEventListener('click', () => {
+    document.getElementById('splash-overlay').classList.add('hidden');
+    gameStarted = true;
+    ND.init({
+      scenesUrl:    'nd1_scenes.json',
+      framesDir:    'nd1_avf_frames',
+      audioDir:     'nd1_audio',
+      spritesDir:   'nd1_images',
+      atlasesDir:   'nd1_atlases',
+      startScene:   'S5',
+      initialFlags: { 5: 1, 101: 1 },
+    });
   });
 </script>
 </body>

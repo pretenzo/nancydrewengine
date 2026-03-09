@@ -367,7 +367,7 @@ const ND = (() => {
   // ── Atlas-based frame loading ─────────────────────────────────────────────
   // Load the full atlas image for an AVF asset (cached via imgCache)
   async function loadAtlas(name) {
-    const src = `${ATLASES_DIR}/${name.toLowerCase()}.png`;
+    const src = `${ATLASES_DIR}/${name.toLowerCase()}.webp`;
     try { return await loadImg(src); } catch (_) { return null; }
   }
 
@@ -382,11 +382,14 @@ const ND = (() => {
     if (info && frameIndex < info.count) {
       const atlas = await loadAtlas(name);
       if (atlas) {
+        const cols = info.cols || 1;
+        const col = frameIndex % cols;
+        const row = Math.floor(frameIndex / cols);
         const c = document.createElement('canvas');
         c.width = info.w;
         c.height = info.h;
         c.getContext('2d').drawImage(atlas,
-          0, frameIndex * info.h, info.w, info.h,
+          col * info.w, row * info.h, info.w, info.h,
           0, 0, info.w, info.h);
         atlasFrameCache[key] = c;
         return c;
@@ -402,6 +405,11 @@ const ND = (() => {
     return atlasManifest?.[assetName.toLowerCase()]?.count ?? -1;
   }
 
+  // Check if atlas frames are pre-keyed (chroma already removed to transparency)
+  function isAtlasPreKeyed(assetName) {
+    return !!atlasManifest?.[assetName.toLowerCase()]?.keyed;
+  }
+
   // Preload an atlas into the image cache (fire-and-forget)
   function preloadAtlas(assetName) {
     if (atlasManifest?.[assetName.toLowerCase()]) {
@@ -410,20 +418,39 @@ const ND = (() => {
   }
 
   // ── Audio ────────────────────────────────────────────────────────────────
+  let audioSinkErrors = 0; // Track consecutive audio failures (e.g. Firefox MEDIASINK)
+
   function playSound(name) {
     if (!name || name.trim() === 'NO SOUND') return null;
     const a = new Audio(`${AUDIO_DIR}/${name.trim().toLowerCase()}.wav`);
     a.volume = 0.65;
-    a.play().catch(() => {});
+    a.addEventListener('playing', () => { audioSinkErrors = 0; }, { once: true });
+    a.addEventListener('error', () => { audioSinkErrors++; }, { once: true });
+    // If audio data isn't ready yet, wait briefly for it to buffer before playing.
+    // This prevents the browser from silently skipping playback on slow connections.
+    if (a.readyState < 3) { // HAVE_FUTURE_DATA = 3
+      let played = false;
+      const doPlay = () => { if (!played) { played = true; a.play().catch(() => {}); } };
+      a.addEventListener('canplaythrough', doPlay, { once: true });
+      // Shorter timeout when audio output is failing to avoid stalling the game
+      setTimeout(doPlay, audioSinkErrors > 2 ? 500 : 3000);
+    } else {
+      a.play().catch(() => {});
+    }
     return a;
   }
 
   // Returns a promise that resolves when the audio finishes (or immediately if null)
   function waitForSound(audio) {
     if (!audio) return Promise.resolve();
+    // If audio already errored or ended (race: event fired before listener attached), resolve now
+    if (audio.error || audio.ended) return Promise.resolve();
     return new Promise(resolve => {
       audio.addEventListener('ended', resolve, { once: true });
       audio.addEventListener('error', resolve, { once: true });
+      // Safety: don't block forever if audio output device fails silently
+      // (e.g. Firefox NS_ERROR_DOM_MEDIA_MEDIASINK_ERR)
+      setTimeout(resolve, 30000);
     });
   }
 
@@ -705,13 +732,16 @@ const ND = (() => {
     const endFrame = act.end_frame ?? 0;
     if (endFrame <= 0) return;
 
-    // Preload all frames from atlas
+    // Fetch the atlas image (this is the slow network part), then slice frames
+    startLoadingBar();
+    await loadAtlas(asset);
     const frames = [];
     for (let i = 0; i <= endFrame; i++) {
       const img = await loadFrame(asset, i);
       if (img) frames.push({ index: i, img });
       else break;
     }
+    stopLoadingBar();
     if (frames.length === 0) return;
 
     // Build timed flag trigger map: frame index → [{flag, value}]
@@ -787,7 +817,9 @@ const ND = (() => {
   async function playNarrationVideo(nodeId, coords, introSound) {
     if (!nodeId) return;
 
-    // Load all frames from atlas
+    // Fetch the atlas image (slow network part), then slice frames
+    startLoadingBar();
+    await loadAtlas(nodeId);
     const count = getFrameCount(nodeId);
     const frames = [];
     const limit = count > 0 ? count : 9999;
@@ -796,6 +828,7 @@ const ND = (() => {
       if (img) frames.push(img);
       else break;
     }
+    stopLoadingBar();
     if (frames.length === 0) return;
 
     // Draw rect from coords: (x2,y2) → (x3,y3)
@@ -1137,8 +1170,7 @@ const ND = (() => {
       if (!fr) continue;
       const img = await loadFrame(act.asset_name, 0);
       if (img) {
-        const cacheKey = `${act.asset_name}_000`;
-        const cleaned = getChromaKeyFrame(img, cacheKey);
+        const cleaned = isAtlasPreKeyed(act.asset_name) ? img : getChromaKeyFrame(img, `${act.asset_name}_000`);
         const yS = bgNativeHeight > GAME_H ? GAME_H / bgNativeHeight : 1;
         const drawH = cleaned.height * yS;
         const drawX = fr.hs_x2 - cleaned.width;
@@ -1176,13 +1208,16 @@ const ND = (() => {
     if (!bgSnapshot) return;
 
     // Preload and chroma-key all frames from atlas
+    startLoadingBar();
     const frames = [];
+    const preKeyed = isAtlasPreKeyed(assetName);
     const maxFrame = endFrame ?? (getFrameCount(assetName) - 1);
     for (let i = 0; i <= maxFrame; i++) {
       const img = await loadFrame(assetName, i);
       if (!img) break;
-      frames.push(getChromaKeyFrame(img, `${assetName}_${i}`));
+      frames.push(preKeyed ? img : getChromaKeyFrame(img, `${assetName}_${i}`));
     }
+    stopLoadingBar();
     if (frames.length === 0) return;
 
     const cleaned0 = frames[0];
@@ -1251,11 +1286,12 @@ const ND = (() => {
   }
 
   // ── Conversation animation ──────────────────────────────────────────────
-  async function startConvAnimation(nodeId, coords) {
+  async function startConvAnimation(nodeId, coords, audioName) {
     stopConvAnimation();
     if (!state.animationEnabled || !nodeId) return;
 
     // Load all frames from atlas (conversation frames include background — no chroma-key)
+    startLoadingBar();
     const count = getFrameCount(nodeId);
     const frames = [];
     const limit = count > 0 ? count : 9999;
@@ -1264,7 +1300,11 @@ const ND = (() => {
       if (!img) break;
       frames.push(img);
     }
+    stopLoadingBar();
     if (frames.length === 0) return;
+
+    // Play audio now that frames are loaded (avoids audio playing before animation on slow connections)
+    if (audioName) playConvVoice(audioName);
 
     // Draw rect from coords (same logic as playNarrationVideo)
     const x = coords?.x2 ?? 0;
@@ -1352,10 +1392,12 @@ const ND = (() => {
     pendingConvNav       = null;
 
     // Play NPC dialogue audio (prefer intro_sound from scene data, fall back to node_id)
-    if (!skipGreeting) {
-      const audioName = act.intro_sound
-        || (act.node_id && act.node_id.replace(/^([a-zA-Z]+)0*(\d+.*)$/, '$1$2'));
-      if (audioName) playConvVoice(audioName);
+    // When animation is enabled, defer audio until frames are loaded (see startConvAnimation)
+    const convAudioName = !skipGreeting
+      ? (act.intro_sound || (act.node_id && act.node_id.replace(/^([a-zA-Z]+)0*(\d+.*)$/, '$1$2')))
+      : null;
+    if (convAudioName && !(state.animationEnabled && act.node_id)) {
+      playConvVoice(convAudioName);
     }
 
     // Three-tier routing (matches Game.exe.c ProcessConversation):
@@ -1386,6 +1428,7 @@ const ND = (() => {
         btn.innerHTML = markupToHtml(ch.text);
         btn.onclick = async () => {
           const nancyAudio = ch.target_node ? playConvVoice(ch.target_node) : null;
+          if (ch.response_scene) prefetchSceneConv(`S${ch.response_scene}`);
           if (nancyAudio) await waitForSound(nancyAudio);
           if (ch.response_scene) {
             hideConv();
@@ -1404,6 +1447,7 @@ const ND = (() => {
         btn.onclick = async () => {
           pendingReturnHub = hubSceneId;
           const nancyAudio = playConvVoice(q.id);
+          if (q.response_scene) prefetchSceneConv(q.response_scene);
           if (nancyAudio) await waitForSound(nancyAudio);
           if (q.response_scene) {
             hideConv();
@@ -1427,6 +1471,7 @@ const ND = (() => {
       // Tier 2: No visible choices — unconditional continuation
       convCont.style.display = '';
       pendingConvNav = `S${act.continuation_scene}`;
+      prefetchSceneConv(pendingConvNav);
     } else {
       // Tier 3: Terminal node (has_pop or fallback) — Continue pops back
       convCont.style.display = '';
@@ -1451,7 +1496,7 @@ const ND = (() => {
       const gameWrap = document.getElementById('game-wrap');
       gameWrap.parentNode.insertBefore(convOL, gameWrap.nextSibling);
       convOL.classList.add('below-canvas');
-      startConvAnimation(act.node_id, act.coords);
+      startConvAnimation(act.node_id, act.coords, convAudioName);
     }
 
     convOL.classList.add('active');
@@ -1568,7 +1613,11 @@ const ND = (() => {
       if (isCurrent) btn.classList.add('current');
       btn.onclick = () => {
         hideMapDialog();
-        if (!isCurrent) loadScene(destId, 0);
+        if (!isCurrent) {
+          // Preload diner fidget (NPC visible immediately on entry)
+          if (destId === 'S10' || destId === 'S888') preloadSceneAtlases(destId);
+          loadScene(destId, 0);
+        }
       };
       mapBtns.appendChild(btn);
     });
@@ -3077,9 +3126,82 @@ const ND = (() => {
     preloadAdjacentScenes(hotspots);
   }
 
+  // ── Loading indicator ──────────────────────────────────────────────────
+  // Animated loading bar shown while waiting for atlas/audio fetches.
+  // Returns a stop() function to clear the interval and erase the bar.
+  let _loadingBarInterval = null;
+  let _loadingBarSnapshot = null; // ImageData of the region before the bar was drawn
+  function startLoadingBar() {
+    stopLoadingBar();
+    const barW = 120, barH = 4;
+    const x = Math.floor((GAME_W - barW) / 2);
+    const y = GAME_H - 20;
+    // Snapshot the region so we can restore it later
+    _loadingBarSnapshot = ctx.getImageData(x, y, barW, barH);
+    let phase = 0;
+    const draw = () => {
+      phase = (phase + 2) % barW;
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fillRect(x, y, barW, barH);
+      ctx.fillStyle = '#b8903a';
+      const w = 30;
+      ctx.fillRect(x + phase, y, Math.min(w, barW - phase), barH);
+      if (phase + w > barW) ctx.fillRect(x, y, (phase + w) - barW, barH);
+    };
+    draw();
+    _loadingBarInterval = setInterval(draw, 30);
+  }
+
+  function stopLoadingBar() {
+    if (_loadingBarInterval) {
+      clearInterval(_loadingBarInterval);
+      _loadingBarInterval = null;
+    }
+    // Restore the background region that was under the bar
+    if (_loadingBarSnapshot) {
+      const x = Math.floor((GAME_W - 120) / 2);
+      ctx.putImageData(_loadingBarSnapshot, x, GAME_H - 20);
+      _loadingBarSnapshot = null;
+    }
+  }
+
+  // ── Conversation prefetch ──────────────────────────────────────────────
+
+  // Fire-and-forget: preload the conversation animation atlas + voice audio
+  // for a target scene.  Called while Nancy's line is playing so the NPC
+  // response animation is ready by the time the scene loads.
+  function prefetchSceneConv(sceneId) {
+    const scene = scenes[sceneId];
+    if (!scene) return;
+    for (const a of scene.actions) {
+      if (a.type !== 'CONVERSATION_VIDEO') continue;
+      if (a.node_id) loadAtlas(a.node_id).catch(() => {});
+      const audioName = a.intro_sound
+        || (a.node_id && a.node_id.replace(/^([a-zA-Z]+)0*(\d+.*)$/, '$1$2'));
+      if (audioName) {
+        // Kick off a background fetch so the browser caches the wav
+        new Audio(`${AUDIO_DIR}/${audioName.trim().toLowerCase()}.wav`).load();
+      }
+    }
+    // Also prefetch the background atlas
+    if (scene.summary?.bg_avf) preloadAtlas(scene.summary.bg_avf);
+  }
+
   // ── Scene-adjacent preloading ─────────────────────────────────────────────
-  // Silently prefetch atlas images for all scenes linked by hotspots
+  // Silently prefetch background atlases for scenes linked by hotspots
   // so navigation feels instant.  Errors are ignored (non-critical).
+  // Preload all atlases (background + fidget) for a target scene
+  function preloadSceneAtlases(sceneId) {
+    const scene = scenes[sceneId];
+    if (!scene) return;
+    if (scene.summary?.bg_avf) preloadAtlas(scene.summary.bg_avf);
+    for (const act of (scene.actions || [])) {
+      if (act.type === 'PLAY_SECONDARY_VIDEO' && act.asset_name) {
+        preloadAtlas(act.asset_name);
+      }
+    }
+  }
+
   function preloadAdjacentScenes(hotspots) {
     const seen = new Set();
     for (const hs of hotspots) {
@@ -3087,9 +3209,7 @@ const ND = (() => {
       const targetId = act.target_scene ? `S${act.target_scene}` : null;
       if (!targetId || seen.has(targetId)) continue;
       seen.add(targetId);
-      const targetScene = scenes[targetId];
-      if (!targetScene?.summary?.bg_avf) continue;
-      preloadAtlas(targetScene.summary.bg_avf);
+      preloadSceneAtlases(targetId);
     }
   }
 

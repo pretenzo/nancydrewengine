@@ -1,0 +1,39 @@
+# Source material & dev tools
+*.py
+*.c
+*.gzf
+*.iso
+*.dat
+*.md
+*.jsonl
+*.txt
+*.zip
+*.SAV
+
+# Dev/test variants
+engine.js
+engine_test.js
+engine copy.js
+index.html
+index_test.html
+ipad.html
+
+# Raw/intermediate data
+nd1_extracted/
+nd1_boot.json
+nd1_avf_frames_webp/
+nd1_avf_frames/*.gif
+nd1_scene_graph.json
+AVFExt-main/
+SCK-ISO/
+avf/
+his/
+orig/
+decompile_reference.md
+
+# VCS
+.git/
+.claude/
+.dockerignore
+Dockerfile
+nginx.conf
