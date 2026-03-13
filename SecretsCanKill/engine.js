@@ -1356,11 +1356,13 @@ const ND = (() => {
         btn.className = 'choice-btn';
         btn.textContent = q.text;
         btn.onclick = async () => {
+          console.log(`[INV-Q] clicked: id=${q.id} text="${q.text}" response_scene=${q.response_scene} hub=${hubSceneId}`);
           pendingReturnHub = hubSceneId;
           const nancyAudio = playConvVoice(q.id);
           if (nancyAudio) await waitForSound(nancyAudio);
           if (q.response_scene) {
             hideConv();
+            console.log(`[INV-Q] loading scene: ${q.response_scene}`);
             await loadScene(q.response_scene, 0, false);
           } else {
             hideConv();
@@ -3840,6 +3842,27 @@ const ND = (() => {
     loadScene('S1457', 0);
   }
 
+  function debugEssayBug() {
+    // Reproduce bug: visit diner at night → see "Back in 10 Minutes" sign → talk to Hal → click essay question
+    // NPCs met
+    state.flags[38] = 2; // Daryl met
+    state.flags[19] = 2; // Connie met
+    state.flags[29] = 2; // Hulk met
+    state.flags[11] = 2; // Hal met
+    // Watched blackmail tape → enables night diner + confrontation questions
+    state.flags[5]  = 2;
+    // Clues needed for hic8 (essay confrontation with Hal)
+    state.flags[6]  = 2; // Essay plagiarism clue
+    state.flags[8]  = 2; // Hal pressure clue
+    // flag 12 stays at default 1 (hasn't confronted Hal about essay yet)
+    // flag 39 stays at default 1 (hasn't confronted Daryl about blackmail yet)
+    // flag 20 stays at default 1 (nighttime — diner closed)
+    updateInventoryBar();
+    refreshDebugPanel();
+    // Navigate to diner at night (step 1 of reproduction)
+    loadScene('S888', 0);
+  }
+
   function debugEndgame() {
     // Set all prerequisites for endgame night mode:
     // NPCs met
@@ -3860,6 +3883,6 @@ const ND = (() => {
 
   return { init, loadScene, hideConv, continueConv, showMapDialog, hideMapDialog, toggleDebug, toggleAnimation, toggleVoices, toggleAutoPan, goToScene, back, loadSecondChance,
            showMenu, togglePanel, debugToggleItem, debugRestart, debugAskAllQuestions, debugAddAllItems, debugBoilerEmergency,
-           debugTimerSkip, debugTimerAdd, debugEndgame, promptLoadSavFile, promptLoadSavTemplate, exportSavFile, hasSavTemplate };
+           debugTimerSkip, debugTimerAdd, debugEndgame, debugEssayBug, promptLoadSavFile, promptLoadSavTemplate, exportSavFile, hasSavTemplate };
 
 })();
