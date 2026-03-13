@@ -734,7 +734,7 @@ const STFD = (() => {
         if (act.type !== 'SCENE_CHANGE') continue;
         if (!act.conditions || !act.conditions.some(c => c.type === 'timed_flag' && c.seconds === deadline)) continue;
         stopTimer();
-        loadScene(`S${act.target_scene}`, act.scene_param ?? 0, false, act.flags !== 0);
+        loadScene(`S${act.target_scene}`, act.scene_param ?? 0, false);
         return;
       }
     }, 2000);
@@ -2503,7 +2503,7 @@ const STFD = (() => {
                 const originScene = sceneId;
                 waitForSound(audio).then(() => {
                   if (state.currentSceneId === originScene) {
-                    loadScene(`S${navTarget}`, 0, false, true);
+                    loadScene(`S${navTarget}`, 0, false);
                   }
                 });
               }
@@ -2685,7 +2685,7 @@ const STFD = (() => {
 
     // Auto-navigate (SCENE_CHANGE has priority over conversations)
     if (autoNav && !puzzleAction) {
-      await loadScene(`S${autoNav.target_scene}`, autoNav.scene_param ?? 0, false, autoNav.flags !== 0);
+      await loadScene(`S${autoNav.target_scene}`, autoNav.scene_param ?? 0, false);
       return;
     }
 
@@ -2815,12 +2815,12 @@ const STFD = (() => {
             // Don't reload — wait for the sound, then navigate
             waitForSound(navSound.audio).then(() => {
               if (state.currentSceneId === navSound.originScene) {
-                loadScene(`S${navSound.target}`, 0, true, true);
+                loadScene(`S${navSound.target}`, 0, true);
               }
             });
           } else {
             // No nav_on_end sound — reload current scene to re-evaluate conditions
-            loadScene(state.currentSceneId, state.currentVariant, false, true);
+            loadScene(state.currentSceneId, state.currentVariant, false);
           }
           return;
         }
@@ -2829,14 +2829,14 @@ const STFD = (() => {
           if (act.item_id !== undefined) {
             state.inventory.add(act.item_id);
             updateInventoryBar();
-            loadScene(state.currentSceneId, state.currentVariant, false, true);
+            loadScene(state.currentSceneId, state.currentVariant, false);
           }
           return;
         }
 
         if (act.type === 'PLAY_SECONDARY_VIDEO') {
           if (act.target_scene) {
-            loadScene(`S${act.target_scene}`, 0, true, true);
+            loadScene(`S${act.target_scene}`, 0);
           }
           return;
         }
@@ -2991,7 +2991,7 @@ const STFD = (() => {
   function back() {
     if (state.history.length === 0) return;
     const prev = state.history.pop();
-    loadScene(prev.id, prev.variant, false, true);
+    loadScene(prev.id, prev.variant, false);
   }
 
   function toggleDebug() {
