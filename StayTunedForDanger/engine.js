@@ -734,7 +734,7 @@ const STFD = (() => {
         if (act.type !== 'SCENE_CHANGE') continue;
         if (!act.conditions || !act.conditions.some(c => c.type === 'timed_flag' && c.seconds === deadline)) continue;
         stopTimer();
-        loadScene(`S${act.target_scene}`, act.scene_param ?? 0, false);
+        loadScene(`S${act.target_scene}`, act.scene_param ?? 0, false, act.flags !== 0);
         return;
       }
     }, 2000);
@@ -2382,7 +2382,7 @@ const STFD = (() => {
   }
 
   // ── Scene loading ──────────────────────────────────────────────────────
-  async function loadScene(sceneId, variant = 0, pushHistory = true) {
+  async function loadScene(sceneId, variant = 0, pushHistory = true, keepAmbient = false) {
     const scene = scenes[sceneId];
     if (!scene) { console.warn('Scene not found:', sceneId); return; }
 
@@ -2432,10 +2432,13 @@ const STFD = (() => {
     await renderNPCs(scene.actions, variant);
     drawScrollArrows();
 
-    // Set ambient — conversation scenes keep previous ambient
+    // Set ambient — conversation scenes and hotspot navigations keep previous ambient.
+    // The original engine only applies ambient_snd on "fresh" scene loads (game start,
+    // map travel, conversation exits). Hotspot clicks always preserve current ambient,
+    // matching the flags=1 field on every HOT_*_SCENE_CHANGE action in the binary data.
     const isConvScene = scene.actions.some(a =>
       a.type === 'CONVERSATION_CEL' || a.type === 'CONVERSATION_SOUND' || a.type === 'CONVERSATION_VIDEO_ALT');
-    if (!isConvScene) setAmbient(sum.ambient_snd);
+    if (!isConvScene && !keepAmbient) setAmbient(sum.ambient_snd);
 
     const hotspots = [];
     const yS = bgNativeHeight > GAME_H ? GAME_H / bgNativeHeight : 1;
@@ -2500,7 +2503,7 @@ const STFD = (() => {
                 const originScene = sceneId;
                 waitForSound(audio).then(() => {
                   if (state.currentSceneId === originScene) {
-                    loadScene(`S${navTarget}`, 0, false);
+                    loadScene(`S${navTarget}`, 0, false, true);
                   }
                 });
               }
@@ -2682,7 +2685,7 @@ const STFD = (() => {
 
     // Auto-navigate (SCENE_CHANGE has priority over conversations)
     if (autoNav && !puzzleAction) {
-      await loadScene(`S${autoNav.target_scene}`, autoNav.scene_param ?? 0, false);
+      await loadScene(`S${autoNav.target_scene}`, autoNav.scene_param ?? 0, false, autoNav.flags !== 0);
       return;
     }
 
@@ -2812,12 +2815,12 @@ const STFD = (() => {
             // Don't reload — wait for the sound, then navigate
             waitForSound(navSound.audio).then(() => {
               if (state.currentSceneId === navSound.originScene) {
-                loadScene(`S${navSound.target}`, 0, true);
+                loadScene(`S${navSound.target}`, 0, true, true);
               }
             });
           } else {
             // No nav_on_end sound — reload current scene to re-evaluate conditions
-            loadScene(state.currentSceneId, state.currentVariant, false);
+            loadScene(state.currentSceneId, state.currentVariant, false, true);
           }
           return;
         }
@@ -2826,21 +2829,21 @@ const STFD = (() => {
           if (act.item_id !== undefined) {
             state.inventory.add(act.item_id);
             updateInventoryBar();
-            loadScene(state.currentSceneId, state.currentVariant, false);
+            loadScene(state.currentSceneId, state.currentVariant, false, true);
           }
           return;
         }
 
         if (act.type === 'PLAY_SECONDARY_VIDEO') {
           if (act.target_scene) {
-            loadScene(`S${act.target_scene}`, 0);
+            loadScene(`S${act.target_scene}`, 0, true, true);
           }
           return;
         }
 
-        // Navigation hotspot
+        // Navigation hotspot — keep current ambient (matches original engine)
         if (act.target_scene !== undefined) {
-          loadScene(`S${act.target_scene}`, act.scene_param ?? 0);
+          loadScene(`S${act.target_scene}`, act.scene_param ?? 0, true, true);
           return;
         }
       }
@@ -2988,7 +2991,7 @@ const STFD = (() => {
   function back() {
     if (state.history.length === 0) return;
     const prev = state.history.pop();
-    loadScene(prev.id, prev.variant, false);
+    loadScene(prev.id, prev.variant, false, true);
   }
 
   function toggleDebug() {
