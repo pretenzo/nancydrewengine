@@ -495,10 +495,10 @@ const STFD = (() => {
   }
 
   // ── Audio ──────────────────────────────────────────────────────────────
-  function playSound(name) {
+  function playSound(name, volume) {
     if (!name || name.trim() === 'NO SOUND') return null;
     const a = new Audio(`${AUDIO_DIR}/${name.trim().toLowerCase()}.wav`);
-    a.volume = 0.65;
+    a.volume = volume !== undefined ? volume : 0.65;
     a.play().catch(() => {});
     return a;
   }
@@ -1593,13 +1593,17 @@ const STFD = (() => {
             const nancyAudio = playConvVoice(ch.target_node);
             await waitForSound(nancyAudio);
           }
-          // For hub conversations, push onto convStack so player can ask
-          // multiple questions. For non-hub conversations (story dialogue),
-          // player picks one branch and follows it to the end — the NPC
-          // eventually cuts off via default_exit_scene chains.
+          // Push parent onto convStack so the player can explore remaining
+          // choices. For hubs this always applies. For story conversations,
+          // push when children are simple terminals (no default_exit_scene
+          // chain), e.g. S104's four threat-detail questions (S105-S108).
           const newVisited = new Set(visited);
           newVisited.add(choiceIdx);
-          if (isHub) {
+          const childConv = ch.continuation_scene
+            ? getConvFromScene(`S${ch.continuation_scene}`) : null;
+          const childIsTerminal = childConv && !childConv.default_exit_scene
+            && !(childConv.npc_entries || []).some(e => e.text?.includes('<h>'));
+          if (isHub || childIsTerminal) {
             convStack.push({ act, visited: newVisited });
           }
           if (ch.continuation_scene) {
@@ -2483,13 +2487,13 @@ const STFD = (() => {
 
         case 'PLAY_DIGI_SOUND':
           if (!isSameScene && !isEventFlagSound(scene, act)
-              && !movieSoundsPlayed?.has(act.sound_file)
-              && (act.volume_l || act.volume_r)) {
+              && !movieSoundsPlayed?.has(act.sound_file)) {
             if (act.loop_type === 1) {
               // Looping sound — treat as ambient
               setAmbient(act.sound_file);
             } else {
-              const audio = playSound(act.sound_file);
+              const vol = Math.max(act.volume_l || 0, act.volume_r || 0) / 100;
+              const audio = playSound(act.sound_file, vol * 0.65);
               if (audio) sceneSounds.push(audio);
               if (act.nav_on_end && audio) {
                 const navTarget = act.nav_on_end;
