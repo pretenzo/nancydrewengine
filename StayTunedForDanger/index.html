@@ -330,6 +330,28 @@
     .dp-flag-btn.dp-f1 { color: #aa8; border-color: #554; background: #111108; }
     .dp-flag-btn.dp-f2 { color: #6f6; border-color: #4a4; background: #0a140a; }
 
+    /* Save slots */
+    .dp-slot-row { align-items: center; gap: 6px; }
+    .dp-slot-label {
+      font-family: monospace; font-size: 0.9em; color: #aaa;
+      min-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .dp-slot-clear {
+      color: #844 !important; border-color: #422 !important; padding: 2px 5px !important;
+      font-size: 0.8em !important;
+    }
+    .dp-slot-clear:hover { color: #f66 !important; border-color: #844 !important; }
+
+    /* Toast notification */
+    #save-toast {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      background: #1a1a2e; border: 1px solid #b8903a; color: #e8d5a3;
+      padding: 6px 18px; font-family: Georgia, serif; font-size: 13px;
+      letter-spacing: 1px; opacity: 0; transition: opacity 0.25s;
+      pointer-events: none; z-index: 9999;
+    }
+    #save-toast.active { opacity: 1; }
+
     /* ── Conversation overlay: below-canvas mode (CAL animation visible above) ── */
     #conv-overlay.below-canvas {
       position: static;
@@ -462,6 +484,16 @@
     <summary>Inventory</summary>
     <div class="dp-section">
       <div id="dp-inv-grid" class="dp-grid"></div>
+    </div>
+  </details>
+  <details open>
+    <summary>Save Slots</summary>
+    <div class="dp-section">
+      <div id="dp-slots-grid"></div>
+      <div class="dp-row" style="margin-top:4px">
+        <button class="dp-btn" onclick="STFD.promptLoadSavFile()" title="Load an original STFD .SAV file (NANSTD*.SAV)">Load .SAV</button>
+        <span style="font-family:monospace;color:#555;font-size:10px">F5 = quick save &nbsp; F9 = quick load (last used slot)</span>
+      </div>
     </div>
   </details>
 </div>

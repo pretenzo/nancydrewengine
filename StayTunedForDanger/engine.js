@@ -2341,6 +2341,233 @@ const STFD = (() => {
     return !!localStorage.getItem(SAVE_KEY);
   }
 
+  // ── Save slots (7 slots, matching original game) ──────────────────────
+  const SLOT_COUNT = 7;
+  const SLOT_PREFIX = 'stfd_slot_';
+  let lastUsedSlot = 1;
+
+  function buildSlotData(label) {
+    return {
+      flags: { ...state.flags },
+      inventory: [...state.inventory],
+      sceneId: state.currentSceneId,
+      variant: state.currentVariant,
+      dayTime: state.dayTime,
+      difficulty: state.difficulty,
+      label: label || state.currentSceneId,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  function saveToSlot(n) {
+    if (n < 1 || n > SLOT_COUNT) return;
+    const label = `${state.currentSceneId} — ${new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}`;
+    localStorage.setItem(SLOT_PREFIX + n, JSON.stringify(buildSlotData(label)));
+    lastUsedSlot = n;
+    showToast(`Saved to slot ${n}`);
+    refreshDebugPanel();
+  }
+
+  function loadFromSlot(n) {
+    if (n < 1 || n > SLOT_COUNT) return;
+    const raw = localStorage.getItem(SLOT_PREFIX + n);
+    if (!raw) { showToast(`Slot ${n} is empty`); return; }
+    try {
+      const data = JSON.parse(raw);
+      state.flags = data.flags || {};
+      state.inventory = new Set(data.inventory || []);
+      state.dayTime = data.dayTime ?? 0;
+      state.difficulty = data.difficulty ?? 1;
+      lastUsedSlot = n;
+      updateInventoryBar();
+      hideConv();
+      gameEndOL.classList.remove('active');
+      loadScene(data.sceneId, data.variant ?? 0);
+      showToast(`Loaded slot ${n}`);
+    } catch { showToast(`Slot ${n} corrupted`); }
+  }
+
+  function clearSlot(n) {
+    if (n < 1 || n > SLOT_COUNT) return;
+    localStorage.removeItem(SLOT_PREFIX + n);
+    refreshDebugPanel();
+  }
+
+  function getSlotInfo(n) {
+    const raw = localStorage.getItem(SLOT_PREFIX + n);
+    if (!raw) return null;
+    try {
+      const data = JSON.parse(raw);
+      return { label: data.label, timestamp: data.timestamp };
+    } catch { return null; }
+  }
+
+  // ── Toast notifications ───────────────────────────────────────────────
+  let toastTimer = null;
+  function showToast(msg) {
+    let el = document.getElementById('save-toast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'save-toast';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.add('active');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('active'), 1500);
+  }
+
+  // ── SAV file import (original STFD Game.exe binary saves) ────────────
+  // File size: 28,599 bytes (0x6FB7)
+  // Header: 0x00–0x7C (valid flag, publisher/series/subtitle strings, metadata, save name)
+  // Block 1 (game state): 0x7D, size 0x5448
+  //   Inventory at B1+0xE2 (18 items, LE32, 1=not owned, 2=owned)
+  //   Flags at B1+0x15F (230 flags, LE32, default=1)
+  // Block 2 (scene state): 0x54C5, size 0x1AF2
+  //   Scene description at B2+0x00 (50 bytes)
+  //   BG AVF name at B2+0x32 (10 bytes)
+  //   Ambient sound at B2+0x40 (10 bytes)
+  //   Scene ID at B2+0x2D8 (LE16)
+  const SAV_SIZE = 28599;
+  const SAV_B1 = 0x7D;
+  const SAV_B2 = 0x54C5;
+  const SAV_NUM_FLAGS = 230;
+  const SAV_NUM_ITEMS = 18;
+
+  function parseSavFile(buf) {
+    if (buf.byteLength !== SAV_SIZE) throw new Error(`Bad .SAV size: ${buf.byteLength} (expected ${SAV_SIZE})`);
+    const d = new DataView(buf);
+    const u8 = new Uint8Array(buf);
+
+    if (d.getUint32(0, true) !== 1) throw new Error('Invalid save file (valid flag ≠ 1)');
+
+    const readStr = (off, maxLen) => {
+      let end = off;
+      while (end < off + maxLen && u8[end] !== 0) end++;
+      return new TextDecoder('ascii').decode(u8.slice(off, end));
+    };
+
+    // Header
+    const saveDesc = readStr(0x66, 23);
+
+    // Flags (LE32 each, default=1)
+    const flags = {};
+    for (let i = 0; i < SAV_NUM_FLAGS; i++) {
+      const val = d.getUint32(SAV_B1 + 0x15F + i * 4, true);
+      if (val !== 1) flags[i] = val;
+    }
+
+    // Inventory (LE32 each: 1=not owned, 2=owned)
+    const inventory = [];
+    for (let i = 0; i < SAV_NUM_ITEMS; i++) {
+      if (d.getUint32(SAV_B1 + 0xE2 + i * 4, true) === 2) inventory.push(i);
+    }
+
+    // Scene (Block 2)
+    const sceneDesc = readStr(SAV_B2, 50);
+    const bgAvf = readStr(SAV_B2 + 0x32, 10);
+    const sceneId = d.getUint16(SAV_B2 + 0x2D8, true);
+
+    return { saveDesc, flags, inventory, sceneDesc, bgAvf, sceneId };
+  }
+
+  function findSceneForSav(parsed) {
+    // Pass 0: direct scene ID
+    if (parsed.sceneId && scenes['S' + parsed.sceneId]) return 'S' + parsed.sceneId;
+
+    const targetDesc = parsed.sceneDesc.trim().toLowerCase();
+    const targetBg = parsed.bgAvf.trim().toLowerCase();
+
+    // Pass 1: description + bg AVF
+    for (const [sid, scene] of Object.entries(scenes)) {
+      const desc = (scene.summary?.description || '').trim().toLowerCase();
+      const bg = (scene.summary?.bg_avf || '').trim().toLowerCase();
+      if (desc === targetDesc && bg === targetBg) return sid;
+    }
+
+    // Pass 2: description only
+    const candidates = [];
+    for (const [sid, scene] of Object.entries(scenes)) {
+      const desc = (scene.summary?.description || '').trim().toLowerCase();
+      if (desc === targetDesc) candidates.push(sid);
+    }
+    if (candidates.length === 1) return candidates[0];
+
+    // Pass 3: substring match
+    if (candidates.length === 0) {
+      for (const [sid, scene] of Object.entries(scenes)) {
+        const desc = (scene.summary?.description || '').trim().toLowerCase();
+        if (desc.startsWith(targetDesc.substring(0, 20)) || targetDesc.startsWith(desc.substring(0, 20)))
+          candidates.push(sid);
+      }
+      if (candidates.length === 1) return candidates[0];
+    }
+
+    // Pass 4: among multiple, prefer bg_avf match
+    if (candidates.length > 1 && targetBg) {
+      const bgMatch = candidates.find(sid =>
+        (scenes[sid].summary?.bg_avf || '').trim().toLowerCase() === targetBg);
+      if (bgMatch) return bgMatch;
+    }
+
+    return candidates[0] || null;
+  }
+
+  function loadSavFile(buf) {
+    const parsed = parseSavFile(buf);
+    console.log('[SAV] Parsed:', parsed);
+
+    // Apply flags
+    state.flags = {};
+    Object.assign(state.flags, INITIAL_FLAGS);
+    for (const [id, val] of Object.entries(parsed.flags)) state.flags[+id] = val;
+
+    // Apply inventory
+    state.inventory = new Set(parsed.inventory);
+    state.activeItem = null;
+    state.history = [];
+
+    // Day/night from flag 46
+    state.dayTime = (state.flags[46] ?? 1) === 2 ? 1 : 0;
+
+    // Difficulty from flags 0/1/2
+    if (state.flags[2] === 2) state.difficulty = 2;
+    else if (state.flags[1] === 2) state.difficulty = 1;
+    else state.difficulty = 0;
+
+    // Find scene
+    const sceneId = findSceneForSav(parsed);
+    if (!sceneId) {
+      showToast(`Could not identify scene: "${parsed.sceneDesc}"`);
+      return;
+    }
+
+    console.log(`[SAV] Loading → ${sceneId} (desc: "${parsed.sceneDesc}", bg: "${parsed.bgAvf}")`);
+    hideConv();
+    gameEndOL.classList.remove('active');
+    updateInventoryBar();
+    refreshDebugPanel();
+    loadScene(sceneId, 0);
+    showToast(`Loaded: ${parsed.saveDesc || parsed.sceneDesc}`);
+  }
+
+  function promptLoadSavFile() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.SAV,.sav';
+    input.onchange = () => {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try { loadSavFile(reader.result); }
+        catch (e) { showToast(`SAV error: ${e.message}`); console.error(e); }
+      };
+      reader.readAsArrayBuffer(file);
+    };
+    input.click();
+  }
+
   // ── Inventory bar ──────────────────────────────────────────────────────
   async function updateInventoryBar() {
     invBar.innerHTML = '';
@@ -2965,6 +3192,54 @@ const STFD = (() => {
       }
     }
 
+    // Save slots
+    const slotsGrid = document.getElementById('dp-slots-grid');
+    if (slotsGrid) {
+      slotsGrid.innerHTML = '';
+      for (let i = 1; i <= SLOT_COUNT; i++) {
+        const info = getSlotInfo(i);
+        const row = document.createElement('div');
+        row.className = 'dp-row dp-slot-row';
+
+        const label = document.createElement('span');
+        label.className = 'dp-slot-label';
+        if (info) {
+          const ts = new Date(info.timestamp);
+          label.textContent = `${i}: ${info.label}`;
+          label.title = ts.toLocaleString();
+        } else {
+          label.textContent = `${i}: [ empty ]`;
+          label.style.opacity = '0.4';
+        }
+
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'dp-btn';
+        saveBtn.textContent = 'Save';
+        saveBtn.onclick = () => saveToSlot(i);
+
+        row.appendChild(label);
+        row.appendChild(saveBtn);
+
+        if (info) {
+          const loadBtn = document.createElement('button');
+          loadBtn.className = 'dp-btn';
+          loadBtn.textContent = 'Load';
+          loadBtn.onclick = () => loadFromSlot(i);
+
+          const clearBtn = document.createElement('button');
+          clearBtn.className = 'dp-btn dp-slot-clear';
+          clearBtn.textContent = 'x';
+          clearBtn.title = 'Clear slot';
+          clearBtn.onclick = () => clearSlot(i);
+
+          row.appendChild(loadBtn);
+          row.appendChild(clearBtn);
+        }
+
+        slotsGrid.appendChild(row);
+      }
+    }
+
     // Day/night
     updateDayNightDisplay();
   }
@@ -3145,6 +3420,12 @@ const STFD = (() => {
     } else {
       loadScene(START_SCENE_ID, 0, false);
     }
+
+    // Keyboard shortcuts for save slots
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F5') { e.preventDefault(); saveToSlot(lastUsedSlot); }
+      if (e.key === 'F9') { e.preventDefault(); loadFromSlot(lastUsedSlot); }
+    });
   }
 
   // ── Public interface ───────────────────────────────────────────────────
@@ -3163,6 +3444,11 @@ const STFD = (() => {
     debugHireNancy,
     debugDwayneOffice,
     loadSecondChance,
+    saveToSlot,
+    loadFromSlot,
+    clearSlot,
+    getSlotInfo,
+    promptLoadSavFile,
 
     // Expose state for debugging in console
     get state() { return state; },
