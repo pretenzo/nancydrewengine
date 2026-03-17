@@ -1439,6 +1439,8 @@ const STFD = (() => {
         state.inventory.add(a.item_id);
       else if (a.type === 'REMOVE_INVENTORY' && a.item_id !== undefined)
         state.inventory.delete(a.item_id);
+      else if (a.type === 'EVENTFLAGS' && a.flags_set)
+        a.flags_set.forEach(f => { state.flags[f.flag] = f.value; });
     }
     updateInventoryBar();
   }
@@ -2521,6 +2523,8 @@ const STFD = (() => {
               state.inventory.add(a.item_id);
             else if (a.type === 'REMOVE_INVENTORY' && a.item_id !== undefined)
               state.inventory.delete(a.item_id);
+            else if (a.type === 'EVENTFLAGS' && a.flags_set)
+              a.flags_set.forEach(f => { state.flags[f.flag] = f.value; });
           }
 
           const NAV_HS_TYPES = ['HOT_1FR_SCENE_CHANGE', 'HOT_1FR_EXITSCENE', 'HOT_MULTIFRAME_SCENE_CHANGE'];
