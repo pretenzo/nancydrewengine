@@ -1407,7 +1407,7 @@ const STFD = (() => {
       case 'check':           return (state.flags[c.flag] ?? 1) === c.value;
       case 'inventory_check': return state.inventory.has(c.item) === (c.value === 2);
       case 'difficulty_check': return (state.difficulty ?? 1) === c.value;
-      case 'day_night_check': return state.dayTime === c.value;
+      case 'day_night_check': return true; // TODO: day/night gating disabled until day/night cycle is properly implemented
       default:                return true;
     }
   }
@@ -1495,8 +1495,9 @@ const STFD = (() => {
     const isOneTime = flagChecks.length > 0 && sets.some(s =>
       flagChecks.some(c => c.flag === s.flag && c.value !== s.value));
     // Hub triggers when: explicitly listed hub scene, not a first-meeting conversation,
-    // AND either has no choices OR has choices that act as goodbye (Ralph's case).
-    const isHub = !!hubNpc && !setsMetFlag && !isOneTime && !storyBranch;
+    // no default_exit_scene (answering machines / first-call greetings chain via
+    // default_exit and should NOT be intercepted as hubs).
+    const isHub = !!hubNpc && !setsMetFlag && !isOneTime && !storyBranch && !act.default_exit_scene;
     const questions = isHub ? getAvailableQuestions(hubNpc) : [];
 
     if (isHub && (questions.length > 0 || !allChoices.length)) {
@@ -1694,11 +1695,39 @@ const STFD = (() => {
       const isStory = pendingConvNavStory;
       pendingConvNav = null;
       pendingConvNavStory = false;
+      const isTargetHub = !!INVESTIGATION_HUB_SCENES[target];
       const nextConv = getConvFromScene(target);
       if (nextConv) {
+        // For hub scenes reached via default_exit chains (e.g., S899→S839),
+        // update currentSceneId so hub detection works in showConv.
+        if (isTargetHub) state.currentSceneId = target;
         processSceneActions(target);
         stopConvVoice();
-        showConv(nextConv, { storyBranch: isStory });
+        showConv(nextConv, { storyBranch: isStory && !isTargetHub });
+      } else if (isTargetHub) {
+        // Hub scene with no matching greeting (e.g., first Dwayne call before
+        // wire cutters) — show investigation questions directly.
+        state.currentSceneId = target;
+        processSceneActions(target);
+        stopConvVoice();
+        const hubNpc = INVESTIGATION_HUB_SCENES[target];
+        const questions = getAvailableQuestions(hubNpc);
+        if (questions.length > 0) {
+          const syntheticAct = { type: 'CONVERSATION_SOUND', node_id: '',
+            npc_text: '', npc_entries: [], flag_entries: [] };
+          showConv(syntheticAct, { skipGreeting: true });
+        } else {
+          // No greeting and no questions — farewell or return
+          const fw = FAREWELL_DATA[hubNpc];
+          if (fw) {
+            hideConv();
+            const s = fw.scenes[Math.floor(Math.random() * fw.scenes.length)];
+            loadScene(`S${s}`, 0);
+          } else {
+            hideConv();
+            await loadScene(target, 0, false);
+          }
+        }
       } else {
         hideConv();
         await loadScene(target, 0, false);
@@ -2276,6 +2305,22 @@ const STFD = (() => {
       const entryDigits = entry.digits.slice(0, entryLen);
       if (dialDigits.length >= entryLen &&
           entryDigits.every((d, j) => dialDigits[j] === d)) {
+        // "Pickup" entries navigate to the phone hub scene (NPC conversation)
+        if (entry.node_id === 'Pickup' && entry.target_scene) {
+          activePuzzle.dialed = '';
+          activePuzzle.displayText = '....';
+          activePuzzle.locked = true;
+          drawPuzzleState();
+          const target = entry.target_scene;
+          setTimeout(() => {
+            if (activePuzzle?._keyHandler) document.removeEventListener('keydown', activePuzzle._keyHandler);
+            activePuzzle = null;
+            puzzleBaseImage = null;
+            loadScene(`S${target}`, 0);
+          }, 600);
+          return;
+        }
+        // Non-pickup entries: just display text on the phone screen
         let text = entry.text
           .replace(/<t>/g, '').replace(/<e>/g, '')
           .replace(/<c[0-9]>/g, '').replace(/<n>/g, '\n').trim();
